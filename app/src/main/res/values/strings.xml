@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MasterMcVoiceIt</string>
+    <string name="reasons_for_permission">Hey permission is mandatory</string>
 </resources>
