@@ -9,15 +9,25 @@
 
 
 
-        <Button
+        <ImageButton
             android:id="@+id/main_voice_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_microphone_96"
+            android:background="@null"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:onClick="voiceInput" />
+
+        <Button
+            android:id="@+id/main_show_result"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-
-            android:text="VOICE"
-            android:onClick="voiceInput" />
+            android:text="SHOW RESULT"
+            android:onClick="voiceResult" />
 
     </RelativeLayout>
 
