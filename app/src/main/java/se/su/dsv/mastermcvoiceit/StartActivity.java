@@ -12,7 +12,7 @@ import android.os.Bundle;
 public class StartActivity extends AppCompatActivity {
 
     private final int REQUEST_PERMISSION_ALL = 1;
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

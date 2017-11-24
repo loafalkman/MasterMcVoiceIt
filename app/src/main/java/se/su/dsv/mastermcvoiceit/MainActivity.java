@@ -1,4 +1,6 @@
 package se.su.dsv.mastermcvoiceit;
+import android.content.Context;
+import android.speech.SpeechRecognizer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +15,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void voiceInput(View v) {
-        Toast.makeText(this, "Say something", Toast.LENGTH_SHORT).show();
+
+        String input = ""; // let the voice recognizer dance!
+
+
+        Toast.makeText(this, "You said: " + input, Toast.LENGTH_SHORT).show();
     }
 }
