@@ -15,6 +15,13 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
+    <FrameLayout
+        android:id="@+id/framelayout_main_tmpcommandcontainer"
+        android:layout_width="match_parent"
+        android:layout_height="128dp">
+
+    </FrameLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

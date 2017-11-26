@@ -1,4 +1,5 @@
 package se.su.dsv.mastermcvoiceit;
+
 import android.content.Intent;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -8,9 +9,14 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import se.su.dsv.mastermcvoiceit.command.Command;
+import se.su.dsv.mastermcvoiceit.command.TempCommand;
+import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
 
 public class MainActivity extends AppCompatActivity implements RecognitionListener {
 
@@ -35,6 +41,11 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         speechRecognizer.setRecognitionListener(this);
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
+        initCommands();
+    }
+
+    private void initCommands() {
+        new TempCommand(new TelldusSensor(2));
     }
 
     public void voiceInput(View v) {
@@ -46,7 +57,17 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     public void voiceResult(View v) {
         if (resultString != null) {
-            Toast.makeText(this, resultString, Toast.LENGTH_LONG).show();
+            Command foundCommand = Command.findCommand(resultString);
+
+            if (foundCommand != null) {
+                Toast.makeText(this, "Command: " + resultString, Toast.LENGTH_SHORT).show();
+
+                View commandView = foundCommand.doCommand(this, resultString);
+                FrameLayout tmpContainer = (FrameLayout) findViewById(R.id.framelayout_main_tmpcommandcontainer);
+                tmpContainer.addView(commandView);
+            } else {
+                Toast.makeText(this, "Couldn't find command: " + resultString, Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -88,7 +109,9 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     @Override
     public void onResults(Bundle bundle) {
+
         ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+        Log.d(TAG, "onResults: ----> " + matches.get(0));
         if (matches != null && matches.size() > 0) {
             resultString = matches.get(0);
         }
