@@ -1,6 +1,7 @@
 package se.su.dsv.mastermcvoiceit.command;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
@@ -30,17 +31,22 @@ public class TempCommand extends Command {
     }
 
     @Override
-    public View doCommand(Activity parent, String spokenText) {
-        View skeleton = parent.getLayoutInflater().inflate(R.layout.item_commandhistory_temp, null);
+    public Bundle doCommand(Activity parent, String spokenText) {
+        Bundle bundle = new Bundle();
 
-        // TODO: handle different values of the temperature (e.g. turn on heater when too cold, turn off when too hot)
-        // TODO: get rid of hardcoded strings (also in xml file "item_commandhistory_temp.xml")
-        float temperature = sensor.getSensorValue();
-        TextView tempDesc = skeleton.findViewById(R.id.textview_tempitem_description);
-        tempDesc.setText("Temperaturen är "+temperature+" C*");
-        skeleton.findViewById(R.id.button_tempitem_turnoff).setVisibility(View.INVISIBLE);
+        bundle.putInt("flag", Command.FLAG_TEMP);
+        bundle.putFloat("Current temperature", sensor.getSensorValue());
 
-        return skeleton;
+//        View skeleton = parent.getLayoutInflater().inflate(R.layout.item_commandhistory_temp, null);
+//
+//        // TODO: handle different values of the temperature (e.g. turn on heater when too cold, turn off when too hot)
+//        // TODO: get rid of hardcoded strings (also in xml file "item_commandhistory_temp.xml")
+//        float temperature = sensor.getSensorValue();
+//        TextView tempDesc = skeleton.findViewById(R.id.textview_tempitem_description);
+//        tempDesc.setText("Temperaturen är "+temperature+" C*");
+//        skeleton.findViewById(R.id.button_tempitem_turnoff).setVisibility(View.INVISIBLE);
+
+        return bundle;
     }
 
 }
