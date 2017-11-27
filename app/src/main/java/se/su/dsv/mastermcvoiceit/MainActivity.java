@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import se.su.dsv.mastermcvoiceit.command.Command;
 import se.su.dsv.mastermcvoiceit.command.TempCommand;
-import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
+import se.su.dsv.mastermcvoiceit.remote.sensor.TelldusSensor;
 
 public class MainActivity extends AppCompatActivity implements RecognitionListener {
 

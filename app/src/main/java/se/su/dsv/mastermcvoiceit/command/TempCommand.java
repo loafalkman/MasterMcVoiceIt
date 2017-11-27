@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import se.su.dsv.mastermcvoiceit.R;
-import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
+import se.su.dsv.mastermcvoiceit.remote.sensor.TelldusSensor;
 
 /**
  * Created by felix on 2017-11-25.

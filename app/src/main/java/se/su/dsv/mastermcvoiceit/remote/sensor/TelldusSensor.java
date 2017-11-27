@@ -1,4 +1,4 @@
-package se.su.dsv.mastermcvoiceit.sensor;
+package se.su.dsv.mastermcvoiceit.remote.sensor;
 
 /**
  * Created by felix on 2017-11-24.
