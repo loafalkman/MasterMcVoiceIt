@@ -6,6 +6,7 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -36,6 +37,9 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         tmpContainer = (FrameLayout) findViewById(R.id.framelayout_main_tmpcommandcontainer);
         tempSkeleton = getLayoutInflater().inflate(R.layout.item_commandhistory_temp, null);
         tmpContainer.addView(tempSkeleton);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         speechRecognizer.setRecognitionListener(this);
@@ -105,35 +109,22 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     @Override
-    public void onReadyForSpeech(Bundle bundle) {
-
-    }
+    public void onReadyForSpeech(Bundle bundle) {}
 
     @Override
-    public void onBeginningOfSpeech() {
-
-    }
+    public void onBeginningOfSpeech() {}
 
     @Override
-    public void onRmsChanged(float v) {
-
-    }
+    public void onRmsChanged(float v) {}
 
     @Override
-    public void onBufferReceived(byte[] bytes) {
-
-    }
+    public void onBufferReceived(byte[] bytes) {}
 
     @Override
-    public void onEndOfSpeech() {
-//        Called after the user stops speaking.
-
-    }
+    public void onEndOfSpeech() {}
 
     @Override
-    public void onError(int i) {
-
-    }
+    public void onError(int i) {}
 
     @Override
     public void onResults(Bundle bundle) {
@@ -145,13 +136,9 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     @Override
-    public void onPartialResults(Bundle bundle) {
-
-    }
+    public void onPartialResults(Bundle bundle) {}
 
     @Override
-    public void onEvent(int i, Bundle bundle) {
-
-    }
+    public void onEvent(int i, Bundle bundle) {}
 
 }
