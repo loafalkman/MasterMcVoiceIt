@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     private void initCommands() {
-        new TempCommand(new TelldusSensor(2));
+        new TempCommand(new TelldusSensor(2, "hall"));
     }
 
     public void voiceInput(View v) {

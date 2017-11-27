@@ -10,12 +10,7 @@ import java.util.HashMap;
  */
 
 public abstract class Command {
-    final int FLAG;
     private static HashMap<String, Command> allCommands = new HashMap<>();
-
-    public Command(int flag) {
-        FLAG = flag;
-    }
 
     /**
      * @param cmdAlias verbal command
