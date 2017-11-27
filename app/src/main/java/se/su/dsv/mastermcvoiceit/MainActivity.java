@@ -21,29 +21,27 @@ import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
 public class MainActivity extends AppCompatActivity implements RecognitionListener {
 
     private static final String TAG = "main";
+    static final int RESULT_SPEECH = 7474;
     SpeechRecognizer speechRecognizer;
     Intent recognizerIntent;
-    static final int RESULT_SPEECH = 7474;
-
     ArrayList<String> resultArray;
     String resultString;
-
     FrameLayout tmpContainer;
-
+    View tempSkeleton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tmpContainer = (FrameLayout) findViewById(R.id.framelayout_main_tmpcommandcontainer);
+        tempSkeleton = getLayoutInflater().inflate(R.layout.item_commandhistory_temp, null);
+        tmpContainer.addView(tempSkeleton);
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         speechRecognizer.setRecognitionListener(this);
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
         initCommands();
-
-
     }
 
     private void initCommands() {
@@ -57,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     public void voiceResult(View v) {
+        resultString = "sensor 2";
 
         if (resultString != null) {
             Command foundCommand = Command.findCommand(resultString);
@@ -75,26 +74,19 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     private void renderCard(Bundle bundle) {
         int flag = bundle.getInt("flag");
-        View skeleton = null;
 
         switch (flag) {
             case Command.FLAG_TEMP:
                 float temp = bundle.getFloat("Current temperature");
 
-                skeleton = getLayoutInflater().inflate(R.layout.item_commandhistory_temp, null);
-
-                TextView tempDesc = skeleton.findViewById(R.id.textview_tempitem_description);
+                TextView tempDesc = tempSkeleton.findViewById(R.id.textview_tempitem_description);
                 tempDesc.setText("Temperaturen är " + temp + " C*");
-
+                
                 break;
         }
 
-        if (skeleton != null) {
-            tmpContainer.addView(skeleton);
-        }
+
     }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
