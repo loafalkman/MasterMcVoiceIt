@@ -38,9 +38,9 @@ public class TempCommand extends Command {
         float temperature = sensor.getSensorValue();
         TextView tempDesc = skeleton.findViewById(R.id.textview_tempitem_description);
         tempDesc.setText("Temperaturen är "+temperature+" C*");
-        skeleton.findViewById(R.id.button_tempitem_turnoff).setVisibility(View.INVISIBLE);
+        skeleton.findViewById(R.id.button_tempitem_turnoff);
 
         return skeleton;
     }
-
+    
 }
