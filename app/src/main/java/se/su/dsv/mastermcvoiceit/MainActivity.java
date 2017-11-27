@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -22,17 +23,20 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     private static final String TAG = "main";
     static final int RESULT_SPEECH = 7474;
-
     SpeechRecognizer speechRecognizer;
     Intent recognizerIntent;
     ArrayList<String> resultArray;
     String resultString;
-
+    FrameLayout tmpContainer;
+    View tempSkeleton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        tmpContainer = (FrameLayout) findViewById(R.id.framelayout_main_tmpcommandcontainer);
+        tempSkeleton = getLayoutInflater().inflate(R.layout.item_commandhistory_temp, null);
+        tmpContainer.addView(tempSkeleton);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -51,12 +55,10 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     public void voiceInput(View v) {
         if (SpeechRecognizer.isRecognitionAvailable(MainActivity.this)) {
             speechRecognizer.startListening(recognizerIntent);
-
         }
     }
 
     public void voiceResult(View v) {
-
         resultString = "sensor 2";
 
         if (resultString != null) {
@@ -64,13 +66,27 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
             if (foundCommand != null) {
                 Toast.makeText(this, "Command: " + resultString, Toast.LENGTH_SHORT).show();
+                Bundle bundle = foundCommand.doCommand(resultString);
 
-                View commandView = foundCommand.doCommand(this, resultString);
-                FrameLayout tmpContainer = (FrameLayout) findViewById(R.id.framelayout_main_tmpcommandcontainer);
-                tmpContainer.addView(commandView);
+                renderCard(bundle);
+
             } else {
                 Toast.makeText(this, "Couldn't find command: " + resultString, Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    private void renderCard(Bundle bundle) {
+        int flag = bundle.getInt("flag");
+
+        switch (flag) {
+            case Command.FLAG_TEMP:
+                float temp = bundle.getFloat("Current temperature");
+
+                TextView tempDesc = tempSkeleton.findViewById(R.id.textview_tempitem_description);
+                tempDesc.setText("Temperaturen är " + temp + " C*");
+                
+                break;
         }
     }
 
@@ -112,9 +128,8 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     @Override
     public void onResults(Bundle bundle) {
-
         ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-        Log.d(TAG, "onResults: ----> " + matches.get(0));
+
         if (matches != null && matches.size() > 0) {
             resultString = matches.get(0);
         }

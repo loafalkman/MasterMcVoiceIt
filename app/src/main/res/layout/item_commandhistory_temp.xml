@@ -3,55 +3,31 @@
     android:id="@+id/command_relative_layout"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:onClick="expandView"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
 
-    <!--<LinearLayout-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content" >-->
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        app:srcCompat="@drawable/icon_thermometer_50" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
-            app:srcCompat="@drawable/icon_thermometer_50" />
+    <TextView
+        android:id="@+id/textview_tempitem_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Temperaturen är xxC*."
+        android:textColor="@android:color/black"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/imageView" />
 
-        <TextView
-            android:id="@+id/textview_tempitem_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Temperaturen är xxC*."
-            android:textColor="@android:color/black"
-            android:padding="6dp"
-            android:layout_toRightOf="@+id/imageView"
-            />
-
-        <Button
-            android:id="@+id/button_tempitem_turnoff"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Stäng av"
-            android:textColor="@color/colorAccent"
-            android:layout_below="@id/textview_tempitem_description"
-            android:layout_alignParentEnd="true"
-            />
-
-        <TextView
-            android:id="@+id/expandable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TADA!"
-
-            />
-
-    <!--</LinearLayout>-->
-
-
+    <Button
+        android:id="@+id/button_tempitem_turnoff"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stäng av"
+        android:textColor="@color/colorAccent"
+        android:layout_below="@id/textview_tempitem_description"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
-
-
-    <!--card_view:cardCornerRadius="4dp"-->

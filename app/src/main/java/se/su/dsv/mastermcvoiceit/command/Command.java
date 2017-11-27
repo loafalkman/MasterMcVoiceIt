@@ -1,6 +1,7 @@
 package se.su.dsv.mastermcvoiceit.command;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 
 public abstract class Command {
     private static HashMap<String, Command> allCommands = new HashMap<>();
+    public static final int FLAG_TEMP = 64736;
 
     /**
      * @param cmdAlias verbal command
@@ -32,9 +34,8 @@ public abstract class Command {
 
     /**
      * Performs implemented command
-     * @param parentActivity Used to inflate the returned view.
      * @param spokenText The text that the user used to invoke this command.
-     * @return View that will inhabit a card
+     * @return Bundle with processed data
      */
-    public abstract View doCommand(Activity parentActivity, String spokenText);
+    public abstract Bundle doCommand(String spokenText);
 }
