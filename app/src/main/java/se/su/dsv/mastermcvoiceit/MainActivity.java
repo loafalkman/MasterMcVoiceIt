@@ -21,10 +21,10 @@ import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
 public class MainActivity extends AppCompatActivity implements RecognitionListener {
 
     private static final String TAG = "main";
-    SpeechRecognizer speechRecognizer;
-    Intent recognizerIntent;
     static final int RESULT_SPEECH = 7474;
 
+    SpeechRecognizer speechRecognizer;
+    Intent recognizerIntent;
     ArrayList<String> resultArray;
     String resultString;
 
@@ -56,6 +56,9 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     public void voiceResult(View v) {
+
+        resultString = "sensor 2";
+
         if (resultString != null) {
             Command foundCommand = Command.findCommand(resultString);
 
