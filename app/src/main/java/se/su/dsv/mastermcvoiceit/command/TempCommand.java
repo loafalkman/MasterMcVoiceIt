@@ -28,7 +28,7 @@ public class TempCommand extends Command {
     }
 
     @Override
-    public Bundle doCommand(Activity parent, String spokenText) {
+    public Bundle doCommand(String spokenText) {
         Bundle bundle = new Bundle();
         bundle.putInt("flag", Command.FLAG_TEMP);
         bundle.putFloat("Current temperature", sensor.getSensorValue());

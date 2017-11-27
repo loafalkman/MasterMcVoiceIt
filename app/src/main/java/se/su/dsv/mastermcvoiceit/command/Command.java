@@ -34,9 +34,8 @@ public abstract class Command {
 
     /**
      * Performs implemented command
-     * @param parentActivity Used to inflate the returned view.
      * @param spokenText The text that the user used to invoke this command.
-     * @return View that will inhabit a card
+     * @return Bundle with processed data
      */
-    public abstract Bundle doCommand(Activity parentActivity, String spokenText);
+    public abstract Bundle doCommand(String spokenText);
 }

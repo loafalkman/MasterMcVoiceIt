@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
             if (foundCommand != null) {
                 Toast.makeText(this, "Command: " + resultString, Toast.LENGTH_SHORT).show();
-                Bundle bundle = foundCommand.doCommand(MainActivity.this, resultString);
+                Bundle bundle = foundCommand.doCommand(resultString);
 
                 renderCard(bundle);
 
@@ -84,8 +84,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                 
                 break;
         }
-
-
     }
 
     @Override
@@ -139,15 +137,11 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     @Override
     public void onResults(Bundle bundle) {
-        // Called when recognition results are ready.
-
         ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-        Log.d(TAG, "onResults: ----> " + matches.get(0));
+
         if (matches != null && matches.size() > 0) {
             resultString = matches.get(0);
-//            Toast.makeText(MainActivity.this, (matches.get(0)), Toast.LENGTH_LONG).show();
         }
-
     }
 
     @Override
