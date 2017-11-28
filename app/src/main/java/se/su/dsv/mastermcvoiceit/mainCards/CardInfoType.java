@@ -5,6 +5,6 @@ package se.su.dsv.mastermcvoiceit.mainCards;
  */
 
 public enum CardInfoType {
-    actuator,
-    temperature,
+    ACTUATOR,
+    TEMPERATURE,
 }

@@ -1,33 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/command_relative_layout"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto" >
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/framelayout_main_locationservice"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_margin="8dp">
 
-    <ImageView
-        android:id="@+id/imageView"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/command_relative_layout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        app:srcCompat="@drawable/icon_thermometer_50" />
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textview_tempitem_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Temperaturen är xxC*."
-        android:textColor="@android:color/black"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/imageView" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/icon_thermometer_50" />
 
-    <Button
-        android:id="@+id/button_tempitem_turnoff"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@id/textview_tempitem_description"
-        android:text="Stäng av"
-        android:textColor="@color/secondaryColor" />
-</RelativeLayout>
+        <TextView
+            android:id="@+id/textview_tempitem_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/imageView"
+            android:text="Temperaturen är xxC*."
+            android:textColor="@android:color/black" />
+
+        <Button
+            android:id="@+id/button_tempitem_turnoff"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/textview_tempitem_description"
+            android:text="Stäng av"
+            android:textColor="@color/secondaryColor" />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

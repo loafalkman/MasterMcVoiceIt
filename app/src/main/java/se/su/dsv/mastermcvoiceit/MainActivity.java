@@ -10,6 +10,7 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -26,6 +27,8 @@ import se.su.dsv.mastermcvoiceit.command.Command;
 import se.su.dsv.mastermcvoiceit.command.TempCommand;
 import se.su.dsv.mastermcvoiceit.gps.LocationService;
 import se.su.dsv.mastermcvoiceit.mainCards.CardInfo;
+import se.su.dsv.mastermcvoiceit.mainCards.CardRVAdapter;
+import se.su.dsv.mastermcvoiceit.mainCards.TempCardInfo;
 import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
 
 public class MainActivity extends AppCompatActivity implements RecognitionListener {
@@ -45,12 +48,11 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     Location homeLocation; // TEMP
 
     RecyclerView cardRecycler;
+    CardRVAdapter cardRVAdapter;
     ArrayList<CardInfo> cardModels = new ArrayList<>();
 
     // vv -- will be moved -- vv
-    FrameLayout tmpContainer;
     FrameLayout locContainer;
-    View tempSkeleton;
     View locSkeleton;
     Switch simpleSwitch;
     // ^^ ------------ ^^
@@ -66,24 +68,22 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         createHomeLocation();
         locationService = new Intent(this, LocationService.class);
 
-        initializeTempContainer();
         initializeLocationsContainer();
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+
+        cardRVAdapter = new CardRVAdapter(this, cardModels);
+
         cardRecycler = (RecyclerView) findViewById(R.id.recyclerview_main_cardholder);
+        cardRecycler.setAdapter(cardRVAdapter);
+        cardRecycler.setLayoutManager(new LinearLayoutManager(this));
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         speechRecognizer.setRecognitionListener(this);
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
         initCommands();
-    }
-
-    public void initializeTempContainer() {
-        tmpContainer = (FrameLayout) findViewById(R.id.framelayout_main_tmpcommandcontainer);
-        tempSkeleton = getLayoutInflater().inflate(R.layout.item_commandhistory_temp, null);
-        tmpContainer.addView(tempSkeleton);
     }
 
     public void initializeLocationsContainer() {
@@ -134,7 +134,9 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     public void voiceResult(View v) {
-//        resultString = "Sensor 2";
+        Log.v("main", "clicked button");
+        cardModels.add(new TempCardInfo()); // TODO: remove!
+        cardRVAdapter.notifyDataSetChanged();
 
         if (resultString != null) {
             Command foundCommand = Command.findCommand(resultString);
@@ -143,25 +145,11 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                 Toast.makeText(this, "Command: " + resultString, Toast.LENGTH_SHORT).show();
                 Bundle bundle = foundCommand.doCommand(resultString);
 
-                renderCard(bundle);
+                // TODO: insert result from command into cardModels!
 
             } else {
                 Toast.makeText(this, "Couldn't find command: " + resultString, Toast.LENGTH_LONG).show();
             }
-        }
-    }
-
-    private void renderCard(Bundle bundle) {
-        int flag = bundle.getInt("flag");
-
-        switch (flag) {
-            case Command.FLAG_TEMP:
-                float temp = bundle.getFloat("Current temperature");
-
-                TextView tempDesc = tempSkeleton.findViewById(R.id.textview_tempitem_description);
-                tempDesc.setText("Temperaturen är " + temp + " C*");
-                
-                break;
         }
     }
 
