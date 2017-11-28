@@ -5,10 +5,18 @@ package se.su.dsv.mastermcvoiceit.mainCards;
  */
 
 public class LocationCardInfo extends CardInfo {
+    private float distanceFromHome = -1;
 
     public LocationCardInfo() { super(CardInfoType.LOCATION); }
 
+    public void setDistanceFromHome(float dist) {
+        distanceFromHome = dist;
+    }
+
     public String getText() {
-        return "this is the locationText";
+        if (distanceFromHome >= 0)
+            return "Distance from home: "+distanceFromHome+"m";
+        else
+            return "Waiting for GPS.";
     }
 }

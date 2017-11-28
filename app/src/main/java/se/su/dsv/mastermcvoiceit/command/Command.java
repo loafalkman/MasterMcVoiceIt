@@ -6,6 +6,8 @@ import android.view.View;
 
 import java.util.HashMap;
 
+import se.su.dsv.mastermcvoiceit.mainCards.CardInfo;
+
 /**
  * Created by felix on 2017-11-24.
  */
@@ -37,5 +39,5 @@ public abstract class Command {
      * @param spokenText The text that the user used to invoke this command.
      * @return Bundle with processed data
      */
-    public abstract Bundle doCommand(String spokenText);
+    public abstract CardInfo doCommand(String spokenText);
 }

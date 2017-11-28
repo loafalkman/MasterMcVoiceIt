@@ -5,12 +5,20 @@ package se.su.dsv.mastermcvoiceit.mainCards;
  */
 
 public class TempCardInfo extends CardInfo {
+    float temperature;
+    String answer;
 
-    public TempCardInfo() {
+    public TempCardInfo(float temperature) {
         super(CardInfoType.TEMPERATURE);
+        this.temperature = temperature;
+        generateAnswer();
+    }
+
+    private void generateAnswer() {
+        answer = "The temperature is "+temperature+"C*.";
     }
 
     public String getText() {
-        return "this is the tempText";
+        return answer;
     }
 }

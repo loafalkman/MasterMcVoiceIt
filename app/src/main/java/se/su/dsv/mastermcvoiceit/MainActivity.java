@@ -13,12 +13,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.FrameLayout;
-import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -29,7 +24,6 @@ import se.su.dsv.mastermcvoiceit.gps.LocationService;
 import se.su.dsv.mastermcvoiceit.mainCards.CardInfo;
 import se.su.dsv.mastermcvoiceit.mainCards.CardRVAdapter;
 import se.su.dsv.mastermcvoiceit.mainCards.LocationCardInfo;
-import se.su.dsv.mastermcvoiceit.mainCards.TempCardInfo;
 import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
 
 public class MainActivity extends AppCompatActivity implements RecognitionListener {
@@ -45,20 +39,14 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     private BroadcastReceiver broadcastReceiver;
 
     ArrayList<String> resultArray;
-    String resultString;
+    String voiceResultStr;
     Location homeLocation; // TEMP
 
     RecyclerView cardRecycler;
     CardRVAdapter cardRVAdapter;
     ArrayList<CardInfo> cardModels = new ArrayList<>();
 
-//    // vv -- will be moved -- vv
-//    FrameLayout locContainer;
-//    View locSkeleton;
-//    Switch simpleSwitch;
-//    // ^^ ------------ ^^
-//
-
+    LocationCardInfo locationCardInfo;
 
 
     @Override
@@ -83,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
         initCommands();
+        initPermanentCards();
     }
 
 //    public void initializeLocationsContainer() {
@@ -125,6 +114,11 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         new TempCommand(new TelldusSensor(2));
     }
 
+    private void initPermanentCards() {
+        locationCardInfo = new LocationCardInfo();
+        cardModels.add(locationCardInfo);
+    }
+
     public void voiceInput(View v) {
         if (SpeechRecognizer.isRecognitionAvailable(MainActivity.this)) {
             speechRecognizer.startListening(recognizerIntent);
@@ -132,22 +126,18 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     public void voiceResult(View v) {
-        Log.v("main", "clicked button");
-        cardModels.add(new TempCardInfo()); // TODO: remove!
-        cardModels.add(new LocationCardInfo());
-        cardRVAdapter.notifyDataSetChanged();
 
-        if (resultString != null) {
-            Command foundCommand = Command.findCommand(resultString);
+        if (voiceResultStr != null) {
+            Command foundCommand = Command.findCommand(voiceResultStr);
 
             if (foundCommand != null) {
-                Toast.makeText(this, "Command: " + resultString, Toast.LENGTH_SHORT).show();
-                Bundle bundle = foundCommand.doCommand(resultString);
-
-                // TODO: insert result from command into cardModels!
+                Toast.makeText(this, "Command: " + voiceResultStr, Toast.LENGTH_SHORT).show();
+                CardInfo info = foundCommand.doCommand(voiceResultStr);
+                cardModels.add(info);
+                cardRVAdapter.notifyDataSetChanged();
 
             } else {
-                Toast.makeText(this, "Couldn't find command: " + resultString, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Couldn't find command: " + voiceResultStr, Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -193,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 
         if (matches != null && matches.size() > 0) {
-            resultString = matches.get(0).toLowerCase();
+            voiceResultStr = matches.get(0).toLowerCase();
         }
     }
 
@@ -219,12 +209,15 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         public void onReceive(Context context, Intent intent) {
 
             Location location = intent.getParcelableExtra(LOCATION);
-            if (location.distanceTo(homeLocation) < 2000) {
+            float distanceToHome = location.distanceTo(homeLocation);
+            if (distanceToHome < 2000) {
                 Toast.makeText(MainActivity.this, "Near!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(MainActivity.this, "Not Near!", Toast.LENGTH_SHORT).show();
-
             }
+
+            locationCardInfo.setDistanceFromHome(distanceToHome);
+            cardRVAdapter.notifyDataSetChanged();
         }
     }
 

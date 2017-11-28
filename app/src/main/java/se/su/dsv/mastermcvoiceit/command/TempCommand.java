@@ -3,6 +3,8 @@ package se.su.dsv.mastermcvoiceit.command;
 import android.app.Activity;
 import android.os.Bundle;
 
+import se.su.dsv.mastermcvoiceit.mainCards.CardInfo;
+import se.su.dsv.mastermcvoiceit.mainCards.TempCardInfo;
 import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
 
 /**
@@ -28,11 +30,7 @@ public class TempCommand extends Command {
     }
 
     @Override
-    public Bundle doCommand(String spokenText) {
-        Bundle bundle = new Bundle();
-        bundle.putInt("flag", Command.FLAG_TEMP);
-        bundle.putFloat("Current TEMPERATURE", sensor.getSensorValue());
-
-        return bundle;
+    public CardInfo doCommand(String spokenText) {
+        return new TempCardInfo(sensor.getSensorValue());
     }
 }
