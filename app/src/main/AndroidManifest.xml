@@ -12,7 +12,6 @@
         <activity android:name=".StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -21,6 +20,12 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
         </activity>
+
+        <service
+            android:name=".gps.LocationService"
+            android:description="@string/app_name"
+            android:exported="false">
+        </service>
 
 
     </application>
