@@ -5,13 +5,13 @@ package se.su.dsv.mastermcvoiceit.mainCards;
  */
 
 public abstract class CardInfo {
-    private int itemViewType;
+    private CardInfoType itemViewType;
 
-    public CardInfo(int itemViewType) {
+    public CardInfo(CardInfoType itemViewType) {
         this.itemViewType = itemViewType;
     }
 
-    public int getItemViewType() {
+    public CardInfoType getItemViewType() {
         return itemViewType;
     }
 }
