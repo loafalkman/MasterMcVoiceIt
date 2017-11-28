@@ -10,6 +10,7 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import se.su.dsv.mastermcvoiceit.command.Command;
 import se.su.dsv.mastermcvoiceit.command.TempCommand;
 import se.su.dsv.mastermcvoiceit.gps.LocationService;
+import se.su.dsv.mastermcvoiceit.mainCards.CardInfo;
 import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
 
 public class MainActivity extends AppCompatActivity implements RecognitionListener {
@@ -42,11 +44,16 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     String resultString;
     Location homeLocation; // TEMP
 
+    RecyclerView cardRecycler;
+    ArrayList<CardInfo> cardModels = new ArrayList<>();
+
+    // vv -- will be moved -- vv
     FrameLayout tmpContainer;
     FrameLayout locContainer;
     View tempSkeleton;
     View locSkeleton;
     Switch simpleSwitch;
+    // ^^ ------------ ^^
 
 
 
@@ -64,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        cardRecycler = (RecyclerView) findViewById(R.id.recyclerview_main_cardholder);
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         speechRecognizer.setRecognitionListener(this);
