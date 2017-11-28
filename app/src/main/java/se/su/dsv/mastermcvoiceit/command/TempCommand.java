@@ -30,7 +30,13 @@ public class TempCommand extends Command {
     }
 
     @Override
-    public CardInfo doCommand(String spokenText) {
-        return new TempCardInfo(sensor.getSensorValue());
+    public CardInfo doCommand(String spokenText, CardInfo card) {
+
+        float sensorValue = sensor.getSensorValue();
+        TempCardInfo tempCard = (TempCardInfo) card;
+
+        tempCard.setTemperature(sensorValue);
+
+        return tempCard;
     }
 }

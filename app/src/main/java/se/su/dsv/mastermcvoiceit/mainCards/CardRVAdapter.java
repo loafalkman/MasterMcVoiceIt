@@ -57,7 +57,7 @@ public class CardRVAdapter extends RecyclerView.Adapter {
 
             case TEMPERATURE:
                 TextView tempTV = ((TempViewHolder) holder).message;
-                String tempText = ((TempCardInfo) cardInfo).getText();
+                String tempText = ((TempCardInfo) cardInfo).getTemperatureAsString();
                 tempTV.setText(tempText);
                 break;
 
@@ -86,7 +86,7 @@ public class CardRVAdapter extends RecyclerView.Adapter {
 
         TempViewHolder(View itemView) {
             super(itemView);
-            message = itemView.findViewById(R.id.textview_tempitem_description);
+            message = itemView.findViewById(R.id.textview_tempitem_value);
             itemView.setOnClickListener(this);
         }
 

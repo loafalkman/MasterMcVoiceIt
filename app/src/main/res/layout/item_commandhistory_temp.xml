@@ -23,7 +23,15 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/imageView"
-            android:text="Temperaturen är xxC*."
+            android:text="Temperaturen är "
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/textview_tempitem_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/textview_tempitem_description"
             android:textColor="@android:color/black" />
 
         <Button
