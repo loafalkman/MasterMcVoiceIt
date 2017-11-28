@@ -13,7 +13,9 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +43,13 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     Location homeLocation; // TEMP
 
     FrameLayout tmpContainer;
+    FrameLayout locContainer;
     View tempSkeleton;
+    View locSkeleton;
+    Switch simpleSwitch;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +59,8 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         createHomeLocation();
         locationService = new Intent(this, LocationService.class);
 
-        tmpContainer = (FrameLayout) findViewById(R.id.framelayout_main_tmpcommandcontainer);
-        tempSkeleton = getLayoutInflater().inflate(R.layout.item_commandhistory_temp, null);
-        tmpContainer.addView(tempSkeleton);
+        initializeTempContainer();
+        initializeLocationsContainer();
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -63,6 +70,30 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
         initCommands();
+    }
+
+    public void initializeTempContainer() {
+        tmpContainer = (FrameLayout) findViewById(R.id.framelayout_main_tmpcommandcontainer);
+        tempSkeleton = getLayoutInflater().inflate(R.layout.item_commandhistory_temp, null);
+        tmpContainer.addView(tempSkeleton);
+    }
+
+    public void initializeLocationsContainer() {
+        locContainer = (FrameLayout) findViewById(R.id.framelayout_main_locationservice);
+        locSkeleton = getLayoutInflater().inflate(R.layout.container_location_services, null);
+        locContainer.addView(locSkeleton);
+
+        simpleSwitch = (Switch) findViewById(R.id.location_switch);
+        simpleSwitch.setChecked(true);
+        simpleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    startService(locationService);
+                } else {
+                    stopService(locationService);
+                }
+            }
+        });
     }
 
 

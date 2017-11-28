@@ -35,7 +35,7 @@ public class LocationService extends Service {
         locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
         //noinspection MissingPermission
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, locationListener);
     }
 
     /**
@@ -76,7 +76,6 @@ public class LocationService extends Service {
         }
     }
 
-
     /**
      * A customixed LocationListener. When called by the CurrentLocationService,
      * it will create an Intent, put the current location inside it.
@@ -84,7 +83,6 @@ public class LocationService extends Service {
      * (AppActivity has got a inner BroadcastReceiver).
      */
     private class MyLocationListener implements LocationListener {
-
 
         /**
          * Called when the location has changed.
