@@ -7,4 +7,5 @@ package se.su.dsv.mastermcvoiceit.mainCards;
 public enum CardInfoType {
     ACTUATOR,
     TEMPERATURE,
+    LOCATION,
 }

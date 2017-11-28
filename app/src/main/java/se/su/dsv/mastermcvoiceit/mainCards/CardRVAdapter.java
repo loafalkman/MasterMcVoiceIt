@@ -39,6 +39,11 @@ public class CardRVAdapter extends RecyclerView.Adapter {
                 Log.v("CardRVAda", "made temp viewHolder");
                 return new TempViewHolder(tempView);
 
+            case LOCATION:
+                View locationView = inflater.inflate(R.layout.container_location_services, parent, false);
+                Log.v("CardRVAda", "made location viewHolder");
+                return new LocationViewHolder(locationView);
+
             default:
                 return null;
         }
@@ -54,7 +59,14 @@ public class CardRVAdapter extends RecyclerView.Adapter {
                 TextView tempTV = ((TempViewHolder) holder).message;
                 String tempText = ((TempCardInfo) cardInfo).getText();
                 tempTV.setText(tempText);
+                break;
 
+            case LOCATION:
+                TextView locationTV = ((LocationViewHolder) holder).message;
+                String locationText = ((LocationCardInfo) cardInfo).getText();
+                locationTV.setText(locationText);
+
+                break;
         }
     }
 
@@ -83,4 +95,22 @@ public class CardRVAdapter extends RecyclerView.Adapter {
             Toast.makeText(context, "That tickles!", Toast.LENGTH_SHORT).show();
         }
     }
+
+
+    public class LocationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        TextView message;
+
+        LocationViewHolder(View itemView) {
+            super(itemView);
+            message = itemView.findViewById(R.id.textview_locations_description);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            Toast.makeText(context, "That (location) tickles!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 }

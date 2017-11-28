@@ -28,6 +28,7 @@ import se.su.dsv.mastermcvoiceit.command.TempCommand;
 import se.su.dsv.mastermcvoiceit.gps.LocationService;
 import se.su.dsv.mastermcvoiceit.mainCards.CardInfo;
 import se.su.dsv.mastermcvoiceit.mainCards.CardRVAdapter;
+import se.su.dsv.mastermcvoiceit.mainCards.LocationCardInfo;
 import se.su.dsv.mastermcvoiceit.mainCards.TempCardInfo;
 import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
 
@@ -51,12 +52,12 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     CardRVAdapter cardRVAdapter;
     ArrayList<CardInfo> cardModels = new ArrayList<>();
 
-    // vv -- will be moved -- vv
-    FrameLayout locContainer;
-    View locSkeleton;
-    Switch simpleSwitch;
-    // ^^ ------------ ^^
-
+//    // vv -- will be moved -- vv
+//    FrameLayout locContainer;
+//    View locSkeleton;
+//    Switch simpleSwitch;
+//    // ^^ ------------ ^^
+//
 
 
 
@@ -67,8 +68,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
         createHomeLocation();
         locationService = new Intent(this, LocationService.class);
-
-        initializeLocationsContainer();
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -86,24 +85,23 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         initCommands();
     }
 
-    public void initializeLocationsContainer() {
-        locContainer = (FrameLayout) findViewById(R.id.framelayout_main_locationservice);
-        locSkeleton = getLayoutInflater().inflate(R.layout.container_location_services, null);
-        locContainer.addView(locSkeleton);
-
-        simpleSwitch = (Switch) findViewById(R.id.location_switch);
-        simpleSwitch.setChecked(true);
-        simpleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    startService(locationService);
-                } else {
-                    stopService(locationService);
-                }
-            }
-        });
-    }
-
+//    public void initializeLocationsContainer() {
+//        locContainer = (FrameLayout) findViewById(R.id.framelayout_main_locationservice);
+//        locSkeleton = getLayoutInflater().inflate(R.layout.container_location_services, null);
+//        locContainer.addView(locSkeleton);
+//
+//        simpleSwitch = (Switch) findViewById(R.id.location_switch);
+//        simpleSwitch.setChecked(true);
+//        simpleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {
+//                    startService(locationService);
+//                } else {
+//                    stopService(locationService);
+//                }
+//            }
+//        });
+//    }
 
     @Override
     public void onResume() {
@@ -136,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     public void voiceResult(View v) {
         Log.v("main", "clicked button");
         cardModels.add(new TempCardInfo()); // TODO: remove!
+        cardModels.add(new LocationCardInfo());
         cardRVAdapter.notifyDataSetChanged();
 
         if (resultString != null) {
