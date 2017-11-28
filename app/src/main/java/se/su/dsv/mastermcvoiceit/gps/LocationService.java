@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import se.su.dsv.mastermcvoiceit.MainActivity;
 
@@ -22,7 +23,6 @@ public class LocationService extends Service {
     private MyLocationListener locationListener;
     private LocationManager locationManager;
 
-
     /**
      * Sets up the LocationListener and it's LocationManager.
      * It will update every 5 seconds. Location permission is already
@@ -33,6 +33,9 @@ public class LocationService extends Service {
         super.onCreate();
         locationListener = new MyLocationListener();
         locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+        //noinspection MissingPermission
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
     }
 
     /**

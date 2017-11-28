@@ -3,6 +3,8 @@ package se.su.dsv.mastermcvoiceit;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.location.Location;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -32,8 +34,12 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     SpeechRecognizer speechRecognizer;
     Intent recognizerIntent;
     Intent locationService;
+    private BroadcastReceiver broadcastReceiver;
+
     ArrayList<String> resultArray;
     String resultString;
+    Location homeLocation; // TEMP
+
     FrameLayout tmpContainer;
     View tempSkeleton;
 
@@ -42,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        createHomeLocation();
         locationService = new Intent(this, LocationService.class);
 
         tmpContainer = (FrameLayout) findViewById(R.id.framelayout_main_tmpcommandcontainer);
@@ -58,6 +65,25 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         initCommands();
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (broadcastReceiver == null) {
+            broadcastReceiver = new LocationBroadcastReceiver();
+        }
+
+        registerReceiver(broadcastReceiver, new IntentFilter(LOCATION_UPDATE));
+        startService(locationService);
+    }
+
+    private void createHomeLocation() {
+        homeLocation = new Location("");
+        homeLocation.setLatitude(59.345613);
+        homeLocation.setLongitude(18.111798);
+    }
+
     private void initCommands() {
         new TempCommand(new TelldusSensor(2));
     }
@@ -69,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     public void voiceResult(View v) {
-        resultString = "sensor 2";
+//        resultString = "Sensor 2";
 
         if (resultString != null) {
             Command foundCommand = Command.findCommand(resultString);
@@ -141,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 
         if (matches != null && matches.size() > 0) {
-            resultString = matches.get(0);
+            resultString = matches.get(0).toLowerCase();
         }
     }
 
@@ -166,17 +192,27 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         @Override // when the receiver receives the intent
         public void onReceive(Context context, Intent intent) {
 
-//            Location location = intent.getParcelableExtra(LOCATION);
-//            int index = store.isNear(location);
-//
-//            if (index >= 0) {
-////                Toast.makeText(AppActivity.this, "Near!", Toast.LENGTH_SHORT).show();
-//                Reminder reminder = store.getIndex(index);
-//                createNotification(reminder.getText());
-//                removeReminder(index);
-//                serviceControl();
-//            }
+            Location location = intent.getParcelableExtra(LOCATION);
+            if (location.distanceTo(homeLocation) < 2000) {
+                Toast.makeText(MainActivity.this, "Near!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "Not Near!", Toast.LENGTH_SHORT).show();
+
+            }
         }
     }
 
+    /**
+     * The final method in the Activity lifecycle. If the app is stopped
+     * the Reminders has to be saved and the BroadCastReceiver need to disconnect.
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // save data?
+
+        if (broadcastReceiver != null) {
+            unregisterReceiver(broadcastReceiver);
+        }
+    }
 }
