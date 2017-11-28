@@ -22,7 +22,10 @@ import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
 public class MainActivity extends AppCompatActivity implements RecognitionListener {
 
     private static final String TAG = "main";
+    public static final String LOCATION_UPDATE = "location update";
+    public static final String LOCATION = "location";
     static final int RESULT_SPEECH = 7474;
+
     SpeechRecognizer speechRecognizer;
     Intent recognizerIntent;
     ArrayList<String> resultArray;
