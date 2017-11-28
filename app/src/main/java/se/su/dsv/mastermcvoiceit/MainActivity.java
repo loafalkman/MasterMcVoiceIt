@@ -1,5 +1,7 @@
 package se.su.dsv.mastermcvoiceit;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 
 import se.su.dsv.mastermcvoiceit.command.Command;
 import se.su.dsv.mastermcvoiceit.command.TempCommand;
+import se.su.dsv.mastermcvoiceit.gps.LocationService;
 import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
 
 public class MainActivity extends AppCompatActivity implements RecognitionListener {
@@ -28,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     SpeechRecognizer speechRecognizer;
     Intent recognizerIntent;
+    Intent locationService;
     ArrayList<String> resultArray;
     String resultString;
     FrameLayout tmpContainer;
@@ -37,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        locationService = new Intent(this, LocationService.class);
+
         tmpContainer = (FrameLayout) findViewById(R.id.framelayout_main_tmpcommandcontainer);
         tempSkeleton = getLayoutInflater().inflate(R.layout.item_commandhistory_temp, null);
         tmpContainer.addView(tempSkeleton);
@@ -143,5 +150,33 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     @Override
     public void onEvent(int i, Bundle bundle) {}
+
+    /**
+     * Custom BroadCastReceiver for receiving messages from CurrentLocationService.
+     */
+    public class LocationBroadcastReceiver extends BroadcastReceiver {
+
+        /**
+         * Called when the receiver receives the intent.
+         * Determines if the current location is near the "home" location.
+         * If true, some action will be fired.
+         * @param context the context in which the receiver is running.
+         * @param intent intent containing the current location.
+         */
+        @Override // when the receiver receives the intent
+        public void onReceive(Context context, Intent intent) {
+
+//            Location location = intent.getParcelableExtra(LOCATION);
+//            int index = store.isNear(location);
+//
+//            if (index >= 0) {
+////                Toast.makeText(AppActivity.this, "Near!", Toast.LENGTH_SHORT).show();
+//                Reminder reminder = store.getIndex(index);
+//                createNotification(reminder.getText());
+//                removeReminder(index);
+//                serviceControl();
+//            }
+        }
+    }
 
 }
