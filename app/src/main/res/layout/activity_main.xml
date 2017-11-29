@@ -14,24 +14,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/framelayout_main_tmpcommandcontainer"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_margin="16dp" >
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/framelayout_main_locationservice"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_margin="16dp" >
-    </android.support.v7.widget.CardView>
-
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/relativeLayout">
+
+        <android.support.v4.app.FragmentTabHost
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </android.support.v4.app.FragmentTabHost>
 
         <Button
             android:id="@+id/main_show_result"
@@ -42,6 +35,18 @@
             android:onClick="voiceResult"
             android:text="SHOW RESULT"
             app:layout_constraintBottom_toTopOf="@+id/floatingActionButton3"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <Button
+            android:id="@+id/main_update_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#ff4842"
+            android:padding="6dp"
+            android:onClick="updateInfo"
+            android:text="Set temp to 666.666 on object level"
+            app:layout_constraintBottom_toTopOf="@+id/main_show_result"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 

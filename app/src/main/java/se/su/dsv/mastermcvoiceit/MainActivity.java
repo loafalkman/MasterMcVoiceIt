@@ -8,24 +8,29 @@ import android.location.Location;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.FrameLayout;
-import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import se.su.dsv.mastermcvoiceit.cardViews.CardFragment;
 import se.su.dsv.mastermcvoiceit.command.Command;
 import se.su.dsv.mastermcvoiceit.command.TempCommand;
 import se.su.dsv.mastermcvoiceit.gps.LocationService;
+import se.su.dsv.mastermcvoiceit.mainCards.CardInfo;
+import se.su.dsv.mastermcvoiceit.mainCards.CardInfoType;
+import se.su.dsv.mastermcvoiceit.mainCards.LocationCardInfo;
+import se.su.dsv.mastermcvoiceit.mainCards.TempCardInfo;
 import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
 
-public class MainActivity extends AppCompatActivity implements RecognitionListener {
+public class MainActivity extends AppCompatActivity implements RecognitionListener, CardFragment.GPSController {
 
     private static final String TAG = "main";
     public static final String LOCATION_UPDATE = "location update";
@@ -35,20 +40,21 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     SpeechRecognizer speechRecognizer;
     Intent recognizerIntent;
     Intent locationService;
-    private BroadcastReceiver broadcastReceiver;
+    BroadcastReceiver broadcastReceiver;
+
+    TempCommand tempCommand;
 
     ArrayList<String> resultArray;
-    String resultString;
+    String voiceResultStr;
     Location homeLocation; // TEMP
 
-    FrameLayout tmpContainer;
-    FrameLayout locContainer;
-    View tempSkeleton;
-    View locSkeleton;
-    Switch simpleSwitch;
+    ArrayList<CardInfo> cardModels = new ArrayList<>();
+    HashMap<Command, CardInfo> cardOnCommand = new HashMap<>();
 
+    LocationCardInfo locationCardInfo;
 
-
+    FragmentManager fragmentManager;
+    CardFragment cardFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,40 +64,18 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         createHomeLocation();
         locationService = new Intent(this, LocationService.class);
 
-        initializeTempContainer();
-        initializeLocationsContainer();
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         speechRecognizer.setRecognitionListener(this);
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
         initCommands();
+        populateCards();
+        cardFragment = new CardFragment();
+        launchFragment(cardFragment);
     }
-
-    public void initializeTempContainer() {
-        tmpContainer = (FrameLayout) findViewById(R.id.framelayout_main_tmpcommandcontainer);
-        tempSkeleton = getLayoutInflater().inflate(R.layout.item_commandhistory_temp, null);
-        tmpContainer.addView(tempSkeleton);
-    }
-
-    public void initializeLocationsContainer() {
-        locContainer = (FrameLayout) findViewById(R.id.framelayout_main_locationservice);
-        locSkeleton = getLayoutInflater().inflate(R.layout.container_location_services, null);
-        locContainer.addView(locSkeleton);
-
-        simpleSwitch = (Switch) findViewById(R.id.location_switch);
-        simpleSwitch.setChecked(true);
-        simpleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    startService(locationService);
-                } else {
-                    stopService(locationService);
-                }
-            }
-        });
-    }
-
 
     @Override
     public void onResume() {
@@ -103,6 +87,34 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
         registerReceiver(broadcastReceiver, new IntentFilter(LOCATION_UPDATE));
         startService(locationService);
+
+        renderAllCards();
+    }
+
+    private void launchFragment(CardFragment cardFragment) {
+        fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.fragment_container, cardFragment);
+        fragmentTransaction.commit();
+    }
+
+    private void renderAllCards() {
+        for (CardInfo card : cardModels) {
+            renderOneCard(card);
+        }
+    }
+
+    private void renderOneCard(CardInfo cardInfo) {
+        CardInfoType type = cardInfo.getItemViewType();
+        switch (type) {
+            case TEMPERATURE:
+                cardFragment.renderTemperature(((TempCardInfo) cardInfo));
+                break;
+
+            case LOCATION:
+                cardFragment.renderLocation(((LocationCardInfo) cardInfo));
+                break;
+        }
     }
 
     private void createHomeLocation() {
@@ -112,7 +124,15 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     private void initCommands() {
-        new TempCommand(new TelldusSensor(2));
+        tempCommand = new TempCommand(new TelldusSensor(2));
+    }
+
+    private void populateCards() {
+        TempCardInfo tempInfo = new TempCardInfo(23.4f);
+        cardModels.add(tempInfo);
+        cardOnCommand.put(tempCommand, tempInfo);
+
+        cardModels.add(new LocationCardInfo());
     }
 
     public void voiceInput(View v) {
@@ -121,35 +141,35 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         }
     }
 
-    public void voiceResult(View v) {
-//        resultString = "Sensor 2";
+    public void updateInfo(View view) {
+        voiceResultStr = "sensor 2";
 
-        if (resultString != null) {
-            Command foundCommand = Command.findCommand(resultString);
+        if (voiceResultStr != null) {
+            Command foundCommand = Command.findCommand(voiceResultStr);
+            TempCardInfo tempCard = (TempCardInfo) cardOnCommand.get(foundCommand);
 
-            if (foundCommand != null) {
-                Toast.makeText(this, "Command: " + resultString, Toast.LENGTH_SHORT).show();
-                Bundle bundle = foundCommand.doCommand(resultString);
-
-                renderCard(bundle);
-
-            } else {
-                Toast.makeText(this, "Couldn't find command: " + resultString, Toast.LENGTH_LONG).show();
-            }
+            // Voila
+            tempCard.setTemperature(666.666f);
+            cardFragment.renderTemperature(tempCard);
         }
     }
 
-    private void renderCard(Bundle bundle) {
-        int flag = bundle.getInt("flag");
+    public void voiceResult(View v) {
+        voiceResultStr = "sensor 2";
 
-        switch (flag) {
-            case Command.FLAG_TEMP:
-                float temp = bundle.getFloat("Current temperature");
+        if (voiceResultStr != null) {
+            Command foundCommand = Command.findCommand(voiceResultStr);
 
-                TextView tempDesc = tempSkeleton.findViewById(R.id.textview_tempitem_description);
-                tempDesc.setText("Temperaturen är " + temp + " C*");
-                
-                break;
+            if (foundCommand != null) {
+                Toast.makeText(this, "Command: " + voiceResultStr, Toast.LENGTH_SHORT).show();
+
+                TempCardInfo tempCard = (TempCardInfo) cardOnCommand.get(foundCommand);
+                foundCommand.doCommand(voiceResultStr, tempCard);
+                renderOneCard(tempCard);
+
+            } else {
+                Toast.makeText(this, "Couldn't find command: " + voiceResultStr, Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -194,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 
         if (matches != null && matches.size() > 0) {
-            resultString = matches.get(0).toLowerCase();
+            voiceResultStr = matches.get(0).toLowerCase();
         }
     }
 
@@ -220,12 +240,15 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         public void onReceive(Context context, Intent intent) {
 
             Location location = intent.getParcelableExtra(LOCATION);
-            if (location.distanceTo(homeLocation) < 2000) {
+            float distanceToHome = location.distanceTo(homeLocation);
+            if (distanceToHome < 2000) {
                 Toast.makeText(MainActivity.this, "Near!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(MainActivity.this, "Not Near!", Toast.LENGTH_SHORT).show();
-
             }
+
+            locationCardInfo.setDistanceFromHome(distanceToHome);
+            renderOneCard(locationCardInfo);
         }
     }
 
@@ -241,5 +264,15 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         if (broadcastReceiver != null) {
             unregisterReceiver(broadcastReceiver);
         }
+    }
+
+    public void startService() {
+        Toast.makeText(MainActivity.this, "MainActivity says hello", Toast.LENGTH_SHORT).show();
+        startService(locationService);
+    }
+
+    public void stopService() {
+        Toast.makeText(MainActivity.this, "MainActivity says goodbye", Toast.LENGTH_SHORT).show();
+        stopService(locationService);
     }
 }

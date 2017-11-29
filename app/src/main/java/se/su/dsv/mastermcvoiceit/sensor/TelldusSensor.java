@@ -13,7 +13,7 @@ public class TelldusSensor {
 
     // TODO: actually read from a sensor! (or simulate sensor)
     public float getSensorValue() {
-        return (float) Math.PI;
+        return (float) Math.random();
     }
 
     public int getID() {

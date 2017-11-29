@@ -19,7 +19,7 @@ import se.su.dsv.mastermcvoiceit.MainActivity;
  */
 
 public class LocationService extends Service {
-
+    private final int UPDATE_INTERVAL = 5000;
     private MyLocationListener locationListener;
     private LocationManager locationManager;
 
@@ -35,7 +35,7 @@ public class LocationService extends Service {
         locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
         //noinspection MissingPermission
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, UPDATE_INTERVAL, 0, locationListener);
     }
 
     /**
