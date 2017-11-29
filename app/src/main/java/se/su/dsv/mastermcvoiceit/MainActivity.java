@@ -8,12 +8,15 @@ import android.location.Location;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -24,10 +27,13 @@ import se.su.dsv.mastermcvoiceit.command.Command;
 import se.su.dsv.mastermcvoiceit.command.TempCommand;
 import se.su.dsv.mastermcvoiceit.gps.LocationService;
 import se.su.dsv.mastermcvoiceit.mainCards.CardInfo;
+import se.su.dsv.mastermcvoiceit.mainCards.CardInfoType;
 import se.su.dsv.mastermcvoiceit.mainCards.CardRVAdapter;
 import se.su.dsv.mastermcvoiceit.mainCards.LocationCardInfo;
 import se.su.dsv.mastermcvoiceit.mainCards.TempCardInfo;
 import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
+
+import static se.su.dsv.mastermcvoiceit.R.id.parent;
 
 public class MainActivity extends AppCompatActivity implements RecognitionListener {
 
@@ -47,13 +53,14 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     String voiceResultStr;
     Location homeLocation; // TEMP
 
-    RecyclerView cardRecycler;
-    CardRVAdapter cardRVAdapter;
     ArrayList<CardInfo> cardModels = new ArrayList<>();
     HashMap<Command, CardInfo> cardOnCommand = new HashMap<>();
 
-
     LocationCardInfo locationCardInfo;
+
+    FragmentManager fragmentManager;
+    CardFragment cardFragment;
+
 
 
     @Override
@@ -67,18 +74,14 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
-        cardRVAdapter = new CardRVAdapter(this, cardModels);
-
-        cardRecycler = (RecyclerView) findViewById(R.id.recyclerview_main_cardholder);
-        cardRecycler.setAdapter(cardRVAdapter);
-        cardRecycler.setLayoutManager(new LinearLayoutManager(this));
-
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         speechRecognizer.setRecognitionListener(this);
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
         initCommands();
         populateCards();
+        cardFragment = new CardFragment();
+        launchFragment(cardFragment);
 //        initPermanentCards();
     }
 
@@ -112,6 +115,34 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
         registerReceiver(broadcastReceiver, new IntentFilter(LOCATION_UPDATE));
         startService(locationService);
+
+        renderAllCards(cardFragment);
+    }
+
+    private void launchFragment(CardFragment cardFragment) {
+        fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.fragment_container, cardFragment);
+        fragmentTransaction.commit();
+    }
+
+    private void renderAllCards(CardFragment fragment) {
+        for (CardInfo c : cardModels) {
+            renderOneCard(fragment, c, c.getItemViewType());
+        }
+    }
+
+    private void renderOneCard(CardFragment fragment, CardInfo cardInfo, CardInfoType viewType) {
+//        CardInfoType type = CardInfoType.values()[viewType];
+        switch (viewType) {
+            case TEMPERATURE:
+                fragment.renderTemperature(((TempCardInfo) cardInfo));
+                break;
+
+            case LOCATION:
+                fragment.renderLocation(((LocationCardInfo) cardInfo));
+                break;
+        }
     }
 
     private void createHomeLocation() {
@@ -129,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         cardOnCommand.put(tempCommand, tempInfo);
 
         cardModels.add(new LocationCardInfo());
-        cardRVAdapter.notifyDataSetChanged();
+//        cardRVAdapter.notifyDataSetChanged();
     }
 
     public void voiceInput(View v) {
@@ -147,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
             // Voila
             tempCard.setTemperature(666.666f);
-            cardRVAdapter.notifyItemChanged(cardModels.indexOf(tempCard));
+//            cardRVAdapter.notifyItemChanged(cardModels.indexOf(tempCard));
         }
     }
 
@@ -163,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                 TempCardInfo tempCard = (TempCardInfo) cardOnCommand.get(foundCommand);
 
                 foundCommand.doCommand(voiceResultStr, tempCard);
-                cardRVAdapter.notifyItemChanged(cardModels.indexOf(tempCard));
+//                cardRVAdapter.notifyItemChanged(cardModels.indexOf(tempCard));
 
             } else {
                 Toast.makeText(this, "Couldn't find command: " + voiceResultStr, Toast.LENGTH_LONG).show();
@@ -246,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
             }
 
             locationCardInfo.setDistanceFromHome(distanceToHome);
-            cardRVAdapter.notifyItemChanged(cardModels.indexOf(locationCardInfo));
+//            cardRVAdapter.notifyItemChanged(cardModels.indexOf(locationCardInfo));
 
 //            cardRVAdapter.notifyDataSetChanged();
         }
@@ -264,5 +295,13 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         if (broadcastReceiver != null) {
             unregisterReceiver(broadcastReceiver);
         }
+    }
+
+    interface TempController {
+        void renderTemperature(TempCardInfo tempInfo);
+    }
+
+    interface LocationController {
+        void renderLocation(LocationCardInfo locationInfo);
     }
 }
