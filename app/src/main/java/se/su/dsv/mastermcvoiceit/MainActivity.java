@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         setContentView(R.layout.activity_main);
 
         createHomeLocation();
-        locationService = new Intent(this, LocationService.class);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -80,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     @Override
     public void onResume() {
         super.onResume();
+        locationService = new Intent(this, LocationService.class);
 
         if (broadcastReceiver == null) {
             broadcastReceiver = new LocationBroadcastReceiver();
@@ -132,7 +132,9 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         cardModels.add(tempInfo);
         cardOnCommand.put(tempCommand, tempInfo);
 
-        cardModels.add(new LocationCardInfo());
+        locationCardInfo = new LocationCardInfo();
+        cardModels.add(locationCardInfo);
+
     }
 
     public void voiceInput(View v) {
@@ -267,12 +269,10 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     public void startService() {
-        Toast.makeText(MainActivity.this, "MainActivity says hello", Toast.LENGTH_SHORT).show();
         startService(locationService);
     }
 
     public void stopService() {
-        Toast.makeText(MainActivity.this, "MainActivity says goodbye", Toast.LENGTH_SHORT).show();
         stopService(locationService);
     }
 }
