@@ -3,13 +3,15 @@ package se.su.dsv.mastermcvoiceit.command;
 import android.app.Activity;
 import android.os.Bundle;
 
+import se.su.dsv.mastermcvoiceit.mainCards.CardInfo;
+import se.su.dsv.mastermcvoiceit.mainCards.TempCardInfo;
 import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
 
 /**
  * Created by felix on 2017-11-25.
  */
 public class TempCommand extends Command {
-    private final String[] cmdPatterns = {"measure temperature of sensor %d please", "temperature sensor %d", "sensor %d"};
+    private final String[] cmdPatterns = {"measure TEMPERATURE of sensor %d please", "TEMPERATURE sensor %d", "sensor %d"};
     private TelldusSensor sensor;
 
     /**
@@ -28,11 +30,13 @@ public class TempCommand extends Command {
     }
 
     @Override
-    public Bundle doCommand(String spokenText) {
-        Bundle bundle = new Bundle();
-        bundle.putInt("flag", Command.FLAG_TEMP);
-        bundle.putFloat("Current temperature", sensor.getSensorValue());
+    public CardInfo doCommand(String spokenText, CardInfo card) {
 
-        return bundle;
+        float sensorValue = sensor.getSensorValue();
+        TempCardInfo tempCard = (TempCardInfo) card;
+
+        tempCard.setTemperature(sensorValue);
+
+        return tempCard;
     }
 }
