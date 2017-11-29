@@ -12,30 +12,24 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import se.su.dsv.mastermcvoiceit.cardViews.CardFragment;
 import se.su.dsv.mastermcvoiceit.command.Command;
 import se.su.dsv.mastermcvoiceit.command.TempCommand;
 import se.su.dsv.mastermcvoiceit.gps.LocationService;
 import se.su.dsv.mastermcvoiceit.mainCards.CardInfo;
 import se.su.dsv.mastermcvoiceit.mainCards.CardInfoType;
-import se.su.dsv.mastermcvoiceit.mainCards.CardRVAdapter;
 import se.su.dsv.mastermcvoiceit.mainCards.LocationCardInfo;
 import se.su.dsv.mastermcvoiceit.mainCards.TempCardInfo;
 import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
 
-import static se.su.dsv.mastermcvoiceit.R.id.parent;
-
-public class MainActivity extends AppCompatActivity implements RecognitionListener {
+public class MainActivity extends AppCompatActivity implements RecognitionListener, CardFragment.GPSController {
 
     private static final String TAG = "main";
     public static final String LOCATION_UPDATE = "location update";
@@ -61,8 +55,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     FragmentManager fragmentManager;
     CardFragment cardFragment;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,28 +74,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         populateCards();
         cardFragment = new CardFragment();
         launchFragment(cardFragment);
-//        initPermanentCards();
     }
-
-
-
-//    public void initializeLocationsContainer() {
-//        locContainer = (FrameLayout) findViewById(R.id.framelayout_main_locationservice);
-//        locSkeleton = getLayoutInflater().inflate(R.layout.container_location_services, null);
-//        locContainer.addView(locSkeleton);
-//
-//        simpleSwitch = (Switch) findViewById(R.id.location_switch);
-//        simpleSwitch.setChecked(true);
-//        simpleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked) {
-//                    startService(locationService);
-//                } else {
-//                    stopService(locationService);
-//                }
-//            }
-//        });
-//    }
 
     @Override
     public void onResume() {
@@ -116,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         registerReceiver(broadcastReceiver, new IntentFilter(LOCATION_UPDATE));
         startService(locationService);
 
-        renderAllCards(cardFragment);
+        renderAllCards();
     }
 
     private void launchFragment(CardFragment cardFragment) {
@@ -126,21 +97,21 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         fragmentTransaction.commit();
     }
 
-    private void renderAllCards(CardFragment fragment) {
-        for (CardInfo c : cardModels) {
-            renderOneCard(fragment, c, c.getItemViewType());
+    private void renderAllCards() {
+        for (CardInfo card : cardModels) {
+            renderOneCard(card);
         }
     }
 
-    private void renderOneCard(CardFragment fragment, CardInfo cardInfo, CardInfoType viewType) {
-//        CardInfoType type = CardInfoType.values()[viewType];
-        switch (viewType) {
+    private void renderOneCard(CardInfo cardInfo) {
+        CardInfoType type = cardInfo.getItemViewType();
+        switch (type) {
             case TEMPERATURE:
-                fragment.renderTemperature(((TempCardInfo) cardInfo));
+                cardFragment.renderTemperature(((TempCardInfo) cardInfo));
                 break;
 
             case LOCATION:
-                fragment.renderLocation(((LocationCardInfo) cardInfo));
+                cardFragment.renderLocation(((LocationCardInfo) cardInfo));
                 break;
         }
     }
@@ -150,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         homeLocation.setLatitude(59.345613);
         homeLocation.setLongitude(18.111798);
     }
+
     private void initCommands() {
         tempCommand = new TempCommand(new TelldusSensor(2));
     }
@@ -160,7 +132,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         cardOnCommand.put(tempCommand, tempInfo);
 
         cardModels.add(new LocationCardInfo());
-//        cardRVAdapter.notifyDataSetChanged();
     }
 
     public void voiceInput(View v) {
@@ -178,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
             // Voila
             tempCard.setTemperature(666.666f);
-//            cardRVAdapter.notifyItemChanged(cardModels.indexOf(tempCard));
+            cardFragment.renderTemperature(tempCard);
         }
     }
 
@@ -192,9 +163,8 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                 Toast.makeText(this, "Command: " + voiceResultStr, Toast.LENGTH_SHORT).show();
 
                 TempCardInfo tempCard = (TempCardInfo) cardOnCommand.get(foundCommand);
-
                 foundCommand.doCommand(voiceResultStr, tempCard);
-//                cardRVAdapter.notifyItemChanged(cardModels.indexOf(tempCard));
+                renderOneCard(tempCard);
 
             } else {
                 Toast.makeText(this, "Couldn't find command: " + voiceResultStr, Toast.LENGTH_LONG).show();
@@ -277,9 +247,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
             }
 
             locationCardInfo.setDistanceFromHome(distanceToHome);
-//            cardRVAdapter.notifyItemChanged(cardModels.indexOf(locationCardInfo));
-
-//            cardRVAdapter.notifyDataSetChanged();
+            renderOneCard(locationCardInfo);
         }
     }
 
@@ -297,11 +265,13 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         }
     }
 
-    interface TempController {
-        void renderTemperature(TempCardInfo tempInfo);
+    public void startService() {
+        Toast.makeText(MainActivity.this, "MainActivity says hello", Toast.LENGTH_SHORT).show();
+        startService(locationService);
     }
 
-    interface LocationController {
-        void renderLocation(LocationCardInfo locationInfo);
+    public void stopService() {
+        Toast.makeText(MainActivity.this, "MainActivity says goodbye", Toast.LENGTH_SHORT).show();
+        stopService(locationService);
     }
 }
