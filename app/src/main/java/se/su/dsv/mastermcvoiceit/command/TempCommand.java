@@ -2,7 +2,7 @@ package se.su.dsv.mastermcvoiceit.command;
 
 import se.su.dsv.mastermcvoiceit.cardModels.CardModel;
 import se.su.dsv.mastermcvoiceit.cardModels.TempCardModel;
-import se.su.dsv.mastermcvoiceit.sensor.Sensor;
+import se.su.dsv.mastermcvoiceit.remote.sensor.Sensor;
 
 /**
  * Created by felix on 2017-11-25.

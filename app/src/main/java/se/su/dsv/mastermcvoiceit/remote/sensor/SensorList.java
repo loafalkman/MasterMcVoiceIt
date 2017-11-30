@@ -1,4 +1,4 @@
-package se.su.dsv.mastermcvoiceit.sensor;
+package se.su.dsv.mastermcvoiceit.remote.sensor;
 
 import java.util.ArrayList;
 import java.util.HashMap;

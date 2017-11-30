@@ -1,11 +1,8 @@
 package se.su.dsv.mastermcvoiceit.cardModels;
 
-import android.util.Log;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import se.su.dsv.mastermcvoiceit.sensor.Sensor;
+import se.su.dsv.mastermcvoiceit.remote.sensor.Sensor;
 
 /**
  * Created by felix on 2017-11-28.

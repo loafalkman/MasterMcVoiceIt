@@ -26,10 +26,10 @@ import se.su.dsv.mastermcvoiceit.cardModels.CardModel;
 import se.su.dsv.mastermcvoiceit.cardModels.CardModelType;
 import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
 import se.su.dsv.mastermcvoiceit.cardModels.TempsCardModel;
-import se.su.dsv.mastermcvoiceit.sensor.Sensor;
-import se.su.dsv.mastermcvoiceit.sensor.SensorList;
-import se.su.dsv.mastermcvoiceit.sensor.SensorType;
-import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
+import se.su.dsv.mastermcvoiceit.remote.sensor.Sensor;
+import se.su.dsv.mastermcvoiceit.remote.sensor.SensorList;
+import se.su.dsv.mastermcvoiceit.remote.sensor.SensorType;
+import se.su.dsv.mastermcvoiceit.remote.sensor.TelldusSensor;
 
 public class MainActivity extends AppCompatActivity implements RecognitionListener, CardFragment.GPSController {
 

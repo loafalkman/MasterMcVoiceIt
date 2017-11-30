@@ -1,6 +1,6 @@
 package se.su.dsv.mastermcvoiceit.cardModels;
 
-import se.su.dsv.mastermcvoiceit.sensor.Sensor;
+import se.su.dsv.mastermcvoiceit.remote.sensor.Sensor;
 
 /**
  * Created by felix on 2017-11-28.
