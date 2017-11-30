@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     private void launchFragment(CardFragment cardFragment) {
         fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.fragment_container, cardFragment);
+        fragmentTransaction.add(R.id.container_main_cardsfragment, cardFragment);
         fragmentTransaction.commit();
     }
 
