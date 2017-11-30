@@ -10,7 +10,7 @@ public class LocationCardModel extends CardModel {
     private float distanceFromHome = -1;
     private Location location;
 
-    public LocationCardModel() { super(CardInfoType.LOCATION); }
+    public LocationCardModel() { super(CardModelType.LOCATION); }
 
     public void setDistanceFromHome(float dist) {
         distanceFromHome = dist;

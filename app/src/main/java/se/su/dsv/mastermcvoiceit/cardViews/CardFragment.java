@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import se.su.dsv.mastermcvoiceit.R;
 import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
-import se.su.dsv.mastermcvoiceit.cardModels.TempCardModel;
+import se.su.dsv.mastermcvoiceit.cardModels.TempsCardModel;
 
 /**
  * Created by annika on 2017-11-29.
@@ -62,11 +62,11 @@ public class CardFragment extends Fragment {
         return view;
     }
 
-    public void renderTemperature(TempCardModel tempInfo) {
-        tempView.tempTextView.setText(tempInfo.getTemperatureAsString());
+    public void renderTemperatures(TempsCardModel tempsModel) {
+        tempView.tempTextView.setText(tempsModel.getTemperaturesAsString());
     }
 
-    public void renderLocation(LocationCardModel locationInfo) {
-        locationView.locationTextView.setText(locationInfo.getText());
+    public void renderLocation(LocationCardModel locationModel) {
+        locationView.locationTextView.setText(locationModel.getText());
     }
 }

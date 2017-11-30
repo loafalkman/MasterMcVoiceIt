@@ -37,6 +37,5 @@ public class TempView extends RelativeLayout {
     public void init() {
         View v = mInflater.inflate(R.layout.item_commandhistory_temp, this, true);
         tempTextView = (TextView) v.findViewById(R.id.textview_tempitem_value);
-        tempTextView.setText(" Custom RelativeLayout");
     }
 }

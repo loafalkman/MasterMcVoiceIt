@@ -1,30 +1,30 @@
 package se.su.dsv.mastermcvoiceit.cardModels;
 
+import se.su.dsv.mastermcvoiceit.sensor.Sensor;
+
 /**
  * Created by felix on 2017-11-28.
  */
 
 public class TempCardModel extends CardModel {
+    Sensor sensor;
     float temperature;
-    String answer;
 
-    public TempCardModel(float temperature) {
-        super(CardInfoType.TEMPERATURE);
-        this.temperature = temperature;
-        generateAnswer();
+    public TempCardModel(Sensor tempSensr) {
+        super(CardModelType.TEMPERATURE);
+        sensor = tempSensr;
+        updateSensorReadings();
     }
 
-    private void generateAnswer() {
-        answer = "The temperature is " + temperature + "C*.";
+    public void updateSensorReadings() {
+        temperature = sensor.fetchSensorValue();
     }
 
-    public String getText() {
-        return answer;
+    public String getTemperatureAsString() {
+        return "" + temperature;
     }
 
-    public String getTemperatureAsString() { return "" + temperature; }
-
-    public void setTemperature(float value) {
-        this.temperature = value;
+    public String getSensorName() {
+        return sensor.getName();
     }
 }

@@ -34,6 +34,6 @@ public abstract class Command {
      * @param spokenText The text that the user used to invoke this command.
      * @return Bundle with processed data
      */
-    public abstract CardModel doCommand(String spokenText, CardModel card);
+    public abstract CardModel doCommand(String spokenText);
 
 }
