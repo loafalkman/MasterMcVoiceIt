@@ -1,14 +1,14 @@
-package se.su.dsv.mastermcvoiceit.mainCards;
+package se.su.dsv.mastermcvoiceit.cardModels;
 
 /**
  * Created by felix on 2017-11-28.
  */
 
-public class TempCardInfo extends CardInfo {
+public class TempCardModel extends CardModel {
     float temperature;
     String answer;
 
-    public TempCardInfo(float temperature) {
+    public TempCardModel(float temperature) {
         super(CardInfoType.TEMPERATURE);
         this.temperature = temperature;
         generateAnswer();

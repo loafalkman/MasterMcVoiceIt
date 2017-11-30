@@ -12,7 +12,6 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
@@ -24,10 +23,10 @@ import se.su.dsv.mastermcvoiceit.cardViews.CardFragment;
 import se.su.dsv.mastermcvoiceit.command.Command;
 import se.su.dsv.mastermcvoiceit.command.TempCommand;
 import se.su.dsv.mastermcvoiceit.gps.LocationService;
-import se.su.dsv.mastermcvoiceit.mainCards.CardInfo;
-import se.su.dsv.mastermcvoiceit.mainCards.CardInfoType;
-import se.su.dsv.mastermcvoiceit.mainCards.LocationCardInfo;
-import se.su.dsv.mastermcvoiceit.mainCards.TempCardInfo;
+import se.su.dsv.mastermcvoiceit.cardModels.CardModel;
+import se.su.dsv.mastermcvoiceit.cardModels.CardInfoType;
+import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
+import se.su.dsv.mastermcvoiceit.cardModels.TempCardModel;
 import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
 
 public class MainActivity extends AppCompatActivity implements RecognitionListener, CardFragment.GPSController {
@@ -48,10 +47,10 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     String voiceResultStr;
     Location homeLocation; // TEMP
 
-    ArrayList<CardInfo> cardModels = new ArrayList<>();
-    HashMap<Command, CardInfo> cardOnCommand = new HashMap<>();
+    ArrayList<CardModel> cardModels = new ArrayList<>();
+    HashMap<Command, CardModel> cardOnCommand = new HashMap<>();
 
-    LocationCardInfo locationCardInfo;
+    LocationCardModel locationCardInfo;
 
     FragmentManager fragmentManager;
     CardFragment cardFragment;
@@ -99,20 +98,20 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     private void renderAllCards() {
-        for (CardInfo card : cardModels) {
+        for (CardModel card : cardModels) {
             renderOneCard(card);
         }
     }
 
-    private void renderOneCard(CardInfo cardInfo) {
-        CardInfoType type = cardInfo.getItemViewType();
+    private void renderOneCard(CardModel cardModel) {
+        CardInfoType type = cardModel.getItemViewType();
         switch (type) {
             case TEMPERATURE:
-                cardFragment.renderTemperature(((TempCardInfo) cardInfo));
+                cardFragment.renderTemperature(((TempCardModel) cardModel));
                 break;
 
             case LOCATION:
-                cardFragment.renderLocation(((LocationCardInfo) cardInfo));
+                cardFragment.renderLocation(((LocationCardModel) cardModel));
                 break;
         }
     }
@@ -128,11 +127,11 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     private void populateCards() {
-        TempCardInfo tempInfo = new TempCardInfo(23.4f);
+        TempCardModel tempInfo = new TempCardModel(23.4f);
         cardModels.add(tempInfo);
         cardOnCommand.put(tempCommand, tempInfo);
 
-        locationCardInfo = new LocationCardInfo();
+        locationCardInfo = new LocationCardModel();
         cardModels.add(locationCardInfo);
 
     }
@@ -143,12 +142,15 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         }
     }
 
+
+    /**
+     * Updates all cards with fresh sensor data.
+     */
     public void updateInfo(View view) {
-        voiceResultStr = "sensor 2";
 
         if (voiceResultStr != null) {
             Command foundCommand = Command.findCommand(voiceResultStr);
-            TempCardInfo tempCard = (TempCardInfo) cardOnCommand.get(foundCommand);
+            TempCardModel tempCard = (TempCardModel) cardOnCommand.get(foundCommand);
 
             // Voila
             tempCard.setTemperature(666.666f);
@@ -165,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
             if (foundCommand != null) {
                 Toast.makeText(this, "Command: " + voiceResultStr, Toast.LENGTH_SHORT).show();
 
-                TempCardInfo tempCard = (TempCardInfo) cardOnCommand.get(foundCommand);
+                TempCardModel tempCard = (TempCardModel) cardOnCommand.get(foundCommand);
                 foundCommand.doCommand(voiceResultStr, tempCard);
                 renderOneCard(tempCard);
 

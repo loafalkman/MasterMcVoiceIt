@@ -1,4 +1,4 @@
-package se.su.dsv.mastermcvoiceit.mainCards;
+package se.su.dsv.mastermcvoiceit.cardModels;
 
 import android.location.Location;
 
@@ -6,11 +6,11 @@ import android.location.Location;
  * Created by annika on 2017-11-28.
  */
 
-public class LocationCardInfo extends CardInfo {
+public class LocationCardModel extends CardModel {
     private float distanceFromHome = -1;
     private Location location;
 
-    public LocationCardInfo() { super(CardInfoType.LOCATION); }
+    public LocationCardModel() { super(CardInfoType.LOCATION); }
 
     public void setDistanceFromHome(float dist) {
         distanceFromHome = dist;

@@ -1,10 +1,7 @@
 package se.su.dsv.mastermcvoiceit.command;
 
-import android.app.Activity;
-import android.os.Bundle;
-
-import se.su.dsv.mastermcvoiceit.mainCards.CardInfo;
-import se.su.dsv.mastermcvoiceit.mainCards.TempCardInfo;
+import se.su.dsv.mastermcvoiceit.cardModels.CardModel;
+import se.su.dsv.mastermcvoiceit.cardModels.TempCardModel;
 import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
 
 /**
@@ -30,10 +27,10 @@ public class TempCommand extends Command {
     }
 
     @Override
-    public CardInfo doCommand(String spokenText, CardInfo card) {
+    public CardModel doCommand(String spokenText, CardModel card) {
 
         float sensorValue = sensor.getSensorValue();
-        TempCardInfo tempCard = (TempCardInfo) card;
+        TempCardModel tempCard = (TempCardModel) card;
 
         tempCard.setTemperature(sensorValue);
 

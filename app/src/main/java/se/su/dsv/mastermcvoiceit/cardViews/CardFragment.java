@@ -9,8 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import se.su.dsv.mastermcvoiceit.R;
-import se.su.dsv.mastermcvoiceit.mainCards.LocationCardInfo;
-import se.su.dsv.mastermcvoiceit.mainCards.TempCardInfo;
+import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
+import se.su.dsv.mastermcvoiceit.cardModels.TempCardModel;
 
 /**
  * Created by annika on 2017-11-29.
@@ -62,11 +62,11 @@ public class CardFragment extends Fragment {
         return view;
     }
 
-    public void renderTemperature(TempCardInfo tempInfo) {
+    public void renderTemperature(TempCardModel tempInfo) {
         tempView.tempTextView.setText(tempInfo.getTemperatureAsString());
     }
 
-    public void renderLocation(LocationCardInfo locationInfo) {
+    public void renderLocation(LocationCardModel locationInfo) {
         locationView.locationTextView.setText(locationInfo.getText());
     }
 }

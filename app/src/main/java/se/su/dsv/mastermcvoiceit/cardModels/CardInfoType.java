@@ -1,4 +1,4 @@
-package se.su.dsv.mastermcvoiceit.mainCards;
+package se.su.dsv.mastermcvoiceit.cardModels;
 
 /**
  * Created by felix on 2017-11-28.
