@@ -13,7 +13,6 @@ public class TempsCardModel extends CardModel {
     private String[] sensorNames;
 
     private ArrayList<Sensor> tempSensors;
-    private String answer;
 
     public TempsCardModel(ArrayList<Sensor> tempSensors) {
         super(CardModelType.TEMPERATURES);
@@ -24,16 +23,17 @@ public class TempsCardModel extends CardModel {
         temperatures = new float[tempSensors.size()];
         sensorNames = new String[tempSensors.size()];
 
-        answer = ""; // TODO: temporary
         for (int i = 0; i < tempSensors.size(); i++) {
             temperatures[i] = tempSensors.get(i).fetchSensorValue();
             sensorNames[i] = tempSensors.get(i).getName();
-
-            answer += sensorNames[i] + " : " + temperatures[i] + '\n'; // TODO: also temporary
         }
     }
 
-    // TODO: implement properly
-    public String getTemperaturesAsString() { return answer; }
+    public String[] getSensorNames() {
+        return sensorNames;
+    }
 
+    public float[] getSensorValues() {
+        return temperatures;
+    }
 }

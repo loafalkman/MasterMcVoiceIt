@@ -22,6 +22,7 @@ public class CardFragment extends Fragment {
 
     View view;
     TempView tempView;
+    TempsView tempsView;
     LocationView locationView;
 
     public interface GPSController {
@@ -52,8 +53,12 @@ public class CardFragment extends Fragment {
         view = inflater.inflate(R.layout.card_fragment, container, false);
 
         tempView = new TempView(getContext());
-        CardView temp = (CardView) view.findViewById(R.id.framelayout_main_tmpcommandcontainer);
+        CardView temp = (CardView) view.findViewById(R.id.framelayout_main_commandcontainer);
         temp.addView(tempView);
+
+        tempsView = new TempsView(getContext());
+        CardView temps = (CardView) view.findViewById(R.id.framelayout_main_tempscontainer);
+        temps.addView(tempsView);
 
         locationView = new LocationView(getContext(), gpsController);
         CardView locations = (CardView) view.findViewById(R.id.framelayout_main_locationservice);
@@ -63,7 +68,7 @@ public class CardFragment extends Fragment {
     }
 
     public void renderTemperatures(TempsCardModel tempsModel) {
-        tempView.tempTextView.setText(tempsModel.getTemperaturesAsString());
+        tempsView.setTempsList(tempsModel.getSensorNames(), tempsModel.getSensorValues());
     }
 
     public void renderLocation(LocationCardModel locationModel) {
