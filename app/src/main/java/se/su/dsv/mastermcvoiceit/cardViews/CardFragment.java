@@ -7,6 +7,7 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -38,6 +39,7 @@ public class CardFragment extends Fragment {
     TempView tempView;
     TempsView tempsView;
     LocationView locationView;
+    ActuatorsView actuatorsView;
 
     public interface GPSController {
         void stopService();
@@ -88,6 +90,15 @@ public class CardFragment extends Fragment {
         CardView locations = (CardView) fragView.findViewById(R.id.framelayout_main_locationservice);
         locations.addView(locationView);
 
+        actuatorsView = new ActuatorsView(getContext(), new ActuatorsView.SwitchesListener() {
+            @Override
+            public void onSwitchChange(int switchIndex, boolean checked) {
+                Toast.makeText(getContext(), "Switch "+switchIndex+" on:"+checked, Toast.LENGTH_SHORT).show();
+            }
+        });
+        CardView actuators = (CardView) fragView.findViewById(R.id.framelayout_main_actuatorscontainer);
+        actuators.addView(actuatorsView);
+
         return fragView;
     }
 
@@ -99,13 +110,18 @@ public class CardFragment extends Fragment {
         locationView.locationTextView.setText(locationModel.getText());
     }
 
+    private void renderCard(/*ActuatorsCardModel actuatorsModel*/) {
+        actuatorsView.setSwitches(new String[]{"Hello", "WOrld", "test","Hello", "WOrld","Hello", "WOrld"});
+    }
+
     public void renderAllCards() {
         renderCard(locationCardModel);
         renderCard(temperaturesCardModel);
+        renderCard(/*actuatorsModel*/);
     }
 
     /**
-     * should in the future ask R.pi. what sensorsById it has
+     * should in the future ask R.pi. what sensorsById it has, maybe move this to SensorList.java to save space.
      */
     private void initSensors() {
         sensorList = new SensorList();
