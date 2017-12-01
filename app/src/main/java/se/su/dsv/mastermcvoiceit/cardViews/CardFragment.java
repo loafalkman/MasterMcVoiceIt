@@ -8,9 +8,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 import se.su.dsv.mastermcvoiceit.R;
+import se.su.dsv.mastermcvoiceit.cardModels.CardModel;
+import se.su.dsv.mastermcvoiceit.cardModels.CardModelType;
 import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
 import se.su.dsv.mastermcvoiceit.cardModels.TempsCardModel;
+import se.su.dsv.mastermcvoiceit.command.TempCommand;
+import se.su.dsv.mastermcvoiceit.remote.sensor.Sensor;
+import se.su.dsv.mastermcvoiceit.remote.sensor.SensorList;
+import se.su.dsv.mastermcvoiceit.remote.sensor.SensorType;
+import se.su.dsv.mastermcvoiceit.remote.sensor.TelldusSensor;
 
 /**
  * Created by annika on 2017-11-29.
@@ -20,7 +29,12 @@ public class CardFragment extends Fragment {
 
     GPSController gpsController;
 
-    View view;
+    SensorList sensorList;
+
+    LocationCardModel locationCardModel;
+    TempsCardModel temperaturesCardModel;
+
+    View fragView;
     TempView tempView;
     TempsView tempsView;
     LocationView locationView;
@@ -45,33 +59,75 @@ public class CardFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initSensors();
+        initCommands();
+        initCardModels();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateCardModels();
+        renderAllCards();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        view = inflater.inflate(R.layout.card_fragment, container, false);
+        fragView = inflater.inflate(R.layout.card_fragment, container, false);
 
         tempView = new TempView(getContext());
-        CardView temp = (CardView) view.findViewById(R.id.framelayout_main_commandcontainer);
+        CardView temp = (CardView) fragView.findViewById(R.id.framelayout_main_commandcontainer);
         temp.addView(tempView);
 
         tempsView = new TempsView(getContext());
-        CardView temps = (CardView) view.findViewById(R.id.framelayout_main_tempscontainer);
+        CardView temps = (CardView) fragView.findViewById(R.id.framelayout_main_tempscontainer);
         temps.addView(tempsView);
 
         locationView = new LocationView(getContext(), gpsController);
-        CardView locations = (CardView) view.findViewById(R.id.framelayout_main_locationservice);
+        CardView locations = (CardView) fragView.findViewById(R.id.framelayout_main_locationservice);
         locations.addView(locationView);
 
-        return view;
+        return fragView;
     }
 
-    public void renderTemperatures(TempsCardModel tempsModel) {
+    public void renderCard(TempsCardModel tempsModel) {
         tempsView.setTempsList(tempsModel.getSensorNames(), tempsModel.getSensorValues());
     }
 
-    public void renderLocation(LocationCardModel locationModel) {
+    public void renderCard(LocationCardModel locationModel) {
         locationView.locationTextView.setText(locationModel.getText());
+    }
+
+    public void renderAllCards() {
+        renderCard(locationCardModel);
+        renderCard(temperaturesCardModel);
+    }
+
+    /**
+     * should in the future ask R.pi. what sensorsById it has
+     */
+    private void initSensors() {
+        sensorList = new SensorList();
+
+        sensorList.add(new TelldusSensor(2, "Living room", SensorType.TEMPERATURE));
+        sensorList.add(new TelldusSensor(15, "Garage", SensorType.TEMPERATURE));
+        sensorList.add(new TelldusSensor(10, "Front porch", SensorType.WIND));
+    }
+
+    private void initCardModels() {
+        locationCardModel = new LocationCardModel();
+
+        ArrayList<Sensor> tempSensors = sensorList.get(SensorType.TEMPERATURE);
+        temperaturesCardModel = new TempsCardModel(tempSensors);
+    }
+
+    public void updateCardModels() {
+        temperaturesCardModel.fetchSensorReadings();
+    }
+
+    // TODO: each CardsFragment should have their own list of commands?
+    private void initCommands() {
+        new TempCommand(sensorList.get(2));
     }
 }

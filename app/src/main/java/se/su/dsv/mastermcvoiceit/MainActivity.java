@@ -43,19 +43,12 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     Intent locationService;
     BroadcastReceiver broadcastReceiver;
 
-    TempCommand tempCommand;
-
     ArrayList<String> resultArray;
     String voiceResultStr;
     Location homeLocation; // TEMP
 
     FragmentManager fragmentManager;
     CardFragment cardFragment;
-
-    SensorList sensorList;
-
-    LocationCardModel locationCardModel;
-    TempsCardModel temperaturesCardModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,10 +66,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
         cardFragment = new CardFragment();
         launchFragment(cardFragment);
-
-        initSensors();
-        initCommands();
-        initCardModels();
     }
 
     @Override
@@ -90,9 +79,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
         registerReceiver(broadcastReceiver, new IntentFilter(LOCATION_UPDATE));
         startService(locationService);
-
-        updateCardModels();
-        renderAllCards();
     }
 
     private void launchFragment(CardFragment cardFragment) {
@@ -102,56 +88,13 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         fragmentTransaction.commit();
     }
 
-    private void renderAllCards() {
-        renderCard(locationCardModel);
-        renderCard(temperaturesCardModel);
-    }
-
-    private void renderCard(CardModel cardModel) {
-        CardModelType type = cardModel.getItemViewType();
-        switch (type) {
-            case TEMPERATURES:
-                cardFragment.renderTemperatures(((TempsCardModel) cardModel));
-                break;
-
-            case LOCATION:
-                cardFragment.renderLocation(((LocationCardModel) cardModel));
-                break;
-        }
-    }
-
-    /**
-     * should in the future ask R.pi. what sensorsById it has
-     */
-    private void initSensors() {
-        sensorList = new SensorList();
-
-        sensorList.add(new TelldusSensor(2, "Living room", SensorType.TEMPERATURE));
-        sensorList.add(new TelldusSensor(15, "Garage", SensorType.TEMPERATURE));
-        sensorList.add(new TelldusSensor(10, "Front porch", SensorType.WIND));
-    }
-
-    private void initCommands() {
-        tempCommand = new TempCommand(sensorList.get(2));
-    }
-
-    private void initCardModels() {
-        locationCardModel = new LocationCardModel();
-
-        ArrayList<Sensor> tempSensors = sensorList.get(SensorType.TEMPERATURE);
-        temperaturesCardModel = new TempsCardModel(tempSensors);
-    }
-
-    private void updateCardModels() {
-        temperaturesCardModel.fetchSensorReadings();
-    }
 
     /**
      * temporary listener for a temporary button :P TODO: call from a Thread instead.
      */
     public void updateCardModelListener(View view) {
-        updateCardModels();
-        renderAllCards();
+        cardFragment.updateCardModels();
+        cardFragment.renderAllCards();
     }
 
     /**
@@ -161,15 +104,19 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         voiceResultStr = "sensor 2";
 
         if (voiceResultStr != null) {
-            Command foundCommand = Command.findCommand(voiceResultStr);
+            // TODO: implement method in fragment to execute and render command?
+            // idea: use the place name as prefix in command if you want to execute a command for another place that's not the visible one.
+            // for example, say the command: "home, turn off all lights" when in the fragment for country house.
+            // commands with such prefix launches the corresponding place fragment and runs the command within it.
 
-            if (foundCommand != null) {
-                Toast.makeText(this, "Command: " + voiceResultStr, Toast.LENGTH_SHORT).show();
-                renderCard(foundCommand.doCommand(voiceResultStr));
-
-            } else {
-                Toast.makeText(this, "Couldn't find command: " + voiceResultStr, Toast.LENGTH_LONG).show();
-            }
+//            Command foundCommand = Command.findCommand(voiceResultStr);
+//
+//            if (foundCommand != null) {
+//                Toast.makeText(this, "Command: " + voiceResultStr, Toast.LENGTH_SHORT).show();
+//
+//            } else {
+//                Toast.makeText(this, "Couldn't find command: " + voiceResultStr, Toast.LENGTH_LONG).show();
+//            }
         }
     }
 
@@ -236,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         homeLocation.setLongitude(18.111798);
     }
 
-    /**
+    /** TODO: remove this, activity won't need the location
      * Custom BroadCastReceiver for receiving messages from CurrentLocationService.
      */
     public class LocationBroadcastReceiver extends BroadcastReceiver {
@@ -259,8 +206,8 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                 Toast.makeText(MainActivity.this, "Not Near!", Toast.LENGTH_SHORT).show();
             }
 
-            locationCardModel.setDistanceFromHome(distanceToHome);
-            renderCard(locationCardModel);
+//            locationCardModel.setDistanceFromHome(distanceToHome);
+//            renderCard(locationCardModel);
         }
     }
 
