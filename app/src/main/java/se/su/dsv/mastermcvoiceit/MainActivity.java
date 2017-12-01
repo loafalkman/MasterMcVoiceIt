@@ -12,23 +12,24 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import se.su.dsv.mastermcvoiceit.cardViews.CardFragment;
 import se.su.dsv.mastermcvoiceit.command.Command;
 import se.su.dsv.mastermcvoiceit.command.TempCommand;
 import se.su.dsv.mastermcvoiceit.gps.LocationService;
-import se.su.dsv.mastermcvoiceit.mainCards.CardInfo;
-import se.su.dsv.mastermcvoiceit.mainCards.CardInfoType;
-import se.su.dsv.mastermcvoiceit.mainCards.LocationCardInfo;
-import se.su.dsv.mastermcvoiceit.mainCards.TempCardInfo;
-import se.su.dsv.mastermcvoiceit.sensor.TelldusSensor;
+import se.su.dsv.mastermcvoiceit.cardModels.CardModel;
+import se.su.dsv.mastermcvoiceit.cardModels.CardModelType;
+import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
+import se.su.dsv.mastermcvoiceit.cardModels.TempsCardModel;
+import se.su.dsv.mastermcvoiceit.remote.sensor.Sensor;
+import se.su.dsv.mastermcvoiceit.remote.sensor.SensorList;
+import se.su.dsv.mastermcvoiceit.remote.sensor.SensorType;
+import se.su.dsv.mastermcvoiceit.remote.sensor.TelldusSensor;
 
 public class MainActivity extends AppCompatActivity implements RecognitionListener, CardFragment.GPSController {
 
@@ -48,13 +49,13 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     String voiceResultStr;
     Location homeLocation; // TEMP
 
-    ArrayList<CardInfo> cardModels = new ArrayList<>();
-    HashMap<Command, CardInfo> cardOnCommand = new HashMap<>();
-
-    LocationCardInfo locationCardInfo;
-
     FragmentManager fragmentManager;
     CardFragment cardFragment;
+
+    SensorList sensorList;
+
+    LocationCardModel locationCardModel;
+    TempsCardModel temperaturesCardModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +71,12 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         speechRecognizer.setRecognitionListener(this);
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
-        initCommands();
-        populateCards();
         cardFragment = new CardFragment();
         launchFragment(cardFragment);
+
+        initSensors();
+        initCommands();
+        initCardModels();
     }
 
     @Override
@@ -88,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         registerReceiver(broadcastReceiver, new IntentFilter(LOCATION_UPDATE));
         startService(locationService);
 
+        updateCardModels();
         renderAllCards();
     }
 
@@ -99,63 +103,60 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     private void renderAllCards() {
-        for (CardInfo card : cardModels) {
-            renderOneCard(card);
-        }
+        renderCard(locationCardModel);
+        renderCard(temperaturesCardModel);
     }
 
-    private void renderOneCard(CardInfo cardInfo) {
-        CardInfoType type = cardInfo.getItemViewType();
+    private void renderCard(CardModel cardModel) {
+        CardModelType type = cardModel.getItemViewType();
         switch (type) {
-            case TEMPERATURE:
-                cardFragment.renderTemperature(((TempCardInfo) cardInfo));
+            case TEMPERATURES:
+                cardFragment.renderTemperatures(((TempsCardModel) cardModel));
                 break;
 
             case LOCATION:
-                cardFragment.renderLocation(((LocationCardInfo) cardInfo));
+                cardFragment.renderLocation(((LocationCardModel) cardModel));
                 break;
         }
     }
 
-    private void createHomeLocation() {
-        homeLocation = new Location("");
-        homeLocation.setLatitude(59.345613);
-        homeLocation.setLongitude(18.111798);
+    /**
+     * should in the future ask R.pi. what sensorsById it has
+     */
+    private void initSensors() {
+        sensorList = new SensorList();
+
+        sensorList.add(new TelldusSensor(2, "Living room", SensorType.TEMPERATURE));
+        sensorList.add(new TelldusSensor(15, "Garage", SensorType.TEMPERATURE));
+        sensorList.add(new TelldusSensor(10, "Front porch", SensorType.WIND));
     }
 
     private void initCommands() {
-        tempCommand = new TempCommand(new TelldusSensor(2));
+        tempCommand = new TempCommand(sensorList.get(2));
     }
 
-    private void populateCards() {
-        TempCardInfo tempInfo = new TempCardInfo(23.4f);
-        cardModels.add(tempInfo);
-        cardOnCommand.put(tempCommand, tempInfo);
+    private void initCardModels() {
+        locationCardModel = new LocationCardModel();
 
-        locationCardInfo = new LocationCardInfo();
-        cardModels.add(locationCardInfo);
-
+        ArrayList<Sensor> tempSensors = sensorList.get(SensorType.TEMPERATURE);
+        temperaturesCardModel = new TempsCardModel(tempSensors);
     }
 
-    public void voiceInput(View v) {
-        if (SpeechRecognizer.isRecognitionAvailable(MainActivity.this)) {
-            speechRecognizer.startListening(recognizerIntent);
-        }
+    private void updateCardModels() {
+        temperaturesCardModel.fetchSensorReadings();
     }
 
-    public void updateInfo(View view) {
-        voiceResultStr = "sensor 2";
-
-        if (voiceResultStr != null) {
-            Command foundCommand = Command.findCommand(voiceResultStr);
-            TempCardInfo tempCard = (TempCardInfo) cardOnCommand.get(foundCommand);
-
-            // Voila
-            tempCard.setTemperature(666.666f);
-            cardFragment.renderTemperature(tempCard);
-        }
+    /**
+     * temporary listener for a temporary button :P TODO: call from a Thread instead.
+     */
+    public void updateCardModelListener(View view) {
+        updateCardModels();
+        renderAllCards();
     }
 
+    /**
+     * Temporarily bound to a button for testing, should be activated after voice result.
+     */
     public void voiceResult(View v) {
         voiceResultStr = "sensor 2";
 
@@ -164,14 +165,17 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
             if (foundCommand != null) {
                 Toast.makeText(this, "Command: " + voiceResultStr, Toast.LENGTH_SHORT).show();
-
-                TempCardInfo tempCard = (TempCardInfo) cardOnCommand.get(foundCommand);
-                foundCommand.doCommand(voiceResultStr, tempCard);
-                renderOneCard(tempCard);
+                renderCard(foundCommand.doCommand(voiceResultStr));
 
             } else {
                 Toast.makeText(this, "Couldn't find command: " + voiceResultStr, Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    public void voiceInputButtonListener(View v) {
+        if (SpeechRecognizer.isRecognitionAvailable(MainActivity.this)) {
+            speechRecognizer.startListening(recognizerIntent);
         }
     }
 
@@ -226,6 +230,12 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     @Override
     public void onEvent(int i, Bundle bundle) {}
 
+    private void createHomeLocation() {
+        homeLocation = new Location("");
+        homeLocation.setLatitude(59.345613);
+        homeLocation.setLongitude(18.111798);
+    }
+
     /**
      * Custom BroadCastReceiver for receiving messages from CurrentLocationService.
      */
@@ -249,8 +259,8 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                 Toast.makeText(MainActivity.this, "Not Near!", Toast.LENGTH_SHORT).show();
             }
 
-            locationCardInfo.setDistanceFromHome(distanceToHome);
-            renderOneCard(locationCardInfo);
+            locationCardModel.setDistanceFromHome(distanceToHome);
+            renderCard(locationCardModel);
         }
     }
 

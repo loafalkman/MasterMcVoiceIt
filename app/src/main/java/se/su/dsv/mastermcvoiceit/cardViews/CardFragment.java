@@ -9,8 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import se.su.dsv.mastermcvoiceit.R;
-import se.su.dsv.mastermcvoiceit.mainCards.LocationCardInfo;
-import se.su.dsv.mastermcvoiceit.mainCards.TempCardInfo;
+import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
+import se.su.dsv.mastermcvoiceit.cardModels.TempsCardModel;
 
 /**
  * Created by annika on 2017-11-29.
@@ -22,6 +22,7 @@ public class CardFragment extends Fragment {
 
     View view;
     TempView tempView;
+    TempsView tempsView;
     LocationView locationView;
 
     public interface GPSController {
@@ -52,8 +53,12 @@ public class CardFragment extends Fragment {
         view = inflater.inflate(R.layout.card_fragment, container, false);
 
         tempView = new TempView(getContext());
-        CardView temp = (CardView) view.findViewById(R.id.framelayout_main_tmpcommandcontainer);
+        CardView temp = (CardView) view.findViewById(R.id.framelayout_main_commandcontainer);
         temp.addView(tempView);
+
+        tempsView = new TempsView(getContext());
+        CardView temps = (CardView) view.findViewById(R.id.framelayout_main_tempscontainer);
+        temps.addView(tempsView);
 
         locationView = new LocationView(getContext(), gpsController);
         CardView locations = (CardView) view.findViewById(R.id.framelayout_main_locationservice);
@@ -62,11 +67,11 @@ public class CardFragment extends Fragment {
         return view;
     }
 
-    public void renderTemperature(TempCardInfo tempInfo) {
-        tempView.tempTextView.setText(tempInfo.getTemperatureAsString());
+    public void renderTemperatures(TempsCardModel tempsModel) {
+        tempsView.setTempsList(tempsModel.getSensorNames(), tempsModel.getSensorValues());
     }
 
-    public void renderLocation(LocationCardInfo locationInfo) {
-        locationView.locationTextView.setText(locationInfo.getText());
+    public void renderLocation(LocationCardModel locationModel) {
+        locationView.locationTextView.setText(locationModel.getText());
     }
 }

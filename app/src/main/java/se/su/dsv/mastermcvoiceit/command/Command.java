@@ -1,13 +1,8 @@
 package se.su.dsv.mastermcvoiceit.command;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.support.v7.widget.CardView;
-import android.view.View;
-
 import java.util.HashMap;
 
-import se.su.dsv.mastermcvoiceit.mainCards.CardInfo;
+import se.su.dsv.mastermcvoiceit.cardModels.CardModel;
 
 /**
  * Created by felix on 2017-11-24.
@@ -39,6 +34,6 @@ public abstract class Command {
      * @param spokenText The text that the user used to invoke this command.
      * @return Bundle with processed data
      */
-    public abstract CardInfo doCommand(String spokenText, CardInfo card);
+    public abstract CardModel doCommand(String spokenText);
 
 }
