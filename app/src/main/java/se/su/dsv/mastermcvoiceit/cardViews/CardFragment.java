@@ -28,21 +28,22 @@ import se.su.dsv.mastermcvoiceit.remote.sensor.TelldusSensor;
 
 public class CardFragment extends Fragment {
 
-    GPSController gpsController;
+    private GPSController gpsController;
 
-    SensorList sensorList;
+    private SensorList sensorList;
 
-    LocationCardModel locationCardModel;
-    TempsCardModel temperaturesCardModel;
+    private LocationCardModel locationCardModel;
+    private TempsCardModel temperaturesCardModel;
 
-    View fragView;
-    TempView tempView;
-    TempsView tempsView;
-    LocationView locationView;
-    ActuatorsView actuatorsView;
+    private View fragView;
+    private TempView tempView;
+    private TempsView tempsView;
+    private LocationView locationView;
+    private ActuatorsView actuatorsView;
 
     public interface GPSController {
         void stopService();
+
         void startService();
     }
 
@@ -64,13 +65,12 @@ public class CardFragment extends Fragment {
         initSensors();
         initCommands();
         initCardModels();
+        updateCardModels();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        updateCardModels();
-        renderAllCards();
     }
 
     @Override
@@ -93,25 +93,34 @@ public class CardFragment extends Fragment {
         actuatorsView = new ActuatorsView(getContext(), new ActuatorsView.SwitchesListener() {
             @Override
             public void onSwitchChange(int switchIndex, boolean checked) {
-                Toast.makeText(getContext(), "Switch "+switchIndex+" on:"+checked, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Switch " + switchIndex + " on:" + checked, Toast.LENGTH_SHORT).show();
             }
         });
         CardView actuators = (CardView) fragView.findViewById(R.id.framelayout_main_actuatorscontainer);
         actuators.addView(actuatorsView);
 
+        initRenderAllCards();
         return fragView;
     }
 
-    public void renderCard(TempsCardModel tempsModel) {
-        tempsView.setTempsList(tempsModel.getSensorNames(), tempsModel.getSensorValues());
+    /**
+     * Should be used when sensors or actuators have been added, or when this fragment is created.
+     */
+    public void initRenderAllCards() {
+        tempsView.setTempsList(temperaturesCardModel.getSensorNames(), temperaturesCardModel.getSensorValues());
+        actuatorsView.setSwitches(new String[]{"Hello", "WOrld", "test", "Hello", "WOrld", "Hello", "WOrld"});
     }
 
-    public void renderCard(LocationCardModel locationModel) {
+    private void renderCard(TempsCardModel tempsModel) {
+        tempsView.updateTempsList(tempsModel.getSensorValues());
+    }
+
+    private void renderCard(LocationCardModel locationModel) {
         locationView.locationTextView.setText(locationModel.getText());
     }
 
-    private void renderCard(/*ActuatorsCardModel actuatorsModel*/) {
-        actuatorsView.setSwitches(new String[]{"Hello", "WOrld", "test","Hello", "WOrld","Hello", "WOrld"});
+    private void renderCard(/*ActuatorsCardModel actuatorsModel*/) { // TODO: create actuators model
+        actuatorsView.updateSwitches(new boolean[]{false, true, false, true, false, true, false});
     }
 
     public void renderAllCards() {

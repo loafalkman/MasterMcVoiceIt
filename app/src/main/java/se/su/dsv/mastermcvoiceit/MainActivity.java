@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
+import android.os.Handler;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -50,6 +51,15 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     FragmentManager fragmentManager;
     CardFragment cardFragment;
 
+    Handler readingsHandler = new Handler();
+    private Runnable updateUIReadings = new Runnable() {
+        @Override
+        public void run() {
+            updateCardModelListener(null);
+            readingsHandler.postDelayed(this, 5000);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +89,9 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
         registerReceiver(broadcastReceiver, new IntentFilter(LOCATION_UPDATE));
         startService(locationService);
+
+        readingsHandler.removeCallbacks(updateUIReadings);
+        readingsHandler.postDelayed(updateUIReadings, 1000);
     }
 
     private void launchFragment(CardFragment cardFragment) {

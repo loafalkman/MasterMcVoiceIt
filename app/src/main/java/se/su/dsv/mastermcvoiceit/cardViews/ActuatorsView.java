@@ -10,6 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import se.su.dsv.mastermcvoiceit.R;
 
 public class ActuatorsView extends ConstraintLayout {
@@ -18,6 +20,7 @@ public class ActuatorsView extends ConstraintLayout {
     private LinearLayout actuatorsList;
 
     private SwitchesListener switchesListener;
+    private ArrayList<Switch> switches;
 
     public ActuatorsView(Context context, SwitchesListener switchesListener) {
         super(context);
@@ -53,23 +56,31 @@ public class ActuatorsView extends ConstraintLayout {
     }
 
     public void setSwitches(String[] actuatorNames) {
+        switches = new ArrayList<>();
         actuatorsList.removeAllViews();
 
         for (int i = 0; i < actuatorNames.length; i++) {
-            Switch swtch = new Switch(getContext());
+            final Switch swtch = new Switch(getContext());
             swtch.setText(actuatorNames[i]);
             final int finalI = i;
 
-            swtch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            swtch.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    switchesListener.onSwitchChange(finalI, b);
+                public void onClick(View view) {
+                    switchesListener.onSwitchChange(finalI, ((Switch) view).isChecked());
                 }
             });
 
+            switches.add(swtch);
             actuatorsList.addView(swtch);
         }
 
+    }
+
+    public void updateSwitches(boolean[] on) {
+        for (int i = 0; i < switches.size(); i++) {
+            switches.get(i).setChecked(on[i]);
+        }
     }
 
     public interface SwitchesListener {

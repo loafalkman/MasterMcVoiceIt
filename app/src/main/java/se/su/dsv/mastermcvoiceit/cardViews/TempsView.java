@@ -8,12 +8,16 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import se.su.dsv.mastermcvoiceit.R;
 
 public class TempsView extends ConstraintLayout {
     private static final String TITLE = "Temperature sensors";
     private LayoutInflater mInflater;
     private LinearLayout tempsList;
+
+    ArrayList<TextView> sensorValuesTWs;
 
     public TempsView(Context context) {
         super(context);
@@ -42,6 +46,7 @@ public class TempsView extends ConstraintLayout {
     }
 
     public void setTempsList(String[] sensorNames, float[] temperatures) {
+        sensorValuesTWs = new ArrayList<>();
         tempsList.removeAllViews();
 
         for (int i = 0; i < sensorNames.length; i++) {
@@ -52,9 +57,16 @@ public class TempsView extends ConstraintLayout {
 
             sensorName.setText(sensorNames[i] + ":");
             sensorValue.setText(temperatures[i] + "C ");
+            sensorValuesTWs.add(sensorValue);
 
             tempsList.addView(row);
         }
 
+    }
+
+    public void updateTempsList(float[] sensorValues) {
+        for (int i = 0; i < sensorValuesTWs.size(); i++) {
+            sensorValuesTWs.get(i).setText(sensorValues[i]+"C ");
+        }
     }
 }
