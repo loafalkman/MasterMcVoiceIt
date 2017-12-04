@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import se.su.dsv.mastermcvoiceit.R;
 import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
 import se.su.dsv.mastermcvoiceit.cardModels.TempsCardModel;
+import se.su.dsv.mastermcvoiceit.remote.actuator.TelldusActuator;
 import se.su.dsv.mastermcvoiceit.command.TempCommand;
 import se.su.dsv.mastermcvoiceit.remote.sensor.Sensor;
 import se.su.dsv.mastermcvoiceit.remote.sensor.SensorList;
@@ -32,6 +33,9 @@ public class CardFragment extends Fragment {
 
     private LocationCardModel locationCardModel;
     private TempsCardModel temperaturesCardModel;
+
+
+    TelldusActuator telldusActuator; // later HOME MODEL access to this
 
     private View fragView;
     private TempView tempView;
@@ -60,6 +64,8 @@ public class CardFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        telldusActuator = new TelldusActuator(1, "First Actuator");
+
         initSensors();
         initCommands();
         initCardModels();
