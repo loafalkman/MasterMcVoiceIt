@@ -7,7 +7,7 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/linearLayout_temperatures_tempslist"
+        android:id="@+id/linearlayout_genericlayout_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -17,18 +17,18 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/textView">
+        app:layout_constraintStart_toStartOf="@+id/textview_genericlayout_title"
+        app:layout_constraintTop_toBottomOf="@+id/textview_genericlayout_title">
 
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/textview_genericlayout_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:text="Temperature sensors"
+        android:text="Unnamed card"
         android:textColor="@android:color/black"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"

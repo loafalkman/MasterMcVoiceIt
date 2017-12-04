@@ -1,32 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_gravity="right"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/background_all_gradient">
+    android:layout_height="match_parent">
 
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/framelayout_main_commandcontainer"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_margin="16dp" >
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/framelayout_main_locationservice"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_margin="16dp" >
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/framelayout_main_tempscontainer"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp" >
-    </android.support.v7.widget.CardView>
+        android:layout_gravity="right"
+        android:background="@drawable/background_all_gradient"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/framelayout_main_commandcontainer"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_margin="16dp"></android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/framelayout_main_locationservice"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_margin="16dp"></android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/framelayout_main_tempscontainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"></android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/framelayout_main_actuatorscontainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"></android.support.v7.widget.CardView>
 
 
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>
