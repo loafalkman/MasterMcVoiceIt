@@ -10,7 +10,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import se.su.dsv.mastermcvoiceit.R;
-import se.su.dsv.mastermcvoiceit.cardViews.CardFragment;
 
 /**
  * Created by annika on 2017-11-29.
@@ -21,6 +20,7 @@ public class LocationView extends RelativeLayout {
     LayoutInflater mInflater;
     TextView locationTextView;
     Switch GPSSwitch;
+
 
     public LocationView(Context context, CardFragment.GPSController controller) {
         super(context);

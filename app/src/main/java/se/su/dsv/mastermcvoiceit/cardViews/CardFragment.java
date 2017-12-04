@@ -12,8 +12,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import se.su.dsv.mastermcvoiceit.R;
+import se.su.dsv.mastermcvoiceit.cardModels.ActuatorsCardModel;
 import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
 import se.su.dsv.mastermcvoiceit.cardModels.TempsCardModel;
+import se.su.dsv.mastermcvoiceit.remote.actuator.Actuator;
+import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorList;
+import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorType;
+import se.su.dsv.mastermcvoiceit.remote.actuator.TelldusActuator;
 import se.su.dsv.mastermcvoiceit.command.TempCommand;
 import se.su.dsv.mastermcvoiceit.remote.sensor.Sensor;
 import se.su.dsv.mastermcvoiceit.remote.sensor.SensorList;
@@ -29,9 +34,11 @@ public class CardFragment extends Fragment {
     private GPSController gpsController;
 
     private SensorList sensorList;
+    private ActuatorList actuatorList;
 
     private LocationCardModel locationCardModel;
     private TempsCardModel temperaturesCardModel;
+    private ActuatorsCardModel actuatorsModel;
 
     private View fragView;
     private TempView tempView;
@@ -60,7 +67,9 @@ public class CardFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         initSensors();
+        initActuators();
         initCommands();
         initCardModels();
         updateCardModels();
@@ -91,7 +100,7 @@ public class CardFragment extends Fragment {
         actuatorsView = new ActuatorsView(getContext(), new ActuatorsView.SwitchesListener() {
             @Override
             public void onSwitchChange(int switchIndex, boolean checked) {
-                Toast.makeText(getContext(), "Switch " + switchIndex + " on:" + checked, Toast.LENGTH_SHORT).show();
+                actuatorList.get(ActuatorType.POWER_SWITCH).get(switchIndex).setState(checked ? 1 : 0);
             }
         });
         CardView actuators = (CardView) fragView.findViewById(R.id.framelayout_main_actuatorscontainer);
@@ -106,7 +115,7 @@ public class CardFragment extends Fragment {
      */
     public void initRenderAllCards() {
         tempsView.setTempsList(temperaturesCardModel.getSensorNames(), temperaturesCardModel.getSensorValues());
-        actuatorsView.setSwitches(new String[]{"Hello", "WOrld", "test", "Hello", "WOrld", "Hello", "WOrld"});
+        actuatorsView.setSwitches(actuatorsModel.getActuatorNames());
     }
 
     private void renderCard(TempsCardModel tempsModel) {
@@ -117,14 +126,14 @@ public class CardFragment extends Fragment {
         locationView.locationTextView.setText(locationModel.getText());
     }
 
-    private void renderCard(/*ActuatorsCardModel actuatorsModel*/) { // TODO: create actuators model
-        actuatorsView.updateSwitches(new boolean[]{false, true, false, true, false, true, false});
+    private void renderCard(ActuatorsCardModel actuatorsModel) {
+        actuatorsView.updateSwitches(actuatorsModel.getActuatorStates());
     }
 
     public void renderAllCards() {
         renderCard(locationCardModel);
         renderCard(temperaturesCardModel);
-        renderCard(/*actuatorsModel*/);
+        renderCard(actuatorsModel);
     }
 
     /**
@@ -138,15 +147,28 @@ public class CardFragment extends Fragment {
         sensorList.add(new TelldusSensor(10, "Front porch", SensorType.WIND));
     }
 
+    private void initActuators() {
+        actuatorList = new ActuatorList();
+
+        actuatorList.add(new TelldusActuator(1, "bedroom light", ActuatorType.POWER_SWITCH));
+        actuatorList.add(new TelldusActuator(42, "coffeemaker", ActuatorType.POWER_SWITCH));
+        actuatorList.add(new TelldusActuator(5, "central heating", ActuatorType.HEATER));
+        actuatorList.add(new TelldusActuator(7, "element", ActuatorType.POWER_SWITCH));
+    }
+
     private void initCardModels() {
         locationCardModel = new LocationCardModel();
 
         ArrayList<Sensor> tempSensors = sensorList.get(SensorType.TEMPERATURE);
         temperaturesCardModel = new TempsCardModel(tempSensors);
+
+        ArrayList<Actuator> actuators = actuatorList.get(ActuatorType.POWER_SWITCH);
+        actuatorsModel = new ActuatorsCardModel(actuators);
     }
 
     public void updateCardModels() {
         temperaturesCardModel.fetchSensorReadings();
+        actuatorsModel.fetchActuatorStates();
     }
 
     // TODO: each CardsFragment should have their own list of commands?

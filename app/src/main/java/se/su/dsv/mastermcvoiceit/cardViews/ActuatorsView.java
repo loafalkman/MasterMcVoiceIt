@@ -77,9 +77,9 @@ public class ActuatorsView extends ConstraintLayout {
 
     }
 
-    public void updateSwitches(boolean[] on) {
+    public void updateSwitches(int[] states) {
         for (int i = 0; i < switches.size(); i++) {
-            switches.get(i).setChecked(on[i]);
+            switches.get(i).setChecked(states[i] > 0);
         }
     }
 
