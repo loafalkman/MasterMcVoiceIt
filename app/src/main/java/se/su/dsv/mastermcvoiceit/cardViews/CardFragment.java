@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import se.su.dsv.mastermcvoiceit.R;
 import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
 import se.su.dsv.mastermcvoiceit.cardModels.TempsCardModel;
+import se.su.dsv.mastermcvoiceit.remote.actuator.TelldusActuator;
 
 /**
  * Created by annika on 2017-11-29.
@@ -24,6 +25,8 @@ public class CardFragment extends Fragment {
     TempView tempView;
     TempsView tempsView;
     LocationView locationView;
+    TelldusActuator telldusActuator; // later HOME MODEL access to this
+
 
     public interface GPSController {
         void stopService();
@@ -45,6 +48,8 @@ public class CardFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        telldusActuator = new TelldusActuator(1, "First Actuator");
+
     }
 
     @Override
@@ -74,4 +79,6 @@ public class CardFragment extends Fragment {
     public void renderLocation(LocationCardModel locationModel) {
         locationView.locationTextView.setText(locationModel.getText());
     }
+
+
 }

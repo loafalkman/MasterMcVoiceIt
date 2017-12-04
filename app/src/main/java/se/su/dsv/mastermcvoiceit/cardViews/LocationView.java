@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import se.su.dsv.mastermcvoiceit.R;
 import se.su.dsv.mastermcvoiceit.cardViews.CardFragment;
+import se.su.dsv.mastermcvoiceit.remote.actuator.TelldusActuator;
 
 /**
  * Created by annika on 2017-11-29.
@@ -21,11 +22,15 @@ public class LocationView extends RelativeLayout {
     LayoutInflater mInflater;
     TextView locationTextView;
     Switch GPSSwitch;
+    TelldusActuator telldusActuator; // later HOME MODEL access to this
 
-    public LocationView(Context context, CardFragment.GPSController controller) {
+
+
+    public LocationView(Context context, CardFragment.GPSController controller, TelldusActuator actuator) {
         super(context);
         gpsController = controller;
         mInflater = LayoutInflater.from(context);
+        telldusActuator = actuator;
         init();
     }
 
@@ -51,9 +56,11 @@ public class LocationView extends RelativeLayout {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if (isChecked) {
-                    gpsController.startService();
+                    telldusActuator.setState(1);
+//                    gpsController.startService();
                 } else {
-                    gpsController.stopService();
+                    telldusActuator.setState(0);
+//                    gpsController.stopService();
                 }
             }
         });
