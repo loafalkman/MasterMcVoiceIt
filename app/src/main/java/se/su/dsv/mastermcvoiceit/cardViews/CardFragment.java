@@ -12,8 +12,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import se.su.dsv.mastermcvoiceit.R;
-import se.su.dsv.mastermcvoiceit.cardModels.CardModel;
-import se.su.dsv.mastermcvoiceit.cardModels.CardModelType;
 import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
 import se.su.dsv.mastermcvoiceit.cardModels.TempsCardModel;
 import se.su.dsv.mastermcvoiceit.command.TempCommand;

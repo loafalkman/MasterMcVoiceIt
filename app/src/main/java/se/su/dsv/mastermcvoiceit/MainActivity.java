@@ -20,17 +20,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import se.su.dsv.mastermcvoiceit.cardViews.CardFragment;
-import se.su.dsv.mastermcvoiceit.command.Command;
-import se.su.dsv.mastermcvoiceit.command.TempCommand;
 import se.su.dsv.mastermcvoiceit.gps.LocationService;
-import se.su.dsv.mastermcvoiceit.cardModels.CardModel;
-import se.su.dsv.mastermcvoiceit.cardModels.CardModelType;
-import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
-import se.su.dsv.mastermcvoiceit.cardModels.TempsCardModel;
-import se.su.dsv.mastermcvoiceit.remote.sensor.Sensor;
-import se.su.dsv.mastermcvoiceit.remote.sensor.SensorList;
-import se.su.dsv.mastermcvoiceit.remote.sensor.SensorType;
-import se.su.dsv.mastermcvoiceit.remote.sensor.TelldusSensor;
 
 public class MainActivity extends AppCompatActivity implements RecognitionListener, CardFragment.GPSController {
 
@@ -39,19 +29,19 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     public static final String LOCATION = "location";
     static final int RESULT_SPEECH = 7474;
 
-    SpeechRecognizer speechRecognizer;
-    Intent recognizerIntent;
-    Intent locationService;
-    BroadcastReceiver broadcastReceiver;
+    private SpeechRecognizer speechRecognizer;
+    private Intent recognizerIntent;
+    private Intent locationService;
+    private BroadcastReceiver broadcastReceiver;
 
-    ArrayList<String> resultArray;
-    String voiceResultStr;
-    Location homeLocation; // TEMP
+    private ArrayList<String> resultArray;
+    private String voiceResultStr;
+    private Location homeLocation; // TEMP
 
-    FragmentManager fragmentManager;
-    CardFragment cardFragment;
+    private FragmentManager fragmentManager;
+    private CardFragment cardFragment;
 
-    Handler readingsHandler = new Handler();
+    private Handler readingsHandler = new Handler();
     private Runnable updateUIReadings = new Runnable() {
         @Override
         public void run() {
