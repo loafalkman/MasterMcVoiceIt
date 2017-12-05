@@ -1,6 +1,9 @@
 package se.su.dsv.mastermcvoiceit.service;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -11,10 +14,12 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v7.app.NotificationCompat;
 
 import java.util.ArrayList;
 
-import se.su.dsv.mastermcvoiceit.place.HomePlace;
+import se.su.dsv.mastermcvoiceit.MainActivity;
+import se.su.dsv.mastermcvoiceit.R;
 import se.su.dsv.mastermcvoiceit.place.Place;
 
 /**
@@ -46,6 +51,13 @@ public class BackgroundService extends Service {
         locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
         tickerHandler.post(ticker);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                testNotification();
+            }
+        }, 3000);
     }
 
     @Nullable
@@ -74,6 +86,41 @@ public class BackgroundService extends Service {
             tickerHandler.postDelayed(this, UPDATE_INTERVAL_TICK);
         }
     };
+
+    void testNotification() {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this);
+        mBuilder.setSmallIcon(R.drawable.icon_microphone_48);
+        mBuilder.setContentTitle("My notification");
+        mBuilder.setContentText("Hello World!");
+// Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        resultIntent.putExtra("notifytest", "hello notification world!");
+
+// The stack builder object will contain an artificial back stack for the
+// started Activity.
+// This ensures that navigating backward from the Activity leads out of
+// your app to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+// Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(MainActivity.class);
+// Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+// mNotificationId is a unique integer your app uses to identify the
+// notification. For example, to cancel the notification, you can pass its ID
+// number to NotificationManager.cancel().
+        int mNotificationId = 378329572;
+        mNotificationManager.notify(mNotificationId, mBuilder.build());
+    }
 
     private void startGPS(boolean on) {
         if (on) {

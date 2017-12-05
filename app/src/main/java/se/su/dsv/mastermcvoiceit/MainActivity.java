@@ -74,6 +74,13 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         cardFragArgs.putInt(CardFragment.KEY_PLACE_NUMBER, 0);
         cardFragment.setArguments(cardFragArgs);
         launchFragment(cardFragment);
+
+        // TODO: handle intent sent from notifications properly
+        Intent intentForMe = getIntent();
+        String notificationExtra = intentForMe.getStringExtra("notifytest");
+        if (notificationExtra != null) {
+            Toast.makeText(this, notificationExtra, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
