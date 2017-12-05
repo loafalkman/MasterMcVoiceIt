@@ -11,12 +11,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import se.su.dsv.mastermcvoiceit.MainActivity;
 import se.su.dsv.mastermcvoiceit.place.HomePlace;
 import se.su.dsv.mastermcvoiceit.place.Place;
 
@@ -34,7 +31,7 @@ public class BackgroundService extends Service {
     private MyLocationListener locationListener;
     private LocationManager locationManager;
 
-    private Handler tickerHanler = new Handler();
+    private Handler tickerHandler = new Handler();
     private Location lastLocation;
 
     public static ArrayList<Place> places = new ArrayList<>();
@@ -48,9 +45,7 @@ public class BackgroundService extends Service {
         locationListener = new MyLocationListener();
         locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
-        initPlaces();
-
-        tickerHanler.post(ticker);
+        tickerHandler.post(ticker);
     }
 
     @Nullable
@@ -76,16 +71,9 @@ public class BackgroundService extends Service {
                     place.tick(lastLocation);
                 }
             }
-            tickerHanler.postDelayed(this, UPDATE_INTERVAL_TICK);
+            tickerHandler.postDelayed(this, UPDATE_INTERVAL_TICK);
         }
     };
-
-    private void initPlaces() {
-        Location homeLoc = new Location("");
-        homeLoc.setLatitude(59.345613);
-        homeLoc.setLongitude(18.111798);
-        places.add(new HomePlace(this, homeLoc));
-    }
 
     private void startGPS(boolean on) {
         if (on) {

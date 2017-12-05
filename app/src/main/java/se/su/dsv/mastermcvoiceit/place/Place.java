@@ -23,4 +23,16 @@ public abstract class Place {
     }
 
     public abstract void tick(Location currentLocation);
+
+    public SensorList getSensorList() {
+        return sensorList;
+    }
+
+    public ActuatorList getActuatorList() {
+        return actuatorList;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
 }

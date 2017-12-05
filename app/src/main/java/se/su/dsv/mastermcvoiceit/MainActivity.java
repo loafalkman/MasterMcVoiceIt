@@ -20,6 +20,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import se.su.dsv.mastermcvoiceit.cardViews.CardFragment;
+import se.su.dsv.mastermcvoiceit.place.HomePlace;
 import se.su.dsv.mastermcvoiceit.service.BackgroundService;
 
 public class MainActivity extends AppCompatActivity implements RecognitionListener, CardFragment.GPSController {
@@ -63,16 +64,21 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         speechRecognizer.setRecognitionListener(this);
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
+        backgroundService = new Intent(this, BackgroundService.class);
+        startService(backgroundService);
+
+        initPlaces();
+
         cardFragment = new CardFragment();
+        Bundle cardFragArgs = new Bundle();
+        cardFragArgs.putInt(CardFragment.KEY_PLACE_NUMBER, 0);
+        cardFragment.setArguments(cardFragArgs);
         launchFragment(cardFragment);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        backgroundService = new Intent(this, BackgroundService.class);
-        startService(backgroundService);
-
         readingsHandler.removeCallbacks(updateUIReadings);
         readingsHandler.postDelayed(updateUIReadings, 1000);
     }
@@ -82,6 +88,15 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.container_main_cardsfragment, cardFragment);
         fragmentTransaction.commit();
+    }
+
+    private void initPlaces() {
+        if (BackgroundService.places.isEmpty()) {
+            Location homeLoc = new Location("");
+            homeLoc.setLatitude(59.345613);
+            homeLoc.setLongitude(18.111798);
+            BackgroundService.places.add(new HomePlace(this, homeLoc));
+        }
     }
 
 

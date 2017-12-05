@@ -15,6 +15,7 @@ import se.su.dsv.mastermcvoiceit.R;
 import se.su.dsv.mastermcvoiceit.cardModels.ActuatorsCardModel;
 import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
 import se.su.dsv.mastermcvoiceit.cardModels.TempsCardModel;
+import se.su.dsv.mastermcvoiceit.place.Place;
 import se.su.dsv.mastermcvoiceit.remote.actuator.Actuator;
 import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorList;
 import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorType;
@@ -24,17 +25,18 @@ import se.su.dsv.mastermcvoiceit.remote.sensor.Sensor;
 import se.su.dsv.mastermcvoiceit.remote.sensor.SensorList;
 import se.su.dsv.mastermcvoiceit.remote.sensor.SensorType;
 import se.su.dsv.mastermcvoiceit.remote.sensor.TelldusSensor;
+import se.su.dsv.mastermcvoiceit.service.BackgroundService;
 
 /**
  * Created by annika on 2017-11-29.
  */
 
 public class CardFragment extends Fragment {
+    public static final String KEY_PLACE_NUMBER = "placeNumber";
 
     private GPSController gpsController;
 
-    private SensorList sensorList;
-    private ActuatorList actuatorList;
+    private Place myPlace;
 
     private LocationCardModel locationCardModel;
     private TempsCardModel temperaturesCardModel;
@@ -67,8 +69,7 @@ public class CardFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        initSensors();
-        initActuators();
+        myPlace = BackgroundService.places.get(getArguments().getInt(KEY_PLACE_NUMBER));
         initCommands();
         initCardModels();
         updateCardModels();
@@ -99,7 +100,7 @@ public class CardFragment extends Fragment {
         actuatorsView = new ActuatorsView(getContext(), new ActuatorsView.SwitchesListener() {
             @Override
             public void onSwitchChange(int switchIndex, boolean checked) {
-                actuatorList.get(ActuatorType.POWER_SWITCH).get(switchIndex).setState(checked ? 1 : 0);
+                myPlace.getActuatorList().get(ActuatorType.POWER_SWITCH).get(switchIndex).setState(checked ? 1 : 0);
             }
         });
         CardView actuators = (CardView) fragView.findViewById(R.id.framelayout_main_actuatorscontainer);
@@ -135,33 +136,13 @@ public class CardFragment extends Fragment {
         renderCard(actuatorsModel);
     }
 
-    /**
-     * should in the future ask R.pi. what sensorsById it has, maybe move this to SensorList.java to save space.
-     */
-    private void initSensors() {
-        sensorList = new SensorList();
-
-        sensorList.add(new TelldusSensor(2, "Living room", SensorType.TEMPERATURE));
-        sensorList.add(new TelldusSensor(15, "Garage", SensorType.TEMPERATURE));
-        sensorList.add(new TelldusSensor(10, "Front porch", SensorType.WIND));
-    }
-
-    private void initActuators() {
-        actuatorList = new ActuatorList();
-
-        actuatorList.add(new TelldusActuator(1, "bedroom light", ActuatorType.POWER_SWITCH));
-        actuatorList.add(new TelldusActuator(42, "coffeemaker", ActuatorType.POWER_SWITCH));
-        actuatorList.add(new TelldusActuator(5, "central heating", ActuatorType.HEATER));
-        actuatorList.add(new TelldusActuator(7, "element", ActuatorType.POWER_SWITCH));
-    }
-
     private void initCardModels() {
         locationCardModel = new LocationCardModel();
 
-        ArrayList<Sensor> tempSensors = sensorList.get(SensorType.TEMPERATURE);
+        ArrayList<Sensor> tempSensors = myPlace.getSensorList().get(SensorType.TEMPERATURE);
         temperaturesCardModel = new TempsCardModel(tempSensors);
 
-        ArrayList<Actuator> actuators = actuatorList.get(ActuatorType.POWER_SWITCH);
+        ArrayList<Actuator> actuators = myPlace.getActuatorList().get(ActuatorType.POWER_SWITCH);
         actuatorsModel = new ActuatorsCardModel(actuators);
     }
 
@@ -172,6 +153,6 @@ public class CardFragment extends Fragment {
 
     // TODO: each CardsFragment should have their own list of commands?
     private void initCommands() {
-        new TempCommand(sensorList.get(2));
+        new TempCommand(myPlace.getSensorList().get(2));
     }
 }
