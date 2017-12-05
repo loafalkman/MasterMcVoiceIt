@@ -7,7 +7,14 @@ package se.su.dsv.mastermcvoiceit.remote.actuator;
 public interface Actuator {
     int getID();
     String getName();
-//    ActuatorType getType();
     int fetchState();
+
+    /**
+     * @param state Default definition:
+     *              (state == Integer.MAX_INT) --> full power ;
+     *              (state == 0) --> off
+     */
     void setState(int state);
+
+    ActuatorType getType();
 }
