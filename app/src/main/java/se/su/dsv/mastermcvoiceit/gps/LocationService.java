@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import se.su.dsv.mastermcvoiceit.MainActivity;
+import se.su.dsv.mastermcvoiceit.place.HomePlace;
 
 /**
  * Created by annika on 2017-11-28.
@@ -22,6 +23,7 @@ public class LocationService extends Service {
     private final int UPDATE_INTERVAL = 5000;
     private MyLocationListener locationListener;
     private LocationManager locationManager;
+    private HomePlace homePlace;
 
     /**
      * Sets up the LocationListener and it's LocationManager.
@@ -31,6 +33,14 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // vv             test           vv
+        Location homeLocation = new Location("");
+        homeLocation.setLatitude(59.345613);
+        homeLocation.setLongitude(18.111798);
+        homePlace = new HomePlace(this, homeLocation);
+        // ^^             test           ^^
+
         locationListener = new MyLocationListener();
         locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
@@ -91,10 +101,11 @@ public class LocationService extends Service {
          */
         @Override
         public void onLocationChanged(Location location) {
-            Intent intent = new Intent(MainActivity.LOCATION_UPDATE); // nyckelsträng för att hitta rätt intent
-
-            intent.putExtra(MainActivity.LOCATION, location);
-            sendBroadcast(intent);
+//            Intent intent = new Intent(MainActivity.LOCATION_UPDATE); // nyckelsträng för att hitta rätt intent
+//
+//            intent.putExtra(MainActivity.LOCATION, location);
+//            sendBroadcast(intent);
+//            homePlace.tick(location);
         }
 
         @Override
