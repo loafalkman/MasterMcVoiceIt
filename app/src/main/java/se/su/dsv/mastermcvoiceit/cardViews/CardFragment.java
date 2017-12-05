@@ -48,7 +48,6 @@ public class CardFragment extends Fragment {
 
     public interface GPSController {
         void stopGPS();
-
         void startGPS();
     }
 

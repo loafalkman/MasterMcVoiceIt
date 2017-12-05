@@ -17,6 +17,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import se.su.dsv.mastermcvoiceit.MainActivity;
+import se.su.dsv.mastermcvoiceit.place.HomePlace;
+import se.su.dsv.mastermcvoiceit.place.Place;
 
 /**
  * Created by annika on 2017-11-28.
@@ -27,13 +29,15 @@ public class BackgroundService extends Service {
 
     private final int UPDATE_INTERVAL_TICK = 10000;
     private final int UPDATE_INTERVAL_GPS = 5000;
+
+    private boolean gpsON;
     private MyLocationListener locationListener;
     private LocationManager locationManager;
 
     private Handler tickerHanler = new Handler();
     private Location lastLocation;
 
-    public static ArrayList<Object> places = new ArrayList<>();
+    public static ArrayList<Place> places = new ArrayList<>();
 
     /**
      * Location permission is already granted.
@@ -43,6 +47,8 @@ public class BackgroundService extends Service {
         super.onCreate();
         locationListener = new MyLocationListener();
         locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+        initPlaces();
 
         tickerHanler.post(ticker);
     }
@@ -65,12 +71,21 @@ public class BackgroundService extends Service {
         @Override
         public void run() {
 
-            for (Object place : places) {
-                //TODO: place.tick();
+            if (lastLocation != null && gpsON) {
+                for (Place place : places) {
+                    place.tick(lastLocation);
+                }
             }
             tickerHanler.postDelayed(this, UPDATE_INTERVAL_TICK);
         }
     };
+
+    private void initPlaces() {
+        Location homeLoc = new Location("");
+        homeLoc.setLatitude(59.345613);
+        homeLoc.setLongitude(18.111798);
+        places.add(new HomePlace(this, homeLoc));
+    }
 
     private void startGPS(boolean on) {
         if (on) {
@@ -79,6 +94,7 @@ public class BackgroundService extends Service {
         } else if (locationManager != null) {
             locationManager.removeUpdates(locationListener);
         }
+        gpsON = on;
     }
 
     /**
