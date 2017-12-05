@@ -35,9 +35,9 @@ public class TelldusActuator implements Actuator {
     @Override
     public void setState(int state) {
         if (state > 0) {
-            Log.v("TelldsAct", "Actuator on");
+            Log.v("TelldsAct", "Actuator " + name + " on");
         } else {
-            Log.v("TelldsAct", "Actuator off");
+            Log.v("TelldsAct", "Actuator " + name + " off");
         }
     }
 

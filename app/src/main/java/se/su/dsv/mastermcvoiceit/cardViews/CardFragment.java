@@ -47,9 +47,9 @@ public class CardFragment extends Fragment {
     private ActuatorsView actuatorsView;
 
     public interface GPSController {
-        void stopService();
+        void stopGPS();
 
-        void startService();
+        void startGPS();
     }
 
     @Override

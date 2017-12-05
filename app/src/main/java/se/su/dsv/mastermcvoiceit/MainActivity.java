@@ -20,7 +20,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import se.su.dsv.mastermcvoiceit.cardViews.CardFragment;
-import se.su.dsv.mastermcvoiceit.gps.LocationService;
+import se.su.dsv.mastermcvoiceit.service.BackgroundService;
 
 public class MainActivity extends AppCompatActivity implements RecognitionListener, CardFragment.GPSController {
 
@@ -31,8 +31,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     private SpeechRecognizer speechRecognizer;
     private Intent recognizerIntent;
-    private Intent locationService;
-    private BroadcastReceiver broadcastReceiver;
+    private Intent backgroundService;
 
     private ArrayList<String> resultArray;
     private String voiceResultStr;
@@ -71,14 +70,8 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     @Override
     public void onResume() {
         super.onResume();
-        locationService = new Intent(this, LocationService.class);
-
-        if (broadcastReceiver == null) {
-            broadcastReceiver = new LocationBroadcastReceiver();
-        }
-
-        registerReceiver(broadcastReceiver, new IntentFilter(LOCATION_UPDATE));
-        startService(locationService);
+        backgroundService = new Intent(this, BackgroundService.class);
+        startService(backgroundService);
 
         readingsHandler.removeCallbacks(updateUIReadings);
         readingsHandler.postDelayed(updateUIReadings, 1000);
@@ -186,34 +179,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         homeLocation.setLongitude(18.111798);
     }
 
-    /** TODO: remove this, activity won't need the location
-     * Custom BroadCastReceiver for receiving messages from CurrentLocationService.
-     */
-    public class LocationBroadcastReceiver extends BroadcastReceiver {
-
-        /**
-         * Called when the receiver receives the intent.
-         * Determines if the current location is near the "home" location.
-         * If true, some action will be fired.
-         * @param context the context in which the receiver is running.
-         * @param intent intent containing the current location.
-         */
-        @Override // when the receiver receives the intent
-        public void onReceive(Context context, Intent intent) {
-
-            Location location = intent.getParcelableExtra(LOCATION);
-            float distanceToHome = location.distanceTo(homeLocation);
-            if (distanceToHome < 2000) {
-                Toast.makeText(MainActivity.this, "Near!", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(MainActivity.this, "Not Near!", Toast.LENGTH_SHORT).show();
-            }
-
-//            locationCardModel.setDistanceFromHome(distanceToHome);
-//            renderCard(locationCardModel);
-        }
-    }
-
     /**
      * The final method in the Activity lifecycle. If the app is stopped
      * the Reminders has to be saved and the BroadCastReceiver need to disconnect.
@@ -222,17 +187,17 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     protected void onDestroy() {
         super.onDestroy();
         // save data?
-
-        if (broadcastReceiver != null) {
-            unregisterReceiver(broadcastReceiver);
-        }
     }
 
-    public void startService() {
-        startService(locationService);
+    public void startGPS() {
+        Intent startGPSintent = new Intent(backgroundService);
+        startGPSintent.putExtra(BackgroundService.INTENT_KEY_GPS_ON, true);
+        startService(startGPSintent);
     }
 
-    public void stopService() {
-        stopService(locationService);
+    public void stopGPS() {
+        Intent stopGPSintent = new Intent(backgroundService);
+        stopGPSintent.putExtra(BackgroundService.INTENT_KEY_GPS_ON, false);
+        startService(stopGPSintent);
     }
 }

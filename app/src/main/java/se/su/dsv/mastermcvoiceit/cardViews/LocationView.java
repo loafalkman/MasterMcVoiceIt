@@ -51,9 +51,9 @@ public class LocationView extends RelativeLayout {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if (isChecked) {
-                    gpsController.startService();
+                    gpsController.startGPS();
                 } else {
-                    gpsController.stopService();
+                    gpsController.stopGPS();
                 }
             }
         });
