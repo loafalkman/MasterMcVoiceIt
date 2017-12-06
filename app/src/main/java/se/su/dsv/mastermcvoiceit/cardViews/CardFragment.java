@@ -149,6 +149,9 @@ public class CardFragment extends Fragment {
     public void updateCardModels() {
         temperaturesCardModel.fetchSensorReadings();
         actuatorsModel.fetchActuatorStates();
+
+        if (BackgroundService.lastLocation != null)
+            locationCardModel.setDistanceFromHome(BackgroundService.lastLocation.distanceTo(myPlace.getLocation())); // TODO: for demo purpose
     }
 
     // TODO: each CardsFragment should have their own list of commands?

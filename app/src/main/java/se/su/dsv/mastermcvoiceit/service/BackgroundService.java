@@ -37,7 +37,7 @@ public class BackgroundService extends Service {
     private LocationManager locationManager;
 
     private Handler tickerHandler = new Handler();
-    private Location lastLocation;
+    public static Location lastLocation; // TODO: temporary public for demo purpose
 
     public static ArrayList<Place> places = new ArrayList<>();
 
@@ -57,7 +57,7 @@ public class BackgroundService extends Service {
             public void run() {
                 testNotification();
             }
-        }, 3000);
+        }, 10000);
     }
 
     @Nullable
@@ -90,7 +90,7 @@ public class BackgroundService extends Service {
     void testNotification() {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this);
-        mBuilder.setSmallIcon(R.drawable.icon_microphone_48);
+        mBuilder.setSmallIcon(R.drawable.icon_appbar_brain_transparent);
         mBuilder.setContentTitle("My notification");
         mBuilder.setContentText("Hello World!");
 // Creates an explicit intent for an Activity in your app
