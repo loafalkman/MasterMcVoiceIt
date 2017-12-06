@@ -56,7 +56,7 @@ public class TempsView extends ConstraintLayout {
             TextView sensorValue = row.findViewById(R.id.textview_temprow_sensorvalue);
 
             sensorName.setText(sensorNames[i] + ":");
-            sensorValue.setText(temperatures[i] + "C ");
+            sensorValue.setText(round(temperatures[i]) + " °C");
             sensorValuesTWs.add(sensorValue);
 
             tempsList.addView(row);
@@ -66,7 +66,11 @@ public class TempsView extends ConstraintLayout {
 
     public void updateTempsList(float[] sensorValues) {
         for (int i = 0; i < sensorValuesTWs.size(); i++) {
-            sensorValuesTWs.get(i).setText(sensorValues[i]+"C ");
+            sensorValuesTWs.get(i).setText(round(sensorValues[i])+" °C");
         }
+    }
+
+    private float round(float a) {
+        return Math.round(a * 100.0) / 100.0f;
     }
 }
