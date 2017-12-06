@@ -22,7 +22,7 @@
         </activity>
 
         <service
-            android:name=".gps.LocationService"
+            android:name=".service.BackgroundService"
             android:description="@string/app_name"
             android:exported="false">
         </service>
