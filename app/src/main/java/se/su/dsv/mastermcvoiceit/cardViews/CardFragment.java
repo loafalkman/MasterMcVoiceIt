@@ -43,7 +43,6 @@ public class CardFragment extends Fragment {
     private ActuatorsCardModel actuatorsModel;
 
     private View fragView;
-    private TempView tempView;
     private TempsView tempsView;
     private LocationView locationView;
     private ActuatorsView actuatorsView;
@@ -84,10 +83,6 @@ public class CardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         fragView = inflater.inflate(R.layout.card_fragment, container, false);
-
-        tempView = new TempView(getContext());
-        CardView temp = (CardView) fragView.findViewById(R.id.framelayout_main_commandcontainer);
-        temp.addView(tempView);
 
         tempsView = new TempsView(getContext());
         CardView temps = (CardView) fragView.findViewById(R.id.framelayout_main_tempscontainer);
