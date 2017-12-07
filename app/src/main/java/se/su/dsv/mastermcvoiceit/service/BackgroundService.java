@@ -17,6 +17,7 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -61,6 +62,7 @@ public class BackgroundService extends IntentService {
             @Override
             public void run() {
                 testNotification();
+                Log.d("handler thing", "postDepolyed");
             }
         }, 10000);
     }
@@ -115,7 +117,7 @@ public class BackgroundService extends IntentService {
                         this,
                         0,
                         resultIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
+                        PendingIntent.FLAG_UPDATE_CURRENT // ??
                 );
         mBuilder.setContentIntent(resultPendingIntent);
 
