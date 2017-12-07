@@ -1,5 +1,7 @@
 package se.su.dsv.mastermcvoiceit.service;
 
+import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -26,7 +28,7 @@ import se.su.dsv.mastermcvoiceit.place.Place;
  * Created by annika on 2017-11-28.
  */
 
-public class BackgroundService extends Service {
+public class BackgroundService extends IntentService {
     public static final String INTENT_KEY_GPS_ON = "startGps";
 
     private final int UPDATE_INTERVAL_TICK = 10000;
@@ -41,6 +43,9 @@ public class BackgroundService extends Service {
 
     public static ArrayList<Place> places = new ArrayList<>();
 
+    public BackgroundService() {
+        super("");
+    }
     /**
      * Location permission is already granted.
      */
@@ -93,32 +98,77 @@ public class BackgroundService extends Service {
         mBuilder.setSmallIcon(R.drawable.icon_appbar_brain_transparent);
         mBuilder.setContentTitle("My notification");
         mBuilder.setContentText("Hello World!");
-// Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, MainActivity.class);
-        resultIntent.putExtra("notifytest", "hello notification world!");
+        mBuilder.setAutoCancel(true);
+        mBuilder.setDefaults(Notification.DEFAULT_ALL);
 
-// The stack builder object will contain an artificial back stack for the
-// started Activity.
-// This ensures that navigating backward from the Activity leads out of
-// your app to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-// Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(MainActivity.class);
-// Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            mBuilder.setPriority(NotificationManager.IMPORTANCE_HIGH);
+        } else {
+            mBuilder.setPriority(Notification.PRIORITY_MAX);
+        }
+
+        Intent resultIntent = new Intent(this, BackgroundService.class);
+        resultIntent.putExtra("Notification", true);
+
         PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
+                PendingIntent.getService(
+                        this,
                         0,
+                        resultIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
         mBuilder.setContentIntent(resultPendingIntent);
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        
+        int mNotificationId = 378329572;
+        mNotificationManager.notify(mNotificationId, mBuilder.build());
+    }
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        if (intent != null) {
+            Bundle extras = intent.getExtras();
+            if (extras != null && !extras.isEmpty()) {
+                boolean isNotification = extras.getBoolean("Notification");
+                if (isNotification) {
+                    testNotification2();
+                }
+            }
+        }
+    }
+
+    void testNotification2() {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this);
+        mBuilder.setSmallIcon(R.drawable.icon_appbar_brain_transparent);
+        mBuilder.setContentTitle("My notification");
+        mBuilder.setContentText("Hello again!!");
+        mBuilder.setAutoCancel(true);
+        mBuilder.setDefaults(Notification.DEFAULT_ALL);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            mBuilder.setPriority(NotificationManager.IMPORTANCE_HIGH);
+        } else {
+            mBuilder.setPriority(Notification.PRIORITY_MAX);
+        }
+
+        Intent resultIntent = new Intent(this, MainActivity.class);
+
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-// mNotificationId is a unique integer your app uses to identify the
-// notification. For example, to cancel the notification, you can pass its ID
-// number to NotificationManager.cancel().
-        int mNotificationId = 378329572;
+        int mNotificationId = 378329573;
         mNotificationManager.notify(mNotificationId, mBuilder.build());
     }
 
