@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import se.su.dsv.mastermcvoiceit.cardViews.CardFragment;
 import se.su.dsv.mastermcvoiceit.place.HomePlace;
+import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
 import se.su.dsv.mastermcvoiceit.service.BackgroundService;
 
 public class MainActivity extends AppCompatActivity implements RecognitionListener, CardFragment.GPSController {
@@ -99,10 +100,11 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     private void initPlaces() {
         if (BackgroundService.places.isEmpty()) {
+            SSHConnDetails homeSSH = new SSHConnDetails("192.168.2.3", "pi", "XXX");
             Location homeLoc = new Location("");
             homeLoc.setLatitude(59.345613);
             homeLoc.setLongitude(18.111798);
-            BackgroundService.places.add(new HomePlace(this, homeLoc));
+            BackgroundService.places.add(new HomePlace(this, homeLoc, homeSSH));
         }
     }
 

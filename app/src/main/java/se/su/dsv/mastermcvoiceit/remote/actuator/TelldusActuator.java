@@ -2,6 +2,9 @@ package se.su.dsv.mastermcvoiceit.remote.actuator;
 
 import android.util.Log;
 
+import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
+import se.su.dsv.mastermcvoiceit.remote.SSHUtil;
+
 /**
  * Created by annika on 2017-12-01.
  */
@@ -12,10 +15,13 @@ public class TelldusActuator implements Actuator {
     private ActuatorType type;
     private int state;
 
-    public TelldusActuator(int id, String name, ActuatorType type) {
+    private SSHConnDetails connDetails;
+
+    public TelldusActuator(int id, String name, ActuatorType type, SSHConnDetails connDetails) {
         this.id = id;
         this.name = name;
         this.type = type;
+        this.connDetails = connDetails;
 
         // TODO get state from real actuator?
         this.state = 0;
@@ -39,11 +45,17 @@ public class TelldusActuator implements Actuator {
     @Override
     public void setState(int state) {
         this.state = state;
-        if (state > 0) {
-            Log.v("TelldsAct", "Actuator " + name + " on");
-        } else {
-            Log.v("TelldsAct", "Actuator " + name + " off");
-        }
+        setSSHState(state);
+    }
+
+    private void setSSHState(int state) {
+        String command = "tdtool";
+        if (state <= 0)
+            command += "--off " + id;
+        else
+            command += "--on " + id;
+
+        Log.v("TellsudAct", "cmd result: " + SSHUtil.runCommand(command, connDetails));
     }
 
     @Override
