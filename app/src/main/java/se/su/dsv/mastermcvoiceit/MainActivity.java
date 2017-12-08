@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     private Intent backgroundService;
 
     private ArrayList<String> resultArray;
-    private String voiceResultStr;
     private Location homeLocation; // TEMP
 
     private FragmentManager fragmentManager;
@@ -121,13 +120,13 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
      * Temporarily bound to a button for testing, should be activated after voice result.
      */
     public void voiceResult(View v) {
-        voiceResultStr = "sensor 2";
-//        if (voiceResultStr != null) {
-        // TODO: implement method in fragment to execute and render command?
-        // idea: use the place name as prefix in command if you want to execute a command for another place that's not the visible one.
-        // for example, say the command: "home, turn off all lights" when in the fragment for country house.
-        // commands with such prefix launches the corresponding place fragment and runs the command within it.
-//      }
+        doCommand("turn off coffeemaker");
+    }
+
+    private void doCommand(String command) {
+        cardFragment.doCommand(command);
+        cardFragment.updateCardModels();
+        cardFragment.renderAllCards();
     }
 
     public void voiceInputButtonListener(View v) {
@@ -155,37 +154,46 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     @Override
-    public void onReadyForSpeech(Bundle bundle) {}
+    public void onReadyForSpeech(Bundle bundle) {
+    }
 
     @Override
-    public void onBeginningOfSpeech() {}
+    public void onBeginningOfSpeech() {
+    }
 
     @Override
-    public void onRmsChanged(float v) {}
+    public void onRmsChanged(float v) {
+    }
 
     @Override
-    public void onBufferReceived(byte[] bytes) {}
+    public void onBufferReceived(byte[] bytes) {
+    }
 
     @Override
-    public void onEndOfSpeech() {}
+    public void onEndOfSpeech() {
+    }
 
     @Override
-    public void onError(int i) {}
+    public void onError(int i) {
+    }
 
     @Override
     public void onResults(Bundle bundle) {
         ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 
         if (matches != null && matches.size() > 0) {
-            voiceResultStr = matches.get(0).toLowerCase();
+            String voiceResultStr = matches.get(0).toLowerCase();
+            doCommand(voiceResultStr);
         }
     }
 
     @Override
-    public void onPartialResults(Bundle bundle) {}
+    public void onPartialResults(Bundle bundle) {
+    }
 
     @Override
-    public void onEvent(int i, Bundle bundle) {}
+    public void onEvent(int i, Bundle bundle) {
+    }
 
     private void createHomeLocation() {
         homeLocation = new Location("");

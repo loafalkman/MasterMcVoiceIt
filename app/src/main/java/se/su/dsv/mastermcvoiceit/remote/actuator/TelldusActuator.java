@@ -1,5 +1,6 @@
 package se.su.dsv.mastermcvoiceit.remote.actuator;
 
+import android.os.Handler;
 import android.util.Log;
 
 import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
@@ -49,13 +50,19 @@ public class TelldusActuator implements Actuator {
     }
 
     private void setSSHState(int state) {
-        String command = "tdtool";
+        final String command;
         if (state <= 0)
-            command += "--off " + id;
+            command = "tdtool --off " + id;
         else
-            command += "--on " + id;
+            command = "tdtool --on " + id;
 
-        Log.v("TellsudAct", "cmd result: " + SSHUtil.runCommand(command, connDetails));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.v("TellsudAct", "cmd result: " + SSHUtil.runCommand(command, connDetails));
+            }
+        }).start();
+
     }
 
     @Override

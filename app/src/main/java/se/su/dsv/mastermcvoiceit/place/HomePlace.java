@@ -49,7 +49,7 @@ public class HomePlace extends Place {
         actuatorList = new ActuatorList();
 
         actuatorList.add(new TelldusActuator(1, "bedroom light", ActuatorType.POWER_SWITCH, connDetails));
-        actuatorList.add(new TelldusActuator(42, "coffeemaker", ActuatorType.POWER_SWITCH, connDetails));
+        actuatorList.add(new TelldusActuator(42, "coffee maker", ActuatorType.POWER_SWITCH, connDetails));
         actuatorList.add(new TelldusActuator(5, "central heating", ActuatorType.HEATER, connDetails));
         actuatorList.add(new TelldusActuator(7, "element", ActuatorType.POWER_SWITCH, connDetails));
     }

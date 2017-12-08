@@ -14,7 +14,7 @@ public class TempCommand extends Command {
     /**
      * Automatically adds itself to the list of commands, just run "new TempCommand(--insert sensor here--);".
      */
-    public TempCommand(Sensor sensor) { // TODO should use ArrayList<Sensor> as input
+    public TempCommand(Sensor sensor) {
         super();
         this.sensor = sensor;
         makeAliases();
@@ -27,7 +27,7 @@ public class TempCommand extends Command {
     }
 
     @Override
-    public CardModel doCommand(String spokenText) {
-        return new TempCardModel(sensor);
+    public String doCommand(String spokenText) {
+        return "temperature for "+sensor.getName()+" sensor is "+sensor.fetchSensorValue();
     }
 }

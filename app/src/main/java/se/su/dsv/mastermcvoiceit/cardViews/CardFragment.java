@@ -15,16 +15,14 @@ import se.su.dsv.mastermcvoiceit.R;
 import se.su.dsv.mastermcvoiceit.cardModels.ActuatorsCardModel;
 import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
 import se.su.dsv.mastermcvoiceit.cardModels.TempsCardModel;
+import se.su.dsv.mastermcvoiceit.command.ActuatorCommand;
+import se.su.dsv.mastermcvoiceit.command.Command;
 import se.su.dsv.mastermcvoiceit.place.Place;
 import se.su.dsv.mastermcvoiceit.remote.actuator.Actuator;
-import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorList;
 import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorType;
-import se.su.dsv.mastermcvoiceit.remote.actuator.TelldusActuator;
 import se.su.dsv.mastermcvoiceit.command.TempCommand;
 import se.su.dsv.mastermcvoiceit.remote.sensor.Sensor;
-import se.su.dsv.mastermcvoiceit.remote.sensor.SensorList;
 import se.su.dsv.mastermcvoiceit.remote.sensor.SensorType;
-import se.su.dsv.mastermcvoiceit.remote.sensor.TelldusSensor;
 import se.su.dsv.mastermcvoiceit.service.BackgroundService;
 
 /**
@@ -96,7 +94,7 @@ public class CardFragment extends Fragment {
             @Override
             public void onSwitchChange(int switchIndex, boolean checked) {
 
-                myPlace.getActuatorList().get(ActuatorType.POWER_SWITCH).get(switchIndex).setState(checked ? 1 : 0);
+                myPlace.getActuatorList().get(ActuatorType.POWER_SWITCH).get(switchIndex).setState(checked ? Integer.MAX_VALUE : 0);
 
             }
         });
@@ -154,5 +152,20 @@ public class CardFragment extends Fragment {
     // TODO: each CardsFragment should have their own list of commands?
     private void initCommands() {
         new TempCommand(myPlace.getSensorList().get(2));
+
+        for (Actuator actuator : myPlace.getActuatorList().get(ActuatorType.POWER_SWITCH)) {
+            new ActuatorCommand(actuator, true);
+            new ActuatorCommand(actuator, false);
+        }
+    }
+
+    public void doCommand(String spokenText) {
+        Command cmd = Command.findCommand(spokenText);
+        String cmdResult = "Could not find command: "+spokenText;
+
+        if (cmd != null)
+            cmdResult = cmd.doCommand(spokenText);
+
+        Toast.makeText(getContext(), cmdResult, Toast.LENGTH_LONG).show();
     }
 }
