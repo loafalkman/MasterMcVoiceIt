@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import se.su.dsv.mastermcvoiceit.MainActivity;
 import se.su.dsv.mastermcvoiceit.R;
+import se.su.dsv.mastermcvoiceit.place.HomePlace;
 import se.su.dsv.mastermcvoiceit.place.Place;
 
 /**
@@ -58,13 +59,15 @@ public class BackgroundService extends IntentService {
 
         tickerHandler.post(ticker);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                testNotification();
-                Log.d("handler thing", "postDepolyed");
-            }
-        }, 10000);
+        Log.d("Service", "onCreate");
+
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                testNotification();
+//                Log.d("handler thing", "postDelayed");
+//            }
+//        }, 5000);
     }
 
     @Nullable
@@ -77,6 +80,9 @@ public class BackgroundService extends IntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         boolean startGPS = intent.getBooleanExtra(INTENT_KEY_GPS_ON, true);
         startGPS(startGPS);
+
+        Log.d("Service", "onStartCommand");
+
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -98,9 +104,9 @@ public class BackgroundService extends IntentService {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.drawable.icon_appbar_brain_transparent);
-        mBuilder.setContentTitle("My notification");
-        mBuilder.setContentText("Hello World!");
-        mBuilder.setAutoCancel(true);
+        mBuilder.setContentTitle("Bedroom light off");
+        mBuilder.setContentText("Turn on bedroom lights?");
+//        mBuilder.setAutoCancel(true);
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -109,17 +115,37 @@ public class BackgroundService extends IntentService {
             mBuilder.setPriority(Notification.PRIORITY_MAX);
         }
 
-        Intent resultIntent = new Intent(this, BackgroundService.class);
-        resultIntent.putExtra("Notification", true);
+        // Action yes
+        Intent yesAction = new Intent(this, BackgroundService.class);
+        yesAction.putExtra("place id", 0);
+        yesAction.setAction("YES");
 
-        PendingIntent resultPendingIntent =
+        PendingIntent yesPendingIntent =
                 PendingIntent.getService(
                         this,
                         0,
-                        resultIntent,
+                        yesAction,
                         PendingIntent.FLAG_UPDATE_CURRENT // ??
                 );
-        mBuilder.setContentIntent(resultPendingIntent);
+
+        mBuilder.addAction(R.drawable.temp, "YES", yesPendingIntent);
+
+        // Action no
+        Intent noAction = new Intent(this, BackgroundService.class);
+        noAction.putExtra("place id", 0);
+        noAction.setAction("CANCEL");
+
+        PendingIntent noPendingIntent =
+                PendingIntent.getService(
+                        this,
+                        0,
+                        noAction,
+                        PendingIntent.FLAG_UPDATE_CURRENT // ??
+                );
+
+        mBuilder.addAction(R.drawable.temp, "CANCEL", noPendingIntent);
+
+
 
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -130,12 +156,24 @@ public class BackgroundService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+
+        Log.d("Service", "onHandleIntent");
+
         if (intent != null) {
             Bundle extras = intent.getExtras();
+
             if (extras != null && !extras.isEmpty()) {
-                boolean isNotification = extras.getBoolean("Notification");
-                if (isNotification) {
-                    testNotification2();
+                final String action = intent.getAction();
+                int placeID = extras.getInt("place id");
+
+                if (placeID == 0) {
+                    if (action.equals("YES")) {
+                        HomePlace homePlace = (HomePlace) places.get(0);
+                        homePlace.getActuatorList().get(0).setState(1);
+                    }
+                    if (action.equals("CANCEL")) {
+                        testNotification2();
+                    }
                 }
             }
         }
@@ -189,6 +227,8 @@ public class BackgroundService extends IntentService {
      */
     @Override
     public void onDestroy() {
+        Log.d("Service", "onDestroy");
+
         super.onDestroy();
         startGPS(false);
     }

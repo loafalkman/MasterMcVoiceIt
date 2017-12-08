@@ -1,6 +1,8 @@
 package se.su.dsv.mastermcvoiceit.cardModels;
 
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 import se.su.dsv.mastermcvoiceit.remote.actuator.Actuator;

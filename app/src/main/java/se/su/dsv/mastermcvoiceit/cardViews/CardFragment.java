@@ -43,7 +43,6 @@ public class CardFragment extends Fragment {
     private ActuatorsCardModel actuatorsModel;
 
     private View fragView;
-    private TempView tempView;
     private TempsView tempsView;
     private LocationView locationView;
     private ActuatorsView actuatorsView;
@@ -85,10 +84,6 @@ public class CardFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         fragView = inflater.inflate(R.layout.card_fragment, container, false);
 
-        tempView = new TempView(getContext());
-        CardView temp = (CardView) fragView.findViewById(R.id.framelayout_main_commandcontainer);
-        temp.addView(tempView);
-
         tempsView = new TempsView(getContext());
         CardView temps = (CardView) fragView.findViewById(R.id.framelayout_main_tempscontainer);
         temps.addView(tempsView);
@@ -100,7 +95,9 @@ public class CardFragment extends Fragment {
         actuatorsView = new ActuatorsView(getContext(), new ActuatorsView.SwitchesListener() {
             @Override
             public void onSwitchChange(int switchIndex, boolean checked) {
+
                 myPlace.getActuatorList().get(ActuatorType.POWER_SWITCH).get(switchIndex).setState(checked ? 1 : 0);
+
             }
         });
         CardView actuators = (CardView) fragView.findViewById(R.id.framelayout_main_actuatorscontainer);
@@ -119,7 +116,7 @@ public class CardFragment extends Fragment {
     }
 
     private void renderCard(TempsCardModel tempsModel) {
-        tempsView.updateTempsList(tempsModel.getSensorValues());
+           tempsView.updateTempsList(tempsModel.getSensorValues());
     }
 
     private void renderCard(LocationCardModel locationModel) {

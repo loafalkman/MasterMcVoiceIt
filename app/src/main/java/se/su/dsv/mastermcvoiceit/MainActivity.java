@@ -120,22 +120,12 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
      */
     public void voiceResult(View v) {
         voiceResultStr = "sensor 2";
-
-        if (voiceResultStr != null) {
-            // TODO: implement method in fragment to execute and render command?
-            // idea: use the place name as prefix in command if you want to execute a command for another place that's not the visible one.
-            // for example, say the command: "home, turn off all lights" when in the fragment for country house.
-            // commands with such prefix launches the corresponding place fragment and runs the command within it.
-
-//            Command foundCommand = Command.findCommand(voiceResultStr);
-//
-//            if (foundCommand != null) {
-//                Toast.makeText(this, "Command: " + voiceResultStr, Toast.LENGTH_SHORT).show();
-//
-//            } else {
-//                Toast.makeText(this, "Couldn't find command: " + voiceResultStr, Toast.LENGTH_LONG).show();
-//            }
-        }
+//        if (voiceResultStr != null) {
+        // TODO: implement method in fragment to execute and render command?
+        // idea: use the place name as prefix in command if you want to execute a command for another place that's not the visible one.
+        // for example, say the command: "home, turn off all lights" when in the fragment for country house.
+        // commands with such prefix launches the corresponding place fragment and runs the command within it.
+//      }
     }
 
     public void voiceInputButtonListener(View v) {
