@@ -47,17 +47,19 @@ public class NotificationService extends IntentService {
                 }
 
                 final String action = intent.getAction();
-                int placeID = extras.getInt("place id");
+                if (action != null) {
+                    int placeID = extras.getInt("place id");
 
-                if (placeID == 0) {
-                    HomePlace homePlace = (HomePlace) BackgroundService.places.get(0);
-                    if (action.equals(ACTION_YES)) {
-                        homePlace.getActuatorList().get(1).setState(1);
-                        mNotificationManager.cancel(378329572);
-                    }
-                    if (action.equals(ACTION_CANCEL)) {
-                        homePlace.setBedroomLighOnService(false);
-                        mNotificationManager.cancel(378329572);
+                    if (placeID == 0) {
+                        HomePlace homePlace = (HomePlace) BackgroundService.places.get(0);
+                        if (action.equals(ACTION_YES)) {
+                            homePlace.getActuatorList().get(1).setState(1);
+                            mNotificationManager.cancel(378329572);
+                        }
+                        if (action.equals(ACTION_CANCEL)) {
+                            homePlace.setBedroomLighOnService(false);
+                            mNotificationManager.cancel(378329572);
+                        }
                     }
                 }
             }
