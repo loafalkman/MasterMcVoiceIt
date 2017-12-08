@@ -2,6 +2,7 @@ package se.su.dsv.mastermcvoiceit.place;
 
 import android.content.Context;
 import android.location.Location;
+import android.support.v7.app.NotificationCompat;
 
 import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorList;
 import se.su.dsv.mastermcvoiceit.remote.sensor.SensorList;
@@ -22,7 +23,7 @@ public abstract class Place {
         this.location = location;
     }
 
-    public abstract void tick(Location currentLocation);
+    public abstract String[] tick(Location currentLocation);
 
     public SensorList getSensorList() {
         return sensorList;

@@ -1,11 +1,9 @@
 package se.su.dsv.mastermcvoiceit.service;
 
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -23,7 +21,6 @@ import java.util.ArrayList;
 
 import se.su.dsv.mastermcvoiceit.MainActivity;
 import se.su.dsv.mastermcvoiceit.R;
-import se.su.dsv.mastermcvoiceit.place.HomePlace;
 import se.su.dsv.mastermcvoiceit.place.Place;
 
 /**
@@ -57,14 +54,6 @@ public class BackgroundService extends Service {
         tickerHandler.post(ticker);
 
         Log.d("Service", "onCreate");
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                testNotification();
-                Log.d("handler thing", "postDelayed");
-            }
-        }, 5000);
     }
 
     @Nullable
@@ -76,132 +65,34 @@ public class BackgroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("Service", "onStartCommand");
-
+        boolean startGPS = true;
         if (intent != null) {
-            boolean startGPS = intent.getBooleanExtra(INTENT_KEY_GPS_ON, true);
-            startGPS(startGPS);
-
-            Bundle extras = intent.getExtras();
-
-            if (extras != null && !extras.isEmpty()) {
-                final String action = intent.getAction();
-                int placeID = extras.getInt("place id");
-
-                if (placeID == 0) {
-                    if (action.equals("YES")) {
-                        HomePlace homePlace = (HomePlace) places.get(0);
-                        homePlace.getActuatorList().get(0).setState(1);
-                    }
-                    if (action.equals("CANCEL")) {
-                        testNotification2();
-                    }
-                }
-            }
+            startGPS = intent.getBooleanExtra(INTENT_KEY_GPS_ON, true);
         }
 
-
+        startGPS(startGPS);
         return super.onStartCommand(intent, flags, startId);
     }
 
     private Runnable ticker = new Runnable() {
         @Override
         public void run() {
+            Log.d("Service", "run location "+ lastLocation);
 
             if (lastLocation != null && gpsON) {
+
                 for (Place place : places) {
-                    place.tick(lastLocation);
+                    String[] notify = place.tick(lastLocation);
+                    if (notify != null) {
+                        Intent nService = new Intent(BackgroundService.this, NotificationService.class);
+                        nService.putExtra("notification codes", notify);
+                        BackgroundService.this.startService(nService);
+                    }
                 }
             }
             tickerHandler.postDelayed(this, UPDATE_INTERVAL_TICK);
         }
     };
-
-    void testNotification() {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this);
-        mBuilder.setSmallIcon(R.drawable.icon_appbar_brain_transparent);
-        mBuilder.setContentTitle("Bedroom light off");
-        mBuilder.setContentText("Turn on bedroom lights?");
-//        mBuilder.setAutoCancel(true);
-        mBuilder.setDefaults(Notification.DEFAULT_ALL);
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            mBuilder.setPriority(NotificationManager.IMPORTANCE_HIGH);
-        } else {
-            mBuilder.setPriority(Notification.PRIORITY_MAX);
-        }
-
-        // Action yes
-        Intent yesAction = new Intent(this, BackgroundService.class);
-        yesAction.putExtra("place id", 0);
-        yesAction.setAction("YES");
-
-        PendingIntent yesPendingIntent =
-                PendingIntent.getService(
-                        this,
-                        0,
-                        yesAction,
-                        PendingIntent.FLAG_UPDATE_CURRENT // ??
-                );
-
-        mBuilder.addAction(R.drawable.temp, "YES", yesPendingIntent);
-
-        // Action no
-        Intent noAction = new Intent(this, BackgroundService.class);
-        noAction.putExtra("place id", 0);
-        noAction.setAction("CANCEL");
-
-        PendingIntent noPendingIntent =
-                PendingIntent.getService(
-                        this,
-                        0,
-                        noAction,
-                        PendingIntent.FLAG_UPDATE_CURRENT // ??
-                );
-
-        mBuilder.addAction(R.drawable.temp, "CANCEL", noPendingIntent);
-
-
-
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        
-        int mNotificationId = 378329572;
-        mNotificationManager.notify(mNotificationId, mBuilder.build());
-    }
-
-    void testNotification2() {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this);
-        mBuilder.setSmallIcon(R.drawable.icon_appbar_brain_transparent);
-        mBuilder.setContentTitle("My notification");
-        mBuilder.setContentText("Hello again!!");
-        mBuilder.setAutoCancel(true);
-        mBuilder.setDefaults(Notification.DEFAULT_ALL);
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            mBuilder.setPriority(NotificationManager.IMPORTANCE_HIGH);
-        } else {
-            mBuilder.setPriority(Notification.PRIORITY_MAX);
-        }
-
-        Intent resultIntent = new Intent(this, MainActivity.class);
-
-        PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(
-                        this,
-                        0,
-                        resultIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        mBuilder.setContentIntent(resultPendingIntent);
-
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        int mNotificationId = 378329573;
-        mNotificationManager.notify(mNotificationId, mBuilder.build());
-    }
 
     private void startGPS(boolean on) {
         if (on) {

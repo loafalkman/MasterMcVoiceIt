@@ -26,6 +26,11 @@
             android:description="@string/app_name"
             android:exported="false">
         </service>
+        <service
+            android:name=".service.NotificationService"
+            android:description="@string/app_name"
+            android:exported="false">
+        </service>
 
 
     </application>

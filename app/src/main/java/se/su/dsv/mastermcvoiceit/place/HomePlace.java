@@ -1,8 +1,15 @@
 package se.su.dsv.mastermcvoiceit.place;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
+import android.support.v7.app.NotificationCompat;
+import android.util.Log;
 
+import se.su.dsv.mastermcvoiceit.R;
 import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
 import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorList;
 import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorType;
@@ -10,6 +17,8 @@ import se.su.dsv.mastermcvoiceit.remote.actuator.TelldusActuator;
 import se.su.dsv.mastermcvoiceit.remote.sensor.SensorList;
 import se.su.dsv.mastermcvoiceit.remote.sensor.SensorType;
 import se.su.dsv.mastermcvoiceit.remote.sensor.TelldusSensor;
+import se.su.dsv.mastermcvoiceit.service.BackgroundService;
+import se.su.dsv.mastermcvoiceit.service.NotificationService;
 
 
 /**
@@ -19,7 +28,8 @@ import se.su.dsv.mastermcvoiceit.remote.sensor.TelldusSensor;
 public class HomePlace extends Place {
     private SSHConnDetails connDetails;
 
-    // test constructor
+    private boolean bedroomLighOnService = true;
+
     public HomePlace(Context context, Location location, SSHConnDetails connDetails) {
         super(context, null, null, location);
         this.connDetails = connDetails;
@@ -28,10 +38,17 @@ public class HomePlace extends Place {
         initActuators();
     }
 
-    public void tick(Location currentLocation) {
+    public void setBedroomLighOnService(boolean state) {
+        this.bedroomLighOnService = state;
+    }
+    public String[] tick(Location currentLocation) {
+        Log.d("HomePlace", "tick");
         if (currentLocation.distanceTo(super.location) < 1000) {
-            // someting!
-        }
+            if (actuatorList.get(1).fetchState() == 0 && bedroomLighOnService)
+                return new String[]{"0", "Turn on bedroom light"};
+            }
+
+        return null;
     }
 
     /**
