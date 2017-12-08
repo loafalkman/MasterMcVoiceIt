@@ -1,5 +1,8 @@
 package se.su.dsv.mastermcvoiceit.remote.sensor;
 
+import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
+import se.su.dsv.mastermcvoiceit.remote.SSHUtil;
+
 /**
  * Created by felix on 2017-11-24.
  */
@@ -17,7 +20,24 @@ public class TelldusSensor implements Sensor{
 
     // TODO: actually read from a sensor! (or simulate sensor)
     public float fetchSensorValue() {
-        return (float) Math.random();
+        SSHConnDetails details = new SSHConnDetails("192.168.0.112","pi","raspberry");
+        String list = SSHUtil.runCommand("tdtool -l", details);
+        String result = chopString(list);
+
+        return new Float(result).floatValue();
+    }
+
+    private String chopString(String input) {
+        String[] lines = input.split("\\n");
+
+        for (String line : lines) {
+            if (line.contains("135")) {
+                String result = line.split("\\t")[3];
+                
+                return result.substring(0, result.length() - 1);
+            }
+        }
+        return null;
     }
 
     public int getID() {
