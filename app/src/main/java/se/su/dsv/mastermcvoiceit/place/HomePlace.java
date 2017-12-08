@@ -3,6 +3,7 @@ package se.su.dsv.mastermcvoiceit.place;
 import android.content.Context;
 import android.location.Location;
 
+import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
 import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorList;
 import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorType;
 import se.su.dsv.mastermcvoiceit.remote.actuator.TelldusActuator;
@@ -16,10 +17,13 @@ import se.su.dsv.mastermcvoiceit.remote.sensor.TelldusSensor;
  */
 
 public class HomePlace extends Place {
+    private SSHConnDetails connDetails;
 
     // test constructor
-    public HomePlace(Context context, Location location) {
+    public HomePlace(Context context, Location location, SSHConnDetails connDetails) {
         super(context, null, null, location);
+        this.connDetails = connDetails;
+
         initSensors();
         initActuators();
     }
@@ -44,9 +48,9 @@ public class HomePlace extends Place {
     private void initActuators() {
         actuatorList = new ActuatorList();
 
-        actuatorList.add(new TelldusActuator(1, "bedroom light", ActuatorType.POWER_SWITCH));
-        actuatorList.add(new TelldusActuator(42, "coffeemaker", ActuatorType.POWER_SWITCH));
-        actuatorList.add(new TelldusActuator(5, "central heating", ActuatorType.HEATER));
-        actuatorList.add(new TelldusActuator(7, "element", ActuatorType.POWER_SWITCH));
+        actuatorList.add(new TelldusActuator(1, "bedroom light", ActuatorType.POWER_SWITCH, connDetails));
+        actuatorList.add(new TelldusActuator(42, "coffee maker", ActuatorType.POWER_SWITCH, connDetails));
+        actuatorList.add(new TelldusActuator(5, "central heating", ActuatorType.HEATER, connDetails));
+        actuatorList.add(new TelldusActuator(7, "element", ActuatorType.POWER_SWITCH, connDetails));
     }
 }

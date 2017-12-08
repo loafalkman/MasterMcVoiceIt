@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import se.su.dsv.mastermcvoiceit.cardViews.CardFragment;
 import se.su.dsv.mastermcvoiceit.place.HomePlace;
+import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
 import se.su.dsv.mastermcvoiceit.service.BackgroundService;
 
 public class MainActivity extends AppCompatActivity implements RecognitionListener, CardFragment.GPSController {
@@ -35,7 +36,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     private Intent backgroundService;
 
     private ArrayList<String> resultArray;
-    private String voiceResultStr;
     private Location homeLocation; // TEMP
 
     private FragmentManager fragmentManager;
@@ -99,10 +99,11 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     private void initPlaces() {
         if (BackgroundService.places.isEmpty()) {
+            SSHConnDetails homeSSH = new SSHConnDetails("192.168.2.3", "pi", "XXX");
             Location homeLoc = new Location("");
             homeLoc.setLatitude(59.345613);
             homeLoc.setLongitude(18.111798);
-            BackgroundService.places.add(new HomePlace(this, homeLoc));
+            BackgroundService.places.add(new HomePlace(this, homeLoc, homeSSH));
         }
     }
 
@@ -119,23 +120,13 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
      * Temporarily bound to a button for testing, should be activated after voice result.
      */
     public void voiceResult(View v) {
-        voiceResultStr = "sensor 2";
+        doCommand("turn off coffeemaker");
+    }
 
-        if (voiceResultStr != null) {
-            // TODO: implement method in fragment to execute and render command?
-            // idea: use the place name as prefix in command if you want to execute a command for another place that's not the visible one.
-            // for example, say the command: "home, turn off all lights" when in the fragment for country house.
-            // commands with such prefix launches the corresponding place fragment and runs the command within it.
-
-//            Command foundCommand = Command.findCommand(voiceResultStr);
-//
-//            if (foundCommand != null) {
-//                Toast.makeText(this, "Command: " + voiceResultStr, Toast.LENGTH_SHORT).show();
-//
-//            } else {
-//                Toast.makeText(this, "Couldn't find command: " + voiceResultStr, Toast.LENGTH_LONG).show();
-//            }
-        }
+    private void doCommand(String command) {
+        cardFragment.doCommand(command);
+        cardFragment.updateCardModels();
+        cardFragment.renderAllCards();
     }
 
     public void voiceInputButtonListener(View v) {
@@ -163,37 +154,46 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     @Override
-    public void onReadyForSpeech(Bundle bundle) {}
+    public void onReadyForSpeech(Bundle bundle) {
+    }
 
     @Override
-    public void onBeginningOfSpeech() {}
+    public void onBeginningOfSpeech() {
+    }
 
     @Override
-    public void onRmsChanged(float v) {}
+    public void onRmsChanged(float v) {
+    }
 
     @Override
-    public void onBufferReceived(byte[] bytes) {}
+    public void onBufferReceived(byte[] bytes) {
+    }
 
     @Override
-    public void onEndOfSpeech() {}
+    public void onEndOfSpeech() {
+    }
 
     @Override
-    public void onError(int i) {}
+    public void onError(int i) {
+    }
 
     @Override
     public void onResults(Bundle bundle) {
         ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 
         if (matches != null && matches.size() > 0) {
-            voiceResultStr = matches.get(0).toLowerCase();
+            String voiceResultStr = matches.get(0).toLowerCase();
+            doCommand(voiceResultStr);
         }
     }
 
     @Override
-    public void onPartialResults(Bundle bundle) {}
+    public void onPartialResults(Bundle bundle) {
+    }
 
     @Override
-    public void onEvent(int i, Bundle bundle) {}
+    public void onEvent(int i, Bundle bundle) {
+    }
 
     private void createHomeLocation() {
         homeLocation = new Location("");

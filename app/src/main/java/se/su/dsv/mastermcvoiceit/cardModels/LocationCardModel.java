@@ -18,7 +18,7 @@ public class LocationCardModel extends CardModel {
 
     public String getText() {
         if (distanceFromHome >= 0)
-            return "Distance from home: "+distanceFromHome+"m";
+            return "Distance from home: " + Math.floor(distanceFromHome/1000)+" km";
         else
             return "Waiting for GPS.";
     }
