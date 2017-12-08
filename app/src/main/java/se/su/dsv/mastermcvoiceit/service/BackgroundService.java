@@ -30,7 +30,7 @@ import se.su.dsv.mastermcvoiceit.place.Place;
  * Created by annika on 2017-11-28.
  */
 
-public class BackgroundService extends IntentService {
+public class BackgroundService extends Service {
     public static final String INTENT_KEY_GPS_ON = "startGps";
 
     private final int UPDATE_INTERVAL_TICK = 10000;
@@ -45,9 +45,6 @@ public class BackgroundService extends IntentService {
 
     public static ArrayList<Place> places = new ArrayList<>();
 
-    public BackgroundService() {
-        super("");
-    }
     /**
      * Location permission is already granted.
      */
@@ -61,13 +58,13 @@ public class BackgroundService extends IntentService {
 
         Log.d("Service", "onCreate");
 
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                testNotification();
-//                Log.d("handler thing", "postDelayed");
-//            }
-//        }, 5000);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                testNotification();
+                Log.d("handler thing", "postDelayed");
+            }
+        }, 5000);
     }
 
     @Nullable
@@ -78,10 +75,29 @@ public class BackgroundService extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        boolean startGPS = intent.getBooleanExtra(INTENT_KEY_GPS_ON, true);
-        startGPS(startGPS);
-
         Log.d("Service", "onStartCommand");
+
+        if (intent != null) {
+            boolean startGPS = intent.getBooleanExtra(INTENT_KEY_GPS_ON, true);
+            startGPS(startGPS);
+
+            Bundle extras = intent.getExtras();
+
+            if (extras != null && !extras.isEmpty()) {
+                final String action = intent.getAction();
+                int placeID = extras.getInt("place id");
+
+                if (placeID == 0) {
+                    if (action.equals("YES")) {
+                        HomePlace homePlace = (HomePlace) places.get(0);
+                        homePlace.getActuatorList().get(0).setState(1);
+                    }
+                    if (action.equals("CANCEL")) {
+                        testNotification2();
+                    }
+                }
+            }
+        }
 
 
         return super.onStartCommand(intent, flags, startId);
@@ -152,31 +168,6 @@ public class BackgroundService extends IntentService {
         
         int mNotificationId = 378329572;
         mNotificationManager.notify(mNotificationId, mBuilder.build());
-    }
-
-    @Override
-    protected void onHandleIntent(Intent intent) {
-
-        Log.d("Service", "onHandleIntent");
-
-        if (intent != null) {
-            Bundle extras = intent.getExtras();
-
-            if (extras != null && !extras.isEmpty()) {
-                final String action = intent.getAction();
-                int placeID = extras.getInt("place id");
-
-                if (placeID == 0) {
-                    if (action.equals("YES")) {
-                        HomePlace homePlace = (HomePlace) places.get(0);
-                        homePlace.getActuatorList().get(0).setState(1);
-                    }
-                    if (action.equals("CANCEL")) {
-                        testNotification2();
-                    }
-                }
-            }
-        }
     }
 
     void testNotification2() {
