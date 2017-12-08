@@ -14,55 +14,68 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/background_all_gradient"
-        >
+        android:background="@drawable/background_all_gradient">
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/floatingActionButton3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
             android:clickable="true"
             android:onClick="voiceInputButtonListener"
-            app:srcCompat="@drawable/icon_mic_dark_96"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/icon_mic_dark_96" />
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/container_main_cardsfragment"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="0dp"
             android:orientation="vertical"
-            android:layout_above="@+id/floatingActionButton3"
-            />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/main_show_result"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="16dp"
             android:background="@null"
             android:onClick="voiceResult"
             android:text="SHOW RESULT"
-            android:layout_toLeftOf="@id/floatingActionButton3"
-            android:layout_alignParentBottom="true"
-            />
+            app:layout_constraintBottom_toBottomOf="@+id/floatingActionButton3"
+            app:layout_constraintEnd_toStartOf="@+id/floatingActionButton3"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/floatingActionButton3"
+            app:layout_constraintVertical_bias="1.0" />
 
         <Button
             android:id="@+id/main_update_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:background="@null"
-            android:layout_margin="15dp"
             android:onClick="updateCardModelListener"
             android:text="update readings"
-            android:layout_toRightOf="@id/floatingActionButton3"
-            android:layout_alignParentBottom="true"
-            />
+            app:layout_constraintBottom_toBottomOf="@+id/floatingActionButton3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/floatingActionButton3"
+            app:layout_constraintTop_toTopOf="@+id/floatingActionButton3"
+            app:layout_constraintVertical_bias="1.0" />
 
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
+
 </LinearLayout>
