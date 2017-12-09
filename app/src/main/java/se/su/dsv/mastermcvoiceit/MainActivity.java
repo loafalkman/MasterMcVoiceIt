@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     private void initPlaces() {
         if (BackgroundService.places.isEmpty()) {
-            SSHConnDetails homeSSH = new SSHConnDetails("192.168.2.3", "pi", "XXX");
+            SSHConnDetails homeSSH = new SSHConnDetails("192.168.0.112", "pi", "raspberry");
             Location homeLoc = new Location("");
             homeLoc.setLatitude(59.345613);
             homeLoc.setLongitude(18.111798);

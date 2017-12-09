@@ -27,14 +27,12 @@ public class NotificationService extends IntentService {
 
     public NotificationService() {
         super("NotificationService");
-        Log.d("N Service", "constructor");
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         mNotificationManager =
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        Log.d("N Service", "onHandleIntent");
 
         if (intent != null) {
             Bundle extras = intent.getExtras();
@@ -53,7 +51,7 @@ public class NotificationService extends IntentService {
                     if (placeID == 0) {
                         HomePlace homePlace = (HomePlace) BackgroundService.places.get(0);
                         if (action.equals(ACTION_YES)) {
-                            homePlace.getActuatorList().get(1).setState(1);
+                            homePlace.getActuatorList().get(11).setState(1);
                             mNotificationManager.cancel(378329572);
                         }
                         if (action.equals(ACTION_CANCEL)) {
@@ -67,8 +65,6 @@ public class NotificationService extends IntentService {
     }
 
     private void buildNotification(String[] codes) {
-        Log.d("N Service", "buildNotification");
-
         if (codes[0].equals("0")) {
             if (codes[1].equals("Turn on bedroom light")) {
                 BLOffNotification();
@@ -77,8 +73,6 @@ public class NotificationService extends IntentService {
     }
 
     private void BLOffNotification() {
-        Log.d("N Service", "BLOffNotification");
-
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.drawable.icon_appbar_brain_transparent);

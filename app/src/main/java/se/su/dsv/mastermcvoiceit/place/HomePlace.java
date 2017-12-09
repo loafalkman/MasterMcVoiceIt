@@ -43,10 +43,10 @@ public class HomePlace extends Place {
     }
     public String[] tick(Location currentLocation) {
         Log.d("HomePlace", "tick");
-        if (currentLocation.distanceTo(super.location) < 1000) {
-            if (actuatorList.get(1).fetchState() == 0 && bedroomLighOnService)
-                return new String[]{"0", "Turn on bedroom light"};
-            }
+//        if (currentLocation.distanceTo(super.location) < 1000) {
+//            if (actuatorList.get(1).fetchState() == 0 && bedroomLighOnService)
+//                return new String[]{"0", "Turn on bedroom light"};
+//            }
 
         return null;
     }
@@ -65,7 +65,7 @@ public class HomePlace extends Place {
     private void initActuators() {
         actuatorList = new ActuatorList();
 
-        actuatorList.add(new TelldusActuator(1, "bedroom light", ActuatorType.POWER_SWITCH, connDetails));
+        actuatorList.add(new TelldusActuator(11, "bedroom light", ActuatorType.POWER_SWITCH, connDetails));
         actuatorList.add(new TelldusActuator(42, "coffee maker", ActuatorType.POWER_SWITCH, connDetails));
         actuatorList.add(new TelldusActuator(5, "central heating", ActuatorType.HEATER, connDetails));
         actuatorList.add(new TelldusActuator(7, "element", ActuatorType.POWER_SWITCH, connDetails));

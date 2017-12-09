@@ -50,11 +50,15 @@ public class TelldusActuator implements Actuator {
     }
 
     private void setSSHState(int state) {
+        this.state = state;
         final String command;
         if (state <= 0)
             command = "tdtool --off " + id;
         else
             command = "tdtool --on " + id;
+
+
+        Log.d("TellsudAct", command);
 
         new Thread(new Runnable() {
             @Override
