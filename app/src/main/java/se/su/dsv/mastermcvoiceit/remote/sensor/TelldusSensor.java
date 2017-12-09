@@ -11,17 +11,18 @@ public class TelldusSensor implements Sensor{
     private int id;
     private String name;
     private SensorType type;
+    private SSHConnDetails connDetails;
 
-    public TelldusSensor(int id, String name, SensorType type) {
+    public TelldusSensor(int id, String name, SensorType type, SSHConnDetails connDetails) {
         this.id = id;
         this.name = name;
         this.type = type;
+        this.connDetails = connDetails;
     }
 
     // TODO: actually read from a sensor! (or simulate sensor)
     public float fetchSensorValue() {
-        SSHConnDetails details = new SSHConnDetails("192.168.0.112","pi","raspberry");
-        String list = SSHUtil.runCommand("tdtool -l", details);
+        String list = SSHUtil.runCommand("tdtool -l", connDetails);
         String result = chopString(list);
 
         return new Float(result).floatValue();

@@ -42,11 +42,10 @@ public class HomePlace extends Place {
         this.bedroomLighOnService = state;
     }
     public String[] tick(Location currentLocation) {
-        Log.d("HomePlace", "tick");
-//        if (currentLocation.distanceTo(super.location) < 1000) {
-//            if (actuatorList.get(1).fetchState() == 0 && bedroomLighOnService)
-//                return new String[]{"0", "Turn on bedroom light"};
-//            }
+        if (currentLocation.distanceTo(super.location) < 1000) {
+            if (actuatorList.get(11).fetchState() == 0 && bedroomLighOnService)
+                return new String[]{"0", "Turn on bedroom light"};
+            }
 
         return null;
     }
@@ -57,9 +56,9 @@ public class HomePlace extends Place {
     private void initSensors() {
         sensorList = new SensorList();
 
-        sensorList.add(new TelldusSensor(2, "Living room", SensorType.TEMPERATURE));
-        sensorList.add(new TelldusSensor(15, "Garage", SensorType.TEMPERATURE));
-        sensorList.add(new TelldusSensor(10, "Front porch", SensorType.WIND));
+        sensorList.add(new TelldusSensor(2, "Living room", SensorType.TEMPERATURE, connDetails));
+        sensorList.add(new TelldusSensor(15, "Garage", SensorType.TEMPERATURE, connDetails));
+        sensorList.add(new TelldusSensor(10, "Front porch", SensorType.WIND, connDetails));
     }
 
     private void initActuators() {
