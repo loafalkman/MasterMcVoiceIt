@@ -66,7 +66,7 @@ public class HomePlace extends Place {
 
         actuatorList.add(new TelldusActuator(11, "bedroom light", ActuatorType.POWER_SWITCH, connDetails));
         actuatorList.add(new TelldusActuator(42, "coffee maker", ActuatorType.POWER_SWITCH, connDetails));
-        actuatorList.add(new TelldusActuator(5, "central heating", ActuatorType.HEATER, connDetails));
+//        actuatorList.add(new TelldusActuator(5, "central heating", ActuatorType.HEATER, connDetails));
         actuatorList.add(new TelldusActuator(7, "element", ActuatorType.POWER_SWITCH, connDetails));
     }
 }

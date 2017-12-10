@@ -20,7 +20,6 @@ public class TelldusSensor implements Sensor{
         this.connDetails = connDetails;
     }
 
-    // TODO: actually read from a sensor! (or simulate sensor)
     public float fetchSensorValue() {
         String list = SSHUtil.runCommand("tdtool -l", connDetails);
         String result = chopString(list);

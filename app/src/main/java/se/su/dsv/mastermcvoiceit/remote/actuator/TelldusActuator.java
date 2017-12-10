@@ -25,7 +25,7 @@ public class TelldusActuator implements Actuator {
         this.connDetails = connDetails;
 
         // TODO get state from real actuator?
-        this.state = 0;
+        this.state = getSSHState();
     }
 
     @Override
@@ -40,6 +40,7 @@ public class TelldusActuator implements Actuator {
 
     @Override
     public int fetchState() {
+        this.state = getSSHState();
         return this.state;
     }
 
@@ -47,6 +48,37 @@ public class TelldusActuator implements Actuator {
     public void setState(int state) {
         this.state = state;
         setSSHState(state);
+    }
+
+    private int getSSHState() {
+        String list = SSHUtil.runCommand("tdtool -l", connDetails);
+        String result = chopString(list);
+        if (result != null) {
+            if (result.contains("ON")) {
+                return 1;
+            }
+            if (result.contains("OFF")) {
+                return 0;
+            }
+        }
+        return 0;
+    }
+
+    private String chopString(String input) {
+
+        String[] lines = input.split("\\n");
+        //TODO: first line of this string tells the number of actuators connected, make this dynamic
+        int size = 3;
+
+        String[] deviceLines = new String[size];
+        System.arraycopy(lines, 1, deviceLines, 0, size);
+
+        for (String line : deviceLines) {
+            if (line.contains(""+id)) {
+                return line;
+            }
+        }
+        return null;
     }
 
     private void setSSHState(int state) {
