@@ -1,6 +1,5 @@
 package se.su.dsv.mastermcvoiceit.remote.actuator;
 
-import android.os.Handler;
 import android.util.Log;
 
 import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
@@ -24,7 +23,6 @@ public class TelldusActuator implements Actuator {
         this.type = type;
         this.connDetails = connDetails;
 
-        // TODO get state from real actuator?
         this.state = getSSHState();
     }
 
@@ -52,30 +50,32 @@ public class TelldusActuator implements Actuator {
 
     private int getSSHState() {
         String list = SSHUtil.runCommand("tdtool -l", connDetails);
-        String result = chopString(list);
-        if (result != null) {
-            if (result.contains("ON")) {
+
+        String myLine = getMyLine(list);
+        if (myLine != null) {
+            if (myLine.contains("ON")) {
                 return 1;
             }
-            if (result.contains("OFF")) {
+            if (myLine.contains("OFF")) {
                 return 0;
             }
         }
-        return 0;
+
+        throw new IllegalStateException("SSH command 'tdtool -l' is faulty (is telldus installed?)");
     }
 
-    private String chopString(String input) {
-
+    private String getMyLine(String input) {
         String[] lines = input.split("\\n");
-        //TODO: first line of this string tells the number of actuators connected, make this dynamic
-        int size = 3;
 
-        String[] deviceLines = new String[size];
-        System.arraycopy(lines, 1, deviceLines, 0, size);
+        if (!input.isEmpty() && lines[0].contains("Number of devices")) {
 
-        for (String line : deviceLines) {
-            if (line.contains(""+id)) {
-                return line;
+            String[] line0 = lines[0].split(" ");
+            int size = Integer.valueOf(line0[line0.length - 1]);
+
+            for (int i = 1; i < size + 1; i++) {
+                if (lines[i].contains("" + id)) {
+                    return lines[i];
+                }
             }
         }
         return null;

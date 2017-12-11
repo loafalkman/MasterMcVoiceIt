@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -100,11 +101,17 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
             SSHConnDetails homeSSH = getConnDetails();
 
             if (homeSSH != null) {
-                Location homeLoc = new Location("");
-                homeLoc.setLatitude(59.345613);
-                homeLoc.setLongitude(18.111798);
-                BackgroundService.places.add(new HomePlace(this, homeLoc, homeSSH));
-                return true;
+                try {
+                    Location homeLoc = new Location("");
+                    homeLoc.setLatitude(59.345613);
+                    homeLoc.setLongitude(18.111798);
+                    BackgroundService.places.add(new HomePlace(this, homeLoc, homeSSH));
+                    return true;
+                } catch (IllegalStateException e) {
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    stopService(backgroundService);
+                    finish();
+                }
             }
             return false;
         } else {
@@ -240,14 +247,10 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         homeLocation.setLongitude(18.111798);
     }
 
-    /**
-     * The final method in the Activity lifecycle. If the app is stopped
-     * the Reminders has to be saved and the BroadCastReceiver need to disconnect.
-     */
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // save data?
+    public void onStop() {
+        super.onStop();
+        readingsHandler.removeCallbacks(updateUIReadings);
     }
 
     public void startGPS() {

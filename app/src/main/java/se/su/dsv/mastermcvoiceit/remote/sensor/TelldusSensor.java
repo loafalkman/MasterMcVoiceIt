@@ -24,7 +24,10 @@ public class TelldusSensor implements Sensor{
         String list = SSHUtil.runCommand("tdtool -l", connDetails);
         String result = chopString(list);
 
-        return new Float(result).floatValue();
+        if (result != null)
+            return Float.valueOf(result);
+        else
+            return Float.MIN_VALUE;
     }
 
     private String chopString(String input) {

@@ -113,6 +113,7 @@ public class BackgroundService extends Service {
 
         super.onDestroy();
         startGPS(false);
+        tickerHandler.removeCallbacks(ticker);
     }
 
     private class MyLocationListener implements LocationListener {
