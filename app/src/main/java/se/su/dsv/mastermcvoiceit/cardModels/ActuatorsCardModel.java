@@ -1,8 +1,6 @@
 package se.su.dsv.mastermcvoiceit.cardModels;
 
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 import se.su.dsv.mastermcvoiceit.remote.actuator.Actuator;
@@ -28,7 +26,7 @@ public class ActuatorsCardModel extends CardModel {
         actuatorNames = new String[actuators.size()];
 
         for (int i = 0; i < actuators.size(); i++) {
-            actuatorStates[i] = actuators.get(i).fetchState();
+            actuatorStates[i] = actuators.get(i).getState();
             actuatorNames[i] = actuators.get(i).getName();
         }
     }

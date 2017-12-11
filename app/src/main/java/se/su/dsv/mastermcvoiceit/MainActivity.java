@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         @Override
         public void run() {
             updateCardModelListener(null);
-            readingsHandler.postDelayed(this, 5000);
+            readingsHandler.postDelayed(this, 500);
         }
     };
 
@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                     Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                     stopService(backgroundService);
                     finish();
+                    e.printStackTrace();
                 }
             }
             return false;

@@ -10,6 +10,7 @@ import java.util.HashMap;
 public class ActuatorList {
     private HashMap<Integer, Actuator> actuatorById = new HashMap<>();
     private HashMap<ActuatorType, ArrayList<Actuator>> actuatorByType = new HashMap<>();
+    private ArrayList<Actuator.Batch> batches = new ArrayList<>();
 
     public void add(Actuator actuator) {
         if (actuatorById.put(actuator.getID(), actuator) != null)
@@ -37,6 +38,24 @@ public class ActuatorList {
 
     public ArrayList<Actuator> get(ActuatorType type) {
         return actuatorByType.get(type);
+    }
+
+    public <X extends Actuator> void addBatch(Actuator.Batch<X> batch) {
+        batches.add(batch);
+        for (Actuator act : batch.getActuators()) {
+            add(act);
+        }
+    }
+
+    public void updateBatches() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (Actuator.Batch batch : batches) {
+                    batch.updateBatch();
+                }
+            }
+        }).start();
     }
 
 }
