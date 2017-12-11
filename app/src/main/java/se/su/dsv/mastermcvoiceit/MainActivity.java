@@ -1,9 +1,7 @@
 package se.su.dsv.mastermcvoiceit;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Handler;
 import android.speech.RecognitionListener;
@@ -24,12 +22,15 @@ import se.su.dsv.mastermcvoiceit.place.HomePlace;
 import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
 import se.su.dsv.mastermcvoiceit.service.BackgroundService;
 
-public class MainActivity extends AppCompatActivity implements RecognitionListener, CardFragment.GPSController {
+public class MainActivity extends AppCompatActivity implements RecognitionListener, CardFragment.GPSController, ConnDetailsDialog.ConnDetailDialogListener {
 
     private static final String TAG = "main";
     public static final String LOCATION_UPDATE = "location update";
     public static final String LOCATION = "location";
     static final int RESULT_SPEECH = 7474;
+    private static final String PREF_SSH_IP = "SSHIpAddress";
+    private static final String PREF_SSH_USER = "SSHUsername";
+    private static final String PREF_SSH_PASS = "SSHPassword";
 
     private SpeechRecognizer speechRecognizer;
     private Intent recognizerIntent;
@@ -67,20 +68,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         backgroundService = new Intent(this, BackgroundService.class);
         startService(backgroundService);
 
-        initPlaces();
-
-        cardFragment = new CardFragment();
-        Bundle cardFragArgs = new Bundle();
-        cardFragArgs.putInt(CardFragment.KEY_PLACE_NUMBER, 0);
-        cardFragment.setArguments(cardFragArgs);
-        launchFragment(cardFragment);
-
-        // TODO: handle intent sent from notifications properly
-        Intent intentForMe = getIntent();
-        String notificationExtra = intentForMe.getStringExtra("notifytest");
-        if (notificationExtra != null) {
-            Toast.makeText(this, notificationExtra, Toast.LENGTH_SHORT).show();
-        }
+        initFragment();
     }
 
     @Override
@@ -90,6 +78,16 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         readingsHandler.postDelayed(updateUIReadings, 1000);
     }
 
+    private void initFragment() {
+        if (initPlaces()) {
+            cardFragment = new CardFragment();
+            Bundle cardFragArgs = new Bundle();
+            cardFragArgs.putInt(CardFragment.KEY_PLACE_NUMBER, 0);
+            cardFragment.setArguments(cardFragArgs);
+            launchFragment(cardFragment);
+        }
+    }
+
     private void launchFragment(CardFragment cardFragment) {
         fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -97,23 +95,69 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         fragmentTransaction.commit();
     }
 
-    private void initPlaces() {
+    /** returns false if waiting for user input of connection details*/
+    private boolean initPlaces() {
         if (BackgroundService.places.isEmpty()) {
-            SSHConnDetails homeSSH = new SSHConnDetails("192.168.2.3", "pi", "XXX");
-            Location homeLoc = new Location("");
-            homeLoc.setLatitude(59.345613);
-            homeLoc.setLongitude(18.111798);
-            BackgroundService.places.add(new HomePlace(this, homeLoc, homeSSH));
+            SSHConnDetails homeSSH = getConnDetails();
+
+            if (homeSSH != null) {
+                try {
+                    Location homeLoc = new Location("");
+                    homeLoc.setLatitude(59.345613);
+                    homeLoc.setLongitude(18.111798);
+                    BackgroundService.places.add(new HomePlace(this, homeLoc, homeSSH));
+                    return true;
+                } catch (IllegalStateException e) {
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    stopService(backgroundService);
+                    finish();
+                }
+            }
+            return false;
+        } else {
+            return true;
         }
+    }
+
+    /**
+     * @return null if ssh details had to be asked via dialog, dialog answer captured in dialogResult()
+     */
+    private SSHConnDetails getConnDetails() {
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        String ip = prefs.getString(PREF_SSH_IP, null);
+        String user = prefs.getString(PREF_SSH_USER, null);
+        String pass = prefs.getString(PREF_SSH_PASS, null);
+
+        if (ip == null || user == null || pass == null) {
+            ConnDetailsDialog dialog = new ConnDetailsDialog();
+            dialog.show(getFragmentManager(), "ConnDetails");
+            return null;
+        }
+
+        return new SSHConnDetails(ip, user, pass);
+    }
+
+    @Override
+    public void dialogResult(String ip, String usr, String pass) {
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(PREF_SSH_IP, ip);
+        editor.putString(PREF_SSH_USER, usr);
+        editor.putString(PREF_SSH_PASS, pass);
+        editor.commit();
+
+        initFragment();
     }
 
 
     /**
-     * temporary listener for a temporary button :P TODO: call from a Thread instead.
+     * temporary listener for a temporary button :P
      */
     public void updateCardModelListener(View view) {
-        cardFragment.updateCardModels();
-        cardFragment.renderAllCards();
+        if(cardFragment != null) {
+            cardFragment.updateCardModels();
+            cardFragment.renderAllCards();
+        }
     }
 
     /**
@@ -124,9 +168,11 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     private void doCommand(String command) {
-        cardFragment.doCommand(command);
-        cardFragment.updateCardModels();
-        cardFragment.renderAllCards();
+        if(cardFragment != null) {
+            cardFragment.doCommand(command);
+            cardFragment.updateCardModels();
+            cardFragment.renderAllCards();
+        }
     }
 
     public void voiceInputButtonListener(View v) {
@@ -201,14 +247,10 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         homeLocation.setLongitude(18.111798);
     }
 
-    /**
-     * The final method in the Activity lifecycle. If the app is stopped
-     * the Reminders has to be saved and the BroadCastReceiver need to disconnect.
-     */
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // save data?
+    public void onStop() {
+        super.onStop();
+        readingsHandler.removeCallbacks(updateUIReadings);
     }
 
     public void startGPS() {

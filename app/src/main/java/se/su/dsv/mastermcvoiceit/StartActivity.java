@@ -36,6 +36,7 @@ public class StartActivity extends AppCompatActivity {
 
     private void launchAppActivity() {
         Intent intent = new Intent(StartActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 

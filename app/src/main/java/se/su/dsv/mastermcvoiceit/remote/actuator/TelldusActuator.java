@@ -1,6 +1,5 @@
 package se.su.dsv.mastermcvoiceit.remote.actuator;
 
-import android.os.Handler;
 import android.util.Log;
 
 import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
@@ -24,8 +23,7 @@ public class TelldusActuator implements Actuator {
         this.type = type;
         this.connDetails = connDetails;
 
-        // TODO get state from real actuator?
-        this.state = 0;
+        this.state = getSSHState();
     }
 
     @Override
@@ -40,6 +38,7 @@ public class TelldusActuator implements Actuator {
 
     @Override
     public int fetchState() {
+        this.state = getSSHState();
         return this.state;
     }
 
@@ -47,6 +46,39 @@ public class TelldusActuator implements Actuator {
     public void setState(int state) {
         this.state = state;
         setSSHState(state);
+    }
+
+    private int getSSHState() {
+        String list = SSHUtil.runCommand("tdtool -l", connDetails);
+
+        String myLine = getMyLine(list);
+        if (myLine != null) {
+            if (myLine.contains("ON")) {
+                return 1;
+            }
+            if (myLine.contains("OFF")) {
+                return 0;
+            }
+        }
+
+        throw new IllegalStateException("SSH command 'tdtool -l' is faulty (is telldus installed?)");
+    }
+
+    private String getMyLine(String input) {
+        String[] lines = input.split("\\n");
+
+        if (!input.isEmpty() && lines[0].contains("Number of devices")) {
+
+            String[] line0 = lines[0].split(" ");
+            int size = Integer.valueOf(line0[line0.length - 1]);
+
+            for (int i = 1; i < size + 1; i++) {
+                if (lines[i].contains("" + id)) {
+                    return lines[i];
+                }
+            }
+        }
+        return null;
     }
 
     private void setSSHState(int state) {
