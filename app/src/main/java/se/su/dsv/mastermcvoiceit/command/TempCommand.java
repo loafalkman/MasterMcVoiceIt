@@ -1,7 +1,5 @@
 package se.su.dsv.mastermcvoiceit.command;
 
-import se.su.dsv.mastermcvoiceit.cardModels.CardModel;
-import se.su.dsv.mastermcvoiceit.cardModels.TempCardModel;
 import se.su.dsv.mastermcvoiceit.remote.sensor.Sensor;
 
 /**
@@ -28,6 +26,6 @@ public class TempCommand extends Command {
 
     @Override
     public String doCommand(String spokenText) {
-        return "temperature for "+sensor.getName()+" sensor is "+sensor.fetchSensorValue();
+        return "temperature for "+sensor.getName()+" sensor is "+sensor.getSensorValues();
     }
 }

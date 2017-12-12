@@ -33,6 +33,7 @@ public class HomePlace extends Place {
     }
 
     public String[] tick(Location currentLocation) {
+        sensorList.updateBatches();
         actuatorList.updateBatches();
 
         if (currentLocation != null && currentLocation.distanceTo(super.location) < 1000) {
@@ -48,10 +49,7 @@ public class HomePlace extends Place {
      */
     private void initSensors() {
         sensorList = new SensorList();
-
-        sensorList.add(new TelldusSensor(2, "Living room", SensorType.TEMPERATURE, connDetails));
-        sensorList.add(new TelldusSensor(15, "Garage", SensorType.TEMPERATURE, connDetails));
-        sensorList.add(new TelldusSensor(10, "Front porch", SensorType.WIND, connDetails));
+        sensorList.addBatch(new TelldusSensor.TelldusSensorBatch(connDetails));
     }
 
     private void initActuators() {

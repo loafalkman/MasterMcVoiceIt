@@ -10,25 +10,31 @@ import java.util.HashMap;
 public class SensorList {
     private HashMap<Integer, Sensor> sensorById = new HashMap<>();
     private HashMap<SensorType, ArrayList<Sensor>> sensorByType = new HashMap<>();
+    private ArrayList<Sensor.Batch> batches = new ArrayList<>();
 
     public void add(Sensor sensor) {
         if (sensorById.put(sensor.getID(), sensor) != null)
             throw new RuntimeException("there was at least 2 sensors with same ID, not allowed");
 
-        SensorType sensorType = sensor.getType();
-        ArrayList<Sensor> sameTypeList = sensorByType.get(sensorType);
-        if (sameTypeList == null) {
-            sameTypeList = new ArrayList<>();
-            sensorByType.put(sensorType, sameTypeList);
+        SensorType[] supportedTypes = sensor.getSupportedTypes();
+        for (SensorType sensorType : supportedTypes) {
+            ArrayList<Sensor> sameTypeList = sensorByType.get(sensorType);
+            if (sameTypeList == null) {
+                sameTypeList = new ArrayList<>();
+                sensorByType.put(sensorType, sameTypeList);
+            }
+            sameTypeList.add(sensor);
         }
-        sameTypeList.add(sensor);
     }
 
     public void remove(Sensor sensor) {
         sensorById.remove(sensor.getID());
 
-        ArrayList<Sensor> sameTypeList = sensorByType.get(sensor.getType());
-        sameTypeList.remove(sensor);
+        SensorType[] supportedTypes = sensor.getSupportedTypes();
+        for (SensorType sensorType : supportedTypes) {
+            ArrayList<Sensor> sameTypeList = sensorByType.get(sensorType);
+            sameTypeList.remove(sensor);
+        }
     }
 
     public Sensor get(int id) {
@@ -37,5 +43,23 @@ public class SensorList {
 
     public ArrayList<Sensor> get(SensorType type) {
         return sensorByType.get(type);
+    }
+
+    public <X extends Sensor> void addBatch(Sensor.Batch<X> batch) {
+        batches.add(batch);
+        for (Sensor act : batch.getSensors()) {
+            add(act);
+        }
+    }
+
+    public void updateBatches() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (Sensor.Batch batch : batches) {
+                    batch.updateBatch();
+                }
+            }
+        }).start();
     }
 }

@@ -151,7 +151,7 @@ public class CardFragment extends Fragment {
 
     // TODO: each CardsFragment should have their own list of commands?
     private void initCommands() {
-        new TempCommand(myPlace.getSensorList().get(2));
+        new TempCommand(myPlace.getSensorList().get(135));
 
         for (Actuator actuator : myPlace.getActuatorList().get(ActuatorType.POWER_SWITCH)) {
             new ActuatorCommand(actuator, true);

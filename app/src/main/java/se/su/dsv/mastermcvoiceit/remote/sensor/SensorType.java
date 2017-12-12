@@ -5,7 +5,9 @@ package se.su.dsv.mastermcvoiceit.remote.sensor;
  */
 
 public enum SensorType {
+    UNKNOWN,
     TEMPERATURE,
     WIND,
-    UV
+    HUMIDITY,
+    UV;
 }

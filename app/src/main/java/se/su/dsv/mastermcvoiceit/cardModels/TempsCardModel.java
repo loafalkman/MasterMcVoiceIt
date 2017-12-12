@@ -3,6 +3,7 @@ package se.su.dsv.mastermcvoiceit.cardModels;
 import java.util.ArrayList;
 
 import se.su.dsv.mastermcvoiceit.remote.sensor.Sensor;
+import se.su.dsv.mastermcvoiceit.remote.sensor.SensorType;
 
 /**
  * Created by felix on 2017-11-28.
@@ -23,8 +24,9 @@ public class TempsCardModel extends CardModel {
         temperatures = new float[tempSensors.size()];
         sensorNames = new String[tempSensors.size()];
 
+        int tempIndex = SensorType.TEMPERATURE.ordinal();
         for (int i = 0; i < tempSensors.size(); i++) {
-            temperatures[i] = tempSensors.get(i).fetchSensorValue();
+            temperatures[i] = tempSensors.get(i).getSensorValues()[tempIndex];
             sensorNames[i] = tempSensors.get(i).getName();
         }
     }
