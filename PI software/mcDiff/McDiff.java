@@ -14,6 +14,10 @@ public class McDiff {
 	File lastWeekDir = new File("lastweek");
 	File lastweekFile;
 
+	/**
+	* In args: put weekday (three capital letters only) in first index, sensor id in second
+	* Example: args = {"MON", "135"}
+	*/
 	public static void main(String[] args) {
 		String day = args[0];
 		int sensorID = Integer.parseInt(args[1]);
