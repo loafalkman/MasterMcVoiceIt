@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         @Override
         public void run() {
             updateCardModelListener(null);
-            readingsHandler.postDelayed(this, 5000);
+            readingsHandler.postDelayed(this, 500);
         }
     };
 
@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
         backgroundService = new Intent(this, BackgroundService.class);
+        backgroundService.putExtra(BackgroundService.INTENT_KEY_GPS_ON, true);
         startService(backgroundService);
 
         initFragment();
@@ -111,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                     Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                     stopService(backgroundService);
                     finish();
+                    e.printStackTrace();
                 }
             }
             return false;
@@ -164,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
      * Temporarily bound to a button for testing, should be activated after voice result.
      */
     public void voiceResult(View v) {
-        doCommand("turn off coffeemaker");
+        doCommand("colder than last sunday");
     }
 
     private void doCommand(String command) {

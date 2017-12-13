@@ -65,7 +65,7 @@ public class BackgroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("Service", "onStartCommand");
-        boolean startGPS = true;
+        boolean startGPS = false;
         if (intent != null) {
             startGPS = intent.getBooleanExtra(INTENT_KEY_GPS_ON, true);
         }
@@ -77,19 +77,17 @@ public class BackgroundService extends Service {
     private Runnable ticker = new Runnable() {
         @Override
         public void run() {
-            Log.d("Service", "run location "+ lastLocation);
+            Log.d("Service", "run location " + lastLocation);
 
-            if (lastLocation != null && gpsON) {
-
-                for (Place place : places) {
-                    String[] notify = place.tick(lastLocation);
-                    if (notify != null) {
-                        Intent nService = new Intent(BackgroundService.this, NotificationService.class);
-                        nService.putExtra("notification codes", notify);
-                        BackgroundService.this.startService(nService);
-                    }
+            for (Place place : places) {
+                String[] notify = place.tick(gpsON? lastLocation : null);
+                if (notify != null) {
+                    Intent nService = new Intent(BackgroundService.this, NotificationService.class);
+                    nService.putExtra(NotificationService.EXTRA_NOTIFICATION_CODE, notify);
+                    BackgroundService.this.startService(nService);
                 }
             }
+
             tickerHandler.postDelayed(this, UPDATE_INTERVAL_TICK);
         }
     };

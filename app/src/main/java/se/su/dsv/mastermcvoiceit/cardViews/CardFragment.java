@@ -17,7 +17,10 @@ import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
 import se.su.dsv.mastermcvoiceit.cardModels.TempsCardModel;
 import se.su.dsv.mastermcvoiceit.command.ActuatorCommand;
 import se.su.dsv.mastermcvoiceit.command.Command;
+import se.su.dsv.mastermcvoiceit.command.LastWeekCompareCommand;
+import se.su.dsv.mastermcvoiceit.place.HomePlace;
 import se.su.dsv.mastermcvoiceit.place.Place;
+import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
 import se.su.dsv.mastermcvoiceit.remote.actuator.Actuator;
 import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorType;
 import se.su.dsv.mastermcvoiceit.command.TempCommand;
@@ -151,12 +154,15 @@ public class CardFragment extends Fragment {
 
     // TODO: each CardsFragment should have their own list of commands?
     private void initCommands() {
-        new TempCommand(myPlace.getSensorList().get(2));
+        SSHConnDetails conection = ((HomePlace) myPlace).getConnDetails();
+        new LastWeekCompareCommand(conection, true);
+        new LastWeekCompareCommand(conection, false);
 
         for (Actuator actuator : myPlace.getActuatorList().get(ActuatorType.POWER_SWITCH)) {
             new ActuatorCommand(actuator, true);
             new ActuatorCommand(actuator, false);
         }
+
     }
 
     public void doCommand(String spokenText) {
