@@ -28,6 +28,10 @@ public class HomePlace extends Place {
         initActuators();
     }
 
+    public SSHConnDetails getConnDetails() {
+        return this.connDetails;
+    }
+
     public void setBedroomLighOnService(boolean state) {
         this.bedroomLighOnService = state;
     }
