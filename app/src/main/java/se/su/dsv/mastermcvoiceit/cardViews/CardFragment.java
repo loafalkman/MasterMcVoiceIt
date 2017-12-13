@@ -153,10 +153,12 @@ public class CardFragment extends Fragment {
     private void initCommands() {
         new TempCommand(myPlace.getSensorList().get(135));
 
+
         for (Actuator actuator : myPlace.getActuatorList().get(ActuatorType.POWER_SWITCH)) {
             new ActuatorCommand(actuator, true);
             new ActuatorCommand(actuator, false);
         }
+
     }
 
     public void doCommand(String spokenText) {
