@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
      * Temporarily bound to a button for testing, should be activated after voice result.
      */
     public void voiceResult(View v) {
-        doCommand("turn off coffeemaker");
+        doCommand("colder than last sunday");
     }
 
     private void doCommand(String command) {

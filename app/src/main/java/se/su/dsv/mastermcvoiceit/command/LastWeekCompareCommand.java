@@ -6,8 +6,8 @@ import se.su.dsv.mastermcvoiceit.remote.SSHUtil;
 public class LastWeekCompareCommand extends Command {
     private final String[] cmdDays = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
     private final String[] verbalDays = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
-    private final String[] tempColderCmdPatterns = {"colder", "colder last %s"};
-    private final String[] tempWarmerCmdPatterns = {"warmer", "warmer last %s"};
+    private final String[] tempWarmerCmdPatterns = {"warmer than last %s"};
+    private final String[] tempColderCmdPatterns = {"colder than last %s"};
     private SSHConnDetails connDetails;
     private boolean colder;
 
@@ -43,18 +43,18 @@ public class LastWeekCompareCommand extends Command {
     private String generateAnswer(String result) {
         float value = Float.parseFloat(result);
 
-        if (value < 0.0) {
+        if (value > 0.0) {
             if (colder) {
-                return "No, it was " + value * -1 + " warmer";
+                return "No, it was " + value + " warmer";
             } else {
-                return "Yes, it was " + value * -1 + " warmer";
+                return "Yes, it was " + value + " warmer";
             }
 
-        } else if (value > 0.0) {
+        } else if (value < 0.0) {
             if (colder) {
-                return "Yes, it was " + value + " colder";
+                return "Yes, it was " + value * -1 + " colder";
             } else {
-                return "No, it was " + value + " colder";
+                return "No, it was " + value * -1 + " colder";
             }
 
         } else {
@@ -67,7 +67,7 @@ public class LastWeekCompareCommand extends Command {
     public String doCommand(String spokenText) {
         String day = findDay(spokenText);
         if (day != null) {
-            String command = "mcdiff, " + day + "135";
+            String command = "mcdiff " + day + " 135";
             String result = SSHUtil.runCommand(command, connDetails);
             return generateAnswer(result);
         }
