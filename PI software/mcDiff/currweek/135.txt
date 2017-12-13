@@ -1,0 +1,7 @@
+MON	-1.2
+TUE	-3.5
+WED	-5.1
+THU	-10.9
+FRI	0.0
+SAT	1.0
+SUN	-20.0
