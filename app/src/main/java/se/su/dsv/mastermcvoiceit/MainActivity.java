@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
         backgroundService = new Intent(this, BackgroundService.class);
+        backgroundService.putExtra(BackgroundService.INTENT_KEY_GPS_ON, true);
         startService(backgroundService);
 
         initFragment();
