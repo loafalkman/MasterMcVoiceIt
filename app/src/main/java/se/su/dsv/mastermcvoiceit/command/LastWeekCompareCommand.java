@@ -4,9 +4,10 @@ import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
 import se.su.dsv.mastermcvoiceit.remote.SSHUtil;
 
 public class LastWeekCompareCommand extends Command {
-    private final String[] days = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
-    private final String[] tempColderCmdPatterns = {"colder", "last %s"};
-    private final String[] tempWarmerCmdPatterns = {"warmer", "last %s"};
+    private final String[] cmdDays = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
+    private final String[] verbalDays = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
+    private final String[] tempColderCmdPatterns = {"colder", "colder last %s"};
+    private final String[] tempWarmerCmdPatterns = {"warmer", "warmer last %s"};
     private SSHConnDetails connDetails;
     private boolean colder;
 
@@ -24,13 +25,13 @@ public class LastWeekCompareCommand extends Command {
 
     private void makeAliases(String[] commands) {
         for (String pattern : commands)
-            for (String d : days) {
+            for (String d : verbalDays) {
                 addCommand(String.format(pattern, d), this);
             }
     }
 
     private String findDay(String spokenText) {
-        for (String day : days) {
+        for (String day : cmdDays) {
             if (spokenText.toUpperCase().contains(day)) {
                 return day;
             }
