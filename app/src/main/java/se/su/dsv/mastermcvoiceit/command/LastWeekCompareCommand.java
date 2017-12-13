@@ -45,9 +45,9 @@ public class LastWeekCompareCommand extends Command {
 
         if (value < 0.0) {
             if (colder) {
-                return "No, it was " + value + " warmer";
+                return "No, it was " + value * -1 + " warmer";
             } else {
-                return "Yes, it was " + value + " warmer";
+                return "Yes, it was " + value * -1 + " warmer";
             }
 
         } else if (value > 0.0) {
