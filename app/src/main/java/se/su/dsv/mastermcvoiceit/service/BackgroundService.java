@@ -65,7 +65,7 @@ public class BackgroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("Service", "onStartCommand");
-        boolean startGPS = true;
+        boolean startGPS = false;
         if (intent != null) {
             startGPS = intent.getBooleanExtra(INTENT_KEY_GPS_ON, true);
         }
