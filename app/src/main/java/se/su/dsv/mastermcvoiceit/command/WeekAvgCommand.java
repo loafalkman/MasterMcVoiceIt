@@ -1,6 +1,7 @@
 package se.su.dsv.mastermcvoiceit.command;
 
 import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
+import se.su.dsv.mastermcvoiceit.remote.SSHUtil;
 
 /**
  * Created by felix on 2017-12-15.
@@ -32,6 +33,14 @@ public class WeekAvgCommand extends Command {
 
     @Override
     public String doCommand(String spokenText) {
-        return null;
+        String command = isForCurrWeek? "mcaverage CURRENT 135" : "mcaverage LAST 135";
+        float result = Float.parseFloat(SSHUtil.runCommand(command, connDetails).trim());
+
+        if (isForCurrWeek)
+            return "the average temperature for this week is " + result + "C° ";
+        else
+            return "the average temperature for last week is " + result + "C° ";
     }
+
+
 }
