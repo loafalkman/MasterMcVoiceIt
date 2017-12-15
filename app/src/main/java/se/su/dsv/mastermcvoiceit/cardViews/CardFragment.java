@@ -18,6 +18,7 @@ import se.su.dsv.mastermcvoiceit.cardModels.TempsCardModel;
 import se.su.dsv.mastermcvoiceit.command.ActuatorCommand;
 import se.su.dsv.mastermcvoiceit.command.Command;
 import se.su.dsv.mastermcvoiceit.command.LastWeekCompareCommand;
+import se.su.dsv.mastermcvoiceit.command.WeekAvgCommand;
 import se.su.dsv.mastermcvoiceit.place.HomePlace;
 import se.su.dsv.mastermcvoiceit.place.Place;
 import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
@@ -154,9 +155,12 @@ public class CardFragment extends Fragment {
 
     // TODO: each CardsFragment should have their own list of commands?
     private void initCommands() {
-        SSHConnDetails conection = ((HomePlace) myPlace).getConnDetails();
-        new LastWeekCompareCommand(conection, true);
-        new LastWeekCompareCommand(conection, false);
+        SSHConnDetails connection = ((HomePlace) myPlace).getConnDetails();
+        new LastWeekCompareCommand(connection, true);
+        new LastWeekCompareCommand(connection, false);
+
+        new WeekAvgCommand(connection, true);
+        new WeekAvgCommand(connection, false);
 
         for (Actuator actuator : myPlace.getActuatorList().get(ActuatorType.POWER_SWITCH)) {
             new ActuatorCommand(actuator, true);
