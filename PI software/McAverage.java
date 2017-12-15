@@ -21,7 +21,7 @@ public class McAverage {
 	public static void main(String[] args) {
 		String week = args[0];
 		int sensorID = Integer.parseInt(args[1]);
-		new McAverage(week, sensorID).calcAvg();
+		System.out.println(new McAverage(week, sensorID).calcAvg());
 	}
 
 	public McAverage(String week, int sensorID) {
@@ -34,12 +34,12 @@ public class McAverage {
 			weekFile = new File(currWeekDir, sensorID + ".txt");
 	}
 
-	public void calcAvg() {
+	public float calcAvg() {
 		ArrayList<Float> weekTemps = getWeekTemps(weekFile);
 		float added = 0;
 		for (float temp : weekTemps)
 			added += temp;
-		System.out.println(added / weekTemps.size());
+		return added / weekTemps.size();
 	}
 
 	private ArrayList<Float> getWeekTemps(File weekFile) {

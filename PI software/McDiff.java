@@ -10,18 +10,27 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class McDiff {
-	File currWeekDir = new File("currweek");
-	File lastWeekDir = new File("lastweek");
-	File lastweekFile;
+	private File currWeekDir = new File("currweek");
+	private File lastWeekDir = new File("lastweek");
+	private File lastweekFile;
 
 	/**
-	* In args: put weekday (three capital letters only) in first index, sensor id in second
-	* Example: args = {"MON", "135"}
-	*/
+	 * In args: put weekday (three capital letters only) in first index, sensor id in second
+	 * Example: args = {"MON", "135"} , returns currentTemp - lastMondayTemp.
+	 * To compare weeks average, put "WEEKS" at first index.
+	 * Example: args = {"WEEKS", "135"} , returns currentWeekAvg - lastWeekAvg.
+	 */
 	public static void main(String[] args) {
-		String day = args[0];
+		String firstArg = args[0];
 		int sensorID = Integer.parseInt(args[1]);
-		new McDiff(sensorID).compare(sensorID, day);
+
+		if (firstArg.equals("WEEKS")) {
+			McAverage last = new McAverage("LAST", sensorID);
+			McAverage curr = new McAverage("CURRENT", sensorID);
+			System.out.println(curr.calcAvg() - last.calcAvg());
+		} else {
+			new McDiff(sensorID).compare(sensorID, firstArg);
+		}
 	}
 
 	public McDiff(int sensorID) {
@@ -39,7 +48,7 @@ public class McDiff {
 			BufferedReader reader = new BufferedReader(new FileReader(lastweekFile));
 			String line;
 			while ((line = reader.readLine()) != null) {
-				
+
 				String[] cols = line.split("\t");
 				if (cols[0].equals(day)) {
 					reader.close();
@@ -72,18 +81,18 @@ public class McDiff {
 		return null;
 	}
 
-	private String[] getDeviceLines(String[] lines) {  
-            if (lines.length != 0 && lines[0].contains("Number of devices")) { 
-                String[] line0 = lines[0].split(" "); 
-                int actSize = Integer.valueOf(line0[line0.length - 1]); 
- 
-                int wantedLines = lines.length - (actSize + 6); 
-                String[] sensorLines = new String[wantedLines]; 
-                System.arraycopy(lines, actSize + 6, sensorLines, 0, wantedLines); 
-                return sensorLines; 
-            } 
-            return null; 
-        } 
+	private String[] getDeviceLines(String[] lines) {
+		if (lines.length != 0 && lines[0].contains("Number of devices")) {
+			String[] line0 = lines[0].split(" ");
+			int actSize = Integer.valueOf(line0[line0.length - 1]);
+
+			int wantedLines = lines.length - (actSize + 6);
+			String[] sensorLines = new String[wantedLines];
+			System.arraycopy(lines, actSize + 6, sensorLines, 0, wantedLines);
+			return sensorLines;
+		}
+		return null;
+	}
 
 	private String[] execCommand(String cmd) {
 		Runtime rt = Runtime.getRuntime();
@@ -92,7 +101,7 @@ public class McDiff {
 		try {
 			Process pr = rt.exec(cmd);
 			BufferedReader stdInput = new BufferedReader(
-				new InputStreamReader(pr.getInputStream()));
+					new InputStreamReader(pr.getInputStream()));
 			String s;
 			while ((s = stdInput.readLine()) != null) {
 				result.add(s);
