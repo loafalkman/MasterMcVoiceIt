@@ -168,6 +168,8 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     public void voiceResult(View v) {
 //        doCommand("average temperature this week");
 //        doCommand("average temperature last week");
+        doCommand("is this week warmer than last week");
+        doCommand("is this week colder than last week");
     }
 
     private void doCommand(String command) {

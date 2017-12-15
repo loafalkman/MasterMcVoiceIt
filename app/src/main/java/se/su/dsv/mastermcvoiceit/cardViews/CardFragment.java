@@ -17,6 +17,7 @@ import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
 import se.su.dsv.mastermcvoiceit.cardModels.TempsCardModel;
 import se.su.dsv.mastermcvoiceit.command.ActuatorCommand;
 import se.su.dsv.mastermcvoiceit.command.Command;
+import se.su.dsv.mastermcvoiceit.command.CompareWeekTempCommand;
 import se.su.dsv.mastermcvoiceit.command.LastWeekCompareCommand;
 import se.su.dsv.mastermcvoiceit.command.WeekAvgCommand;
 import se.su.dsv.mastermcvoiceit.place.HomePlace;
@@ -161,6 +162,9 @@ public class CardFragment extends Fragment {
 
         new WeekAvgCommand(connection, true);
         new WeekAvgCommand(connection, false);
+
+        new CompareWeekTempCommand(connection, true);
+        new CompareWeekTempCommand(connection, false);
 
         for (Actuator actuator : myPlace.getActuatorList().get(ActuatorType.POWER_SWITCH)) {
             new ActuatorCommand(actuator, true);
