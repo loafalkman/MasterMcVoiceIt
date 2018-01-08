@@ -9,6 +9,7 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import se.su.dsv.mastermcvoiceit.cardViews.CardsholderFragment;
 import se.su.dsv.mastermcvoiceit.place.HomePlace;
@@ -31,6 +33,15 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     private SpeechRecognizer speechRecognizer;
     private Intent recognizerIntent;
     private Intent backgroundService;
+
+    private TextToSpeech textToSpeech;
+    private TextToSpeech.OnInitListener ttsOnInit = new TextToSpeech.OnInitListener() {
+        @Override
+        public void onInit(int i) {
+            textToSpeech.setLanguage(Locale.UK);
+            textToSpeech.speak("welcome to master mac voice it. Sorry for annoying you.", TextToSpeech.QUEUE_ADD, null, "welcomeMessage");
+        }
+    };
 
     private ArrayList<String> resultArray;
     private Location homeLocation; // TEMP
@@ -60,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         speechRecognizer.setRecognitionListener(this);
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+        textToSpeech = new TextToSpeech(this, ttsOnInit);
 
         backgroundService = new Intent(this, BackgroundService.class);
         backgroundService.putExtra(BackgroundService.INTENT_KEY_GPS_ON, true);
@@ -157,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     private void doCommand(String command) {
         if(cardsFragment != null) {
-            cardsFragment.doCommand(command);
+            cardsFragment.doCommand(command, textToSpeech);
             cardsFragment.updateCardModels();
             cardsFragment.renderAllCards();
         }
@@ -237,7 +250,14 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     @Override
     public void onStop() {
         super.onStop();
+        textToSpeech.stop();
         readingsHandler.removeCallbacks(updateUIReadings);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        textToSpeech.shutdown();
     }
 
     public void startGPS() {
