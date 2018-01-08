@@ -16,14 +16,12 @@ public class TelldusSensor implements Sensor {
     private int id;
     private String name;
     private SensorType[] types;
-    private SSHConnDetails connDetails;
     private float[] sensorValues = new float[SensorType.values().length];
 
-    public TelldusSensor(int id, String name, SensorType[] supportedTypes, SSHConnDetails connDetails) {
+    public TelldusSensor(int id, String name, SensorType[] supportedTypes) {
         this.id = id;
         this.name = name;
         this.types = supportedTypes;
-        this.connDetails = connDetails;
     }
 
     public float[] getSensorValues() {
@@ -140,12 +138,12 @@ public class TelldusSensor implements Sensor {
             switch (typeCol) {
                 case "temperature":
                     SensorType[] types = new SensorType[]{SensorType.TEMPERATURE};
-                    batch.put(id, new TelldusSensor(id, name, types, connDetails));
+                    batch.put(id, new TelldusSensor(id, name, types));
                     break;
 
                 case "temperaturehumidity":
                     SensorType[] typesA = new SensorType[]{SensorType.TEMPERATURE, SensorType.HUMIDITY};
-                    batch.put(id, new TelldusSensor(id, name, typesA, connDetails));
+                    batch.put(id, new TelldusSensor(id, name, typesA));
                     break;
 
                 default:

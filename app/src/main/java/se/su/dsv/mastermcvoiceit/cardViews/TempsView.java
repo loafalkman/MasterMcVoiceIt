@@ -50,7 +50,7 @@ public class TempsView extends ConstraintLayout {
         tempsList.removeAllViews();
 
         for (int i = 0; i < sensorNames.length; i++) {
-            View row = mInflater.inflate(R.layout.row_temperatures_nameandvalue, this, false);
+            View row = mInflater.inflate(R.layout.row_temperature_nameandvalue, this, false);
 
             TextView sensorName = row.findViewById(R.id.textview_temprow_sensorname);
             TextView sensorValue = row.findViewById(R.id.textview_temprow_sensorvalue);

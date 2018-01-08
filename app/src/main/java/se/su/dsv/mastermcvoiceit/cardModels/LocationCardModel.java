@@ -1,14 +1,11 @@
 package se.su.dsv.mastermcvoiceit.cardModels;
 
-import android.location.Location;
-
 /**
  * Created by annika on 2017-11-28.
  */
 
 public class LocationCardModel extends CardModel {
     private float distanceFromHome = -1;
-    private Location location;
 
     public LocationCardModel() { super(CardModelType.LOCATION); }
 
@@ -21,9 +18,5 @@ public class LocationCardModel extends CardModel {
             return "Distance from home: " + Math.floor(distanceFromHome/1000)+" km";
         else
             return "Waiting for GPS.";
-    }
-
-    public void setLocation(Location newLocation) {
-        this.location = newLocation;
     }
 }

@@ -1,13 +1,11 @@
 package se.su.dsv.mastermcvoiceit.place;
 
-import android.content.Context;
 import android.location.Location;
 
 import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
 import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorList;
 import se.su.dsv.mastermcvoiceit.remote.actuator.TelldusActuator;
 import se.su.dsv.mastermcvoiceit.remote.sensor.SensorList;
-import se.su.dsv.mastermcvoiceit.remote.sensor.SensorType;
 import se.su.dsv.mastermcvoiceit.remote.sensor.TelldusSensor;
 
 
@@ -20,8 +18,8 @@ public class HomePlace extends Place {
 
     private boolean bedroomLighOnService = true;
 
-    public HomePlace(Context context, Location location, SSHConnDetails connDetails) {
-        super(context, null, null, location);
+    public HomePlace(Location location, SSHConnDetails connDetails) {
+        super(null, null, location);
         this.connDetails = connDetails;
 
         initSensors();

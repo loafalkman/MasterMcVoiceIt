@@ -9,5 +9,5 @@ public enum SensorType {
     TEMPERATURE,
     WIND,
     HUMIDITY,
-    UV;
+    UV
 }

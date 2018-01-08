@@ -13,7 +13,7 @@
             android:layout_alignBaseline="@+id/location_switch"
             android:layout_alignBottom="@+id/location_switch"
             android:layout_alignParentStart="true"
-            android:text="Location services"
+            android:text="@string/location_services"
             android:textColor="@android:color/black"
             android:textStyle="bold" />
 

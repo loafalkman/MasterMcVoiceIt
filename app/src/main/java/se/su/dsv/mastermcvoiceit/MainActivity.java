@@ -23,10 +23,6 @@ import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
 import se.su.dsv.mastermcvoiceit.service.BackgroundService;
 
 public class MainActivity extends AppCompatActivity implements RecognitionListener, CardFragment.GPSController, ConnDetailsDialog.ConnDetailDialogListener {
-
-    private static final String TAG = "main";
-    public static final String LOCATION_UPDATE = "location update";
-    public static final String LOCATION = "location";
     static final int RESULT_SPEECH = 7474;
     private static final String PREF_SSH_IP = "SSHIpAddress";
     private static final String PREF_SSH_USER = "SSHUsername";
@@ -106,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                     Location homeLoc = new Location("");
                     homeLoc.setLatitude(59.345613);
                     homeLoc.setLongitude(18.111798);
-                    BackgroundService.places.add(new HomePlace(this, homeLoc, homeSSH));
+                    BackgroundService.places.add(new HomePlace(homeLoc, homeSSH));
                     return true;
                 } catch (IllegalStateException e) {
                     Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -180,10 +176,9 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         switch (requestCode) {
             case RESULT_SPEECH: {
                 if (resultCode == RESULT_OK && null != data) {
-                    ArrayList<String> text = data
-                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-                    resultArray = text;
+                    resultArray = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                 }
 
                 break;

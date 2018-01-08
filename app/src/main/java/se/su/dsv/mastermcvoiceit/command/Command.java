@@ -2,8 +2,6 @@ package se.su.dsv.mastermcvoiceit.command;
 
 import java.util.HashMap;
 
-import se.su.dsv.mastermcvoiceit.cardModels.CardModel;
-
 /**
  * Created by felix on 2017-11-24.
  */

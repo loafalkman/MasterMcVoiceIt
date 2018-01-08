@@ -25,7 +25,6 @@ import se.su.dsv.mastermcvoiceit.place.Place;
 import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
 import se.su.dsv.mastermcvoiceit.remote.actuator.Actuator;
 import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorType;
-import se.su.dsv.mastermcvoiceit.command.TempCommand;
 import se.su.dsv.mastermcvoiceit.remote.sensor.Sensor;
 import se.su.dsv.mastermcvoiceit.remote.sensor.SensorType;
 import se.su.dsv.mastermcvoiceit.service.BackgroundService;
@@ -75,11 +74,6 @@ public class CardFragment extends Fragment {
         initCommands();
         initCardModels();
         updateCardModels();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 
     @Override
