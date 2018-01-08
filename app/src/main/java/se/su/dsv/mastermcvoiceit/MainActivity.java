@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     private Runnable updateUIReadings = new Runnable() {
         @Override
         public void run() {
-            updateCardModelListener(null);
+            updateCardModelListener();
             readingsHandler.postDelayed(this, 500);
         }
     };
@@ -152,24 +152,11 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
 
-    /**
-     * temporary listener for a temporary button :P
-     */
-    public void updateCardModelListener(View view) {
+    public void updateCardModelListener() {
         if(cardFragment != null) {
             cardFragment.updateCardModels();
             cardFragment.renderAllCards();
         }
-    }
-
-    /**
-     * Temporarily bound to a button for testing, should be activated after voice result.
-     */
-    public void voiceResult(View v) {
-//        doCommand("average temperature this week");
-//        doCommand("average temperature last week");
-        doCommand("is this week warmer than last week");
-        doCommand("is this week colder than last week");
     }
 
     private void doCommand(String command) {
