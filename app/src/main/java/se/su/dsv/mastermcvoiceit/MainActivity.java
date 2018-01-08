@@ -17,12 +17,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import se.su.dsv.mastermcvoiceit.cardViews.CardFragment;
+import se.su.dsv.mastermcvoiceit.cardViews.CardsholderFragment;
 import se.su.dsv.mastermcvoiceit.place.HomePlace;
 import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
 import se.su.dsv.mastermcvoiceit.service.BackgroundService;
 
-public class MainActivity extends AppCompatActivity implements RecognitionListener, CardFragment.GPSController, ConnDetailsDialog.ConnDetailDialogListener {
+public class MainActivity extends AppCompatActivity implements RecognitionListener, CardsholderFragment.GPSController, ConnDetailsDialog.ConnDetailDialogListener {
     static final int RESULT_SPEECH = 7474;
     private static final String PREF_SSH_IP = "SSHIpAddress";
     private static final String PREF_SSH_USER = "SSHUsername";
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     private Location homeLocation; // TEMP
 
     private FragmentManager fragmentManager;
-    private CardFragment cardFragment;
+    private CardsholderFragment cardsFragment;
 
     private Handler readingsHandler = new Handler();
     private Runnable updateUIReadings = new Runnable() {
@@ -77,18 +77,18 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     private void initFragment() {
         if (initPlaces()) {
-            cardFragment = new CardFragment();
+            cardsFragment = new CardsholderFragment();
             Bundle cardFragArgs = new Bundle();
-            cardFragArgs.putInt(CardFragment.KEY_PLACE_NUMBER, 0);
-            cardFragment.setArguments(cardFragArgs);
-            launchFragment(cardFragment);
+            cardFragArgs.putInt(CardsholderFragment.KEY_PLACE_NUMBER, 0);
+            cardsFragment.setArguments(cardFragArgs);
+            launchFragment(cardsFragment);
         }
     }
 
-    private void launchFragment(CardFragment cardFragment) {
+    private void launchFragment(CardsholderFragment cardsFragment) {
         fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.container_main_cardsfragment, cardFragment);
+        fragmentTransaction.add(R.id.container_main_cardsfragment, cardsFragment);
         fragmentTransaction.commit();
     }
 
@@ -149,17 +149,17 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
 
     public void updateCardModelListener() {
-        if(cardFragment != null) {
-            cardFragment.updateCardModels();
-            cardFragment.renderAllCards();
+        if(cardsFragment != null) {
+            cardsFragment.updateCardModels();
+            cardsFragment.renderAllCards();
         }
     }
 
     private void doCommand(String command) {
-        if(cardFragment != null) {
-            cardFragment.doCommand(command);
-            cardFragment.updateCardModels();
-            cardFragment.renderAllCards();
+        if(cardsFragment != null) {
+            cardsFragment.doCommand(command);
+            cardsFragment.updateCardModels();
+            cardsFragment.renderAllCards();
         }
     }
 

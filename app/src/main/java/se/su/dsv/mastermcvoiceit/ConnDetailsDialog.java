@@ -38,7 +38,7 @@ public class ConnDetailsDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        final View view = inflater.inflate(R.layout.dialog_connection_details, null);
+        final View view = inflater.inflate(R.layout.dialog_main_connection_details, null);
         builder.setView(view)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
