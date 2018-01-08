@@ -3,6 +3,7 @@ package se.su.dsv.mastermcvoiceit.cardViews;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +49,8 @@ public class CardsholderFragment extends Fragment {
     private TempsView tempsView;
     private LocationView locationView;
     private ActuatorsView actuatorsView;
+
+    private int commandsExecuted = 0;
 
     public interface GPSController {
         void stopGPS();
@@ -167,7 +170,7 @@ public class CardsholderFragment extends Fragment {
 
     }
 
-    public void doCommand(String spokenText) {
+    public void doCommand(String spokenText, TextToSpeech tts) {
         Command cmd = Command.findCommand(spokenText);
         String cmdResult = "Could not find command: "+spokenText;
 
@@ -175,5 +178,7 @@ public class CardsholderFragment extends Fragment {
             cmdResult = cmd.doCommand(spokenText);
 
         Toast.makeText(getContext(), cmdResult, Toast.LENGTH_LONG).show();
+        tts.speak(cmdResult, TextToSpeech.QUEUE_ADD, null, "cmdResult" + commandsExecuted);
+        commandsExecuted++;
     }
 }
