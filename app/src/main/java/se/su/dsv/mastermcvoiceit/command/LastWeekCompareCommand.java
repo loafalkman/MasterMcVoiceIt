@@ -4,10 +4,10 @@ import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
 import se.su.dsv.mastermcvoiceit.remote.SSHUtil;
 
 public class LastWeekCompareCommand extends Command {
-    private final String[] cmdDays = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
-    private final String[] verbalDays = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
-    private final String[] tempWarmerCmdPatterns = {"warmer than last %s"};
-    private final String[] tempColderCmdPatterns = {"colder than last %s"};
+    private final String[] cmdDays = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN", "LASTWEEK"};
+    private final String[] verbalDays = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "week"};
+    private final String[] tempWarmerCmdPatterns = {"is it warmer than last %s"};
+    private final String[] tempColderCmdPatterns = {"is it colder than last %s"};
     private SSHConnDetails connDetails;
     private boolean colder;
 
@@ -31,10 +31,12 @@ public class LastWeekCompareCommand extends Command {
     }
 
     private String findDay(String spokenText) {
-        for (String day : cmdDays) {
-            if (spokenText.toUpperCase().contains(day)) {
-                return day;
+        int dayIndex = 0;
+        for (String day : verbalDays) {
+            if (spokenText.toLowerCase().contains(day)) {
+                return cmdDays[dayIndex];
             }
+            dayIndex++;
         }
 
         return null;
@@ -45,16 +47,16 @@ public class LastWeekCompareCommand extends Command {
 
         if (value > 0.0) {
             if (colder) {
-                return "No, it was " + value + " warmer";
+                return "No, it is " + value + " warmer";
             } else {
-                return "Yes, it was " + value + " warmer";
+                return "Yes, it is " + value + " warmer";
             }
 
         } else if (value < 0.0) {
             if (colder) {
-                return "Yes, it was " + value * -1 + " colder";
+                return "Yes, it is " + value * -1 + " colder";
             } else {
-                return "No, it was " + value * -1 + " colder";
+                return "No, it is " + value * -1 + " colder";
             }
 
         } else {

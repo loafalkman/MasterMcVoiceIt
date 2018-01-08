@@ -5,7 +5,6 @@ import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -48,7 +47,7 @@ public class ActuatorsView extends ConstraintLayout {
     }
 
     public void init() {
-        View v = mInflater.inflate(R.layout.item_cardfragment_genericlayout, this, true);
+        View v = mInflater.inflate(R.layout.layout_cardsholder_genericlayout, this, true);
         actuatorsList = (LinearLayout) v.findViewById(R.id.linearlayout_genericlayout_container);
 
         TextView title = v.findViewById(R.id.textview_genericlayout_title);

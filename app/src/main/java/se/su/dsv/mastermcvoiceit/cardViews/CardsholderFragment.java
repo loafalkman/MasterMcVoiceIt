@@ -17,13 +17,14 @@ import se.su.dsv.mastermcvoiceit.cardModels.LocationCardModel;
 import se.su.dsv.mastermcvoiceit.cardModels.TempsCardModel;
 import se.su.dsv.mastermcvoiceit.command.ActuatorCommand;
 import se.su.dsv.mastermcvoiceit.command.Command;
+import se.su.dsv.mastermcvoiceit.command.CompareWeekTempCommand;
 import se.su.dsv.mastermcvoiceit.command.LastWeekCompareCommand;
+import se.su.dsv.mastermcvoiceit.command.WeekAvgCommand;
 import se.su.dsv.mastermcvoiceit.place.HomePlace;
 import se.su.dsv.mastermcvoiceit.place.Place;
 import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
 import se.su.dsv.mastermcvoiceit.remote.actuator.Actuator;
 import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorType;
-import se.su.dsv.mastermcvoiceit.command.TempCommand;
 import se.su.dsv.mastermcvoiceit.remote.sensor.Sensor;
 import se.su.dsv.mastermcvoiceit.remote.sensor.SensorType;
 import se.su.dsv.mastermcvoiceit.service.BackgroundService;
@@ -32,7 +33,7 @@ import se.su.dsv.mastermcvoiceit.service.BackgroundService;
  * Created by annika on 2017-11-29.
  */
 
-public class CardFragment extends Fragment {
+public class CardsholderFragment extends Fragment {
     public static final String KEY_PLACE_NUMBER = "placeNumber";
 
     private GPSController gpsController;
@@ -76,21 +77,16 @@ public class CardFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        fragView = inflater.inflate(R.layout.card_fragment, container, false);
+        fragView = inflater.inflate(R.layout.fragment_main_cardsholder, container, false);
 
         tempsView = new TempsView(getContext());
-        CardView temps = (CardView) fragView.findViewById(R.id.framelayout_main_tempscontainer);
+        CardView temps = (CardView) fragView.findViewById(R.id.cardview_cardsholder_tempscontainer);
         temps.addView(tempsView);
 
         locationView = new LocationView(getContext(), gpsController);
-        CardView locations = (CardView) fragView.findViewById(R.id.framelayout_main_locationservice);
+        CardView locations = (CardView) fragView.findViewById(R.id.cardview_cardsholder_locationservice);
         locations.addView(locationView);
 
         actuatorsView = new ActuatorsView(getContext(), new ActuatorsView.SwitchesListener() {
@@ -101,7 +97,7 @@ public class CardFragment extends Fragment {
 
             }
         });
-        CardView actuators = (CardView) fragView.findViewById(R.id.framelayout_main_actuatorscontainer);
+        CardView actuators = (CardView) fragView.findViewById(R.id.cardview_cardsholder_actuatorscontainer);
         actuators.addView(actuatorsView);
 
         initRenderAllCards();
@@ -152,11 +148,17 @@ public class CardFragment extends Fragment {
             locationCardModel.setDistanceFromHome(BackgroundService.lastLocation.distanceTo(myPlace.getLocation())); // TODO: for demo purpose
     }
 
-    // TODO: each CardsFragment should have their own list of commands?
+    // TODO: each CardsholderFragment should have their own list of commands?
     private void initCommands() {
-        SSHConnDetails conection = ((HomePlace) myPlace).getConnDetails();
-        new LastWeekCompareCommand(conection, true);
-        new LastWeekCompareCommand(conection, false);
+        SSHConnDetails connection = ((HomePlace) myPlace).getConnDetails();
+        new LastWeekCompareCommand(connection, true);
+        new LastWeekCompareCommand(connection, false);
+
+        new WeekAvgCommand(connection, true);
+        new WeekAvgCommand(connection, false);
+
+        new CompareWeekTempCommand(connection, true);
+        new CompareWeekTempCommand(connection, false);
 
         for (Actuator actuator : myPlace.getActuatorList().get(ActuatorType.POWER_SWITCH)) {
             new ActuatorCommand(actuator, true);

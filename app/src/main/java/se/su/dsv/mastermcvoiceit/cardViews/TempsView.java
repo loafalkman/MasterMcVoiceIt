@@ -38,7 +38,7 @@ public class TempsView extends ConstraintLayout {
     }
 
     public void init() {
-        View v = mInflater.inflate(R.layout.item_cardfragment_genericlayout, this, true);
+        View v = mInflater.inflate(R.layout.layout_cardsholder_genericlayout, this, true);
         tempsList = (LinearLayout) v.findViewById(R.id.linearlayout_genericlayout_container);
 
         TextView title = v.findViewById(R.id.textview_genericlayout_title);
@@ -50,7 +50,7 @@ public class TempsView extends ConstraintLayout {
         tempsList.removeAllViews();
 
         for (int i = 0; i < sensorNames.length; i++) {
-            View row = mInflater.inflate(R.layout.row_temperatures_nameandvalue, this, false);
+            View row = mInflater.inflate(R.layout.row_temperaturecard_nameandvalue, this, false);
 
             TextView sensorName = row.findViewById(R.id.textview_temprow_sensorname);
             TextView sensorValue = row.findViewById(R.id.textview_temprow_sensorvalue);

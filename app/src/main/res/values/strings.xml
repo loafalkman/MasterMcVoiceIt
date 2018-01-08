@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">MasterMcVoiceIt</string>
     <string name="reasons_for_permission">Hey permission is mandatory</string>
+    <string name="location_services">Location services</string>
+    <string name="ssh_ip_address">SSH IP address</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
 </resources>

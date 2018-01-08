@@ -17,16 +17,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import se.su.dsv.mastermcvoiceit.cardViews.CardFragment;
+import se.su.dsv.mastermcvoiceit.cardViews.CardsholderFragment;
 import se.su.dsv.mastermcvoiceit.place.HomePlace;
 import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
 import se.su.dsv.mastermcvoiceit.service.BackgroundService;
 
-public class MainActivity extends AppCompatActivity implements RecognitionListener, CardFragment.GPSController, ConnDetailsDialog.ConnDetailDialogListener {
-
-    private static final String TAG = "main";
-    public static final String LOCATION_UPDATE = "location update";
-    public static final String LOCATION = "location";
+public class MainActivity extends AppCompatActivity implements RecognitionListener, CardsholderFragment.GPSController, ConnDetailsDialog.ConnDetailDialogListener {
     static final int RESULT_SPEECH = 7474;
     private static final String PREF_SSH_IP = "SSHIpAddress";
     private static final String PREF_SSH_USER = "SSHUsername";
@@ -40,13 +36,13 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     private Location homeLocation; // TEMP
 
     private FragmentManager fragmentManager;
-    private CardFragment cardFragment;
+    private CardsholderFragment cardsFragment;
 
     private Handler readingsHandler = new Handler();
     private Runnable updateUIReadings = new Runnable() {
         @Override
         public void run() {
-            updateCardModelListener(null);
+            updateCardModelListener();
             readingsHandler.postDelayed(this, 500);
         }
     };
@@ -81,18 +77,18 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     private void initFragment() {
         if (initPlaces()) {
-            cardFragment = new CardFragment();
+            cardsFragment = new CardsholderFragment();
             Bundle cardFragArgs = new Bundle();
-            cardFragArgs.putInt(CardFragment.KEY_PLACE_NUMBER, 0);
-            cardFragment.setArguments(cardFragArgs);
-            launchFragment(cardFragment);
+            cardFragArgs.putInt(CardsholderFragment.KEY_PLACE_NUMBER, 0);
+            cardsFragment.setArguments(cardFragArgs);
+            launchFragment(cardsFragment);
         }
     }
 
-    private void launchFragment(CardFragment cardFragment) {
+    private void launchFragment(CardsholderFragment cardsFragment) {
         fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.container_main_cardsfragment, cardFragment);
+        fragmentTransaction.add(R.id.container_main_cardsfragment, cardsFragment);
         fragmentTransaction.commit();
     }
 
@@ -106,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                     Location homeLoc = new Location("");
                     homeLoc.setLatitude(59.345613);
                     homeLoc.setLongitude(18.111798);
-                    BackgroundService.places.add(new HomePlace(this, homeLoc, homeSSH));
+                    BackgroundService.places.add(new HomePlace(homeLoc, homeSSH));
                     return true;
                 } catch (IllegalStateException e) {
                     Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -152,28 +148,18 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
 
-    /**
-     * temporary listener for a temporary button :P
-     */
-    public void updateCardModelListener(View view) {
-        if(cardFragment != null) {
-            cardFragment.updateCardModels();
-            cardFragment.renderAllCards();
+    public void updateCardModelListener() {
+        if(cardsFragment != null) {
+            cardsFragment.updateCardModels();
+            cardsFragment.renderAllCards();
         }
     }
 
-    /**
-     * Temporarily bound to a button for testing, should be activated after voice result.
-     */
-    public void voiceResult(View v) {
-        doCommand("colder than last sunday");
-    }
-
     private void doCommand(String command) {
-        if(cardFragment != null) {
-            cardFragment.doCommand(command);
-            cardFragment.updateCardModels();
-            cardFragment.renderAllCards();
+        if(cardsFragment != null) {
+            cardsFragment.doCommand(command);
+            cardsFragment.updateCardModels();
+            cardsFragment.renderAllCards();
         }
     }
 
@@ -190,10 +176,9 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         switch (requestCode) {
             case RESULT_SPEECH: {
                 if (resultCode == RESULT_OK && null != data) {
-                    ArrayList<String> text = data
-                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-                    resultArray = text;
+                    resultArray = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                 }
 
                 break;

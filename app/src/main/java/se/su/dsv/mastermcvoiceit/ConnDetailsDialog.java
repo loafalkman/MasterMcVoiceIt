@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -39,7 +38,7 @@ public class ConnDetailsDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        final View view = inflater.inflate(R.layout.dialog_connection_details, null);
+        final View view = inflater.inflate(R.layout.dialog_main_connection_details, null);
         builder.setView(view)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override

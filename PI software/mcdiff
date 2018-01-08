@@ -3,5 +3,5 @@
 ## Put this script into /usr/bin/ to be able to call this as a command.
 ## Example use: "pi@raspberrypi:~ $ mcdiff THU 135" 
 
-cd /home/annika/Dokument/mcDiff/ # Edit this if the java program is located elsewhere
+cd /home/annika/Dokument/MasterMcVoiceIt_PiSoftware/ # Edit this if the java program is located elsewhere
 java McDiff $*

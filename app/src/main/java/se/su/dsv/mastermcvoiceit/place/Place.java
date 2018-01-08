@@ -1,8 +1,6 @@
 package se.su.dsv.mastermcvoiceit.place;
 
-import android.content.Context;
 import android.location.Location;
-import android.support.v7.app.NotificationCompat;
 
 import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorList;
 import se.su.dsv.mastermcvoiceit.remote.sensor.SensorList;
@@ -12,12 +10,11 @@ import se.su.dsv.mastermcvoiceit.remote.sensor.SensorList;
  */
 
 public abstract class Place {
-    protected Context context;
     protected SensorList sensorList;
     protected ActuatorList actuatorList;
     protected Location location;
 
-    public Place(Context context, SensorList sensorList, ActuatorList actuatorList, Location location) {
+    public Place(SensorList sensorList, ActuatorList actuatorList, Location location) {
         this.sensorList = sensorList;
         this.actuatorList = actuatorList;
         this.location = location;
