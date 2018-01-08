@@ -17,19 +17,34 @@ public class McDiff {
 	/**
 	 * In args: put weekday (three capital letters only) in first index, sensor id in second
 	 * Example: args = {"MON", "135"} , returns currentTemp - lastMondayTemp.
+	 * 
 	 * To compare weeks average, put "WEEKS" at first index.
 	 * Example: args = {"WEEKS", "135"} , returns currentWeekAvg - lastWeekAvg.
+	 * 
+	 * To compare current temp to last week's average, put "LASTWEEK" at first index.
+	 * Example: args = {"LASTWEEK", "135"} , returns currentTemp - lastWeekAvg.
 	 */
 	public static void main(String[] args) {
 		String firstArg = args[0];
 		int sensorID = Integer.parseInt(args[1]);
 
-		if (firstArg.equals("WEEKS")) {
-			McAverage last = new McAverage("LAST", sensorID);
-			McAverage curr = new McAverage("CURRENT", sensorID);
-			System.out.println(curr.calcAvg() - last.calcAvg());
-		} else {
-			new McDiff(sensorID).compare(sensorID, firstArg);
+		switch (firstArg) {
+			case "WEEKS":
+				McAverage last = new McAverage("LAST", sensorID);
+				McAverage curr = new McAverage("CURRENT", sensorID);
+				System.out.println(curr.calcAvg() - last.calcAvg());
+				break;
+
+			case "LASTWEEK":
+				McAverage lastWeek = new McAverage("LAST", sensorID);
+				float sensorValue = getSensorValue(sensorID);
+				float lastWeekAvg = lastWeek.calcAvg();
+				System.out.println(sensorValue - lastWeekAvg);
+				break;
+
+			default:
+				new McDiff(sensorID).compare(sensorID, firstArg);
+				break;
 		}
 	}
 
@@ -66,11 +81,11 @@ public class McDiff {
 		return 0;
 	}
 
-	private float getSensorValue(int sensorID) {
+	private static float getSensorValue(int sensorID) {
 		return Float.parseFloat(getSensorLine(sensorID)[3].replace('°', ' ').trim());
 	}
 
-	private String[] getSensorLine(int sensorID) {
+	private static String[] getSensorLine(int sensorID) {
 		for (String line : getDeviceLines(execCommand("tdtool -l"))) {
 			String[] cols = line.split("\t");
 			if (Integer.parseInt(cols[2].trim()) == sensorID) {
@@ -81,7 +96,7 @@ public class McDiff {
 		return null;
 	}
 
-	private String[] getDeviceLines(String[] lines) {
+	private static String[] getDeviceLines(String[] lines) {
 		if (lines.length != 0 && lines[0].contains("Number of devices")) {
 			String[] line0 = lines[0].split(" ");
 			int actSize = Integer.valueOf(line0[line0.length - 1]);
@@ -94,7 +109,7 @@ public class McDiff {
 		return null;
 	}
 
-	private String[] execCommand(String cmd) {
+	private static String[] execCommand(String cmd) {
 		Runtime rt = Runtime.getRuntime();
 		ArrayList<String> result = new ArrayList<>();
 
