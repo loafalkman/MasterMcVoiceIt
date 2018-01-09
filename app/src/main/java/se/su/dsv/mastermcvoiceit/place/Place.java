@@ -17,13 +17,15 @@ public abstract class Place {
     protected SensorList sensorList;
     protected ActuatorList actuatorList;
     protected Location location;
+    protected int id;
 
     protected ArrayList<Action> actions = new ArrayList<>();
 
-    public Place(SensorList sensorList, ActuatorList actuatorList, Location location) {
+    public Place(SensorList sensorList, ActuatorList actuatorList, Location location, int id) {
         this.sensorList = sensorList;
         this.actuatorList = actuatorList;
         this.location = location;
+        this.id = id;
     }
 
     public abstract ArrayList<String[]> tick(Location currentLocation);
@@ -50,6 +52,10 @@ public abstract class Place {
                 return a;
         }
         return null;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public abstract class Action {

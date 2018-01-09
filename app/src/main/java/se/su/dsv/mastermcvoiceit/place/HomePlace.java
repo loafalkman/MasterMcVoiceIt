@@ -2,6 +2,7 @@ package se.su.dsv.mastermcvoiceit.place;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -19,10 +20,12 @@ import se.su.dsv.mastermcvoiceit.service.NotificationService;
 
 public class HomePlace extends Place {
     public static final int ID_NOTIFICATION_GPS_DETECTED = 475839235;
+
+    private int zonePadding = 50;
     private SSHConnDetails connDetails;
 
-    public HomePlace(Location location, SSHConnDetails connDetails) {
-        super(null, null, location);
+    public HomePlace(Location location, SSHConnDetails connDetails, int id) {
+        super(null, null, location, id);
         this.connDetails = connDetails;
 
         initSensors();
@@ -39,20 +42,20 @@ public class HomePlace extends Place {
             @Override
             public String[] checkCondition(Location currentLocation) {
                 // approaching home
-                if (currentLocation != null && currentLocation.distanceTo(HomePlace.super.location) < 1000) {
+                if (currentLocation != null && currentLocation.distanceTo(HomePlace.super.location) < 1000 - zonePadding) {
 
                     if (actuatorList.get(11).getState() == 0 && bedroomLighOnService)
                         return new String[]{
-                                "0",
+                                ""+id,
                                 "Turn on bedroom light",
                                 "" + ID_NOTIFICATION_GPS_DETECTED
                         };
 
                 // leaving home
-                } else if (currentLocation != null && currentLocation.distanceTo(HomePlace.super.location) > 1000) {
-                    if (actuatorList.get(11).getState() == 1 && bedroomLighOnService)
+                } else if (currentLocation != null && currentLocation.distanceTo(HomePlace.super.location) > 1000 + zonePadding) {
+                    if (actuatorList.get(11).getState() > 0 && bedroomLighOnService)
                         return new String[]{
-                                "0",
+                                ""+id,
                                 "Turn off bedroom light",
                                 "" + ID_NOTIFICATION_GPS_DETECTED
                         };
