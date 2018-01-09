@@ -60,7 +60,7 @@ public class LastWeekCompareCommand extends Command {
             }
 
         } else {
-            return "There is no different";
+            return "There is no difference";
         }
 
     }
