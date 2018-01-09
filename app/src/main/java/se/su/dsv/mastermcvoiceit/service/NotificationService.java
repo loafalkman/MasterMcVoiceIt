@@ -9,9 +9,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
+import android.util.Log;
 
 import se.su.dsv.mastermcvoiceit.R;
 import se.su.dsv.mastermcvoiceit.place.HomePlace;
+import se.su.dsv.mastermcvoiceit.place.Place;
 
 /**
  * Created by annika on 2017-12-08.
@@ -19,11 +21,9 @@ import se.su.dsv.mastermcvoiceit.place.HomePlace;
 
 public class NotificationService extends IntentService {
     public static final String EXTRA_NOTIFICATION_CODE = "notification codes";
-    public static final int ID_NOTIFICATION_GPS_DETECTED = 475839235;
 
-    private static final String ACTION_YES = "YES";
-    private static final String ACTION_NO = "NO";
-    private static final String ACTION_CANCEL = "CANCEL";
+    public static final String ACTION_YES = "YES";
+    public  static final String ACTION_CANCEL = "CANCEL";
     private NotificationManager mNotificationManager;
 
     public NotificationService() {
@@ -45,21 +45,17 @@ public class NotificationService extends IntentService {
                     buildNotification(codes);
                 }
 
-                final String action = intent.getAction();
-                if (action != null) {
+                final String notifiAction = intent.getAction();
+                if (notifiAction != null) {
                     int placeID = extras.getInt("place id");
+                    int actionID = extras.getInt("actionID");
+                    Log.v("NOTIFISERV", "Action id: "+actionID);
 
-                    if (placeID == 0) {
-                        HomePlace homePlace = (HomePlace) BackgroundService.places.get(0);
-                        if (action.equals(ACTION_YES)) {
-                            homePlace.getActuatorList().get(11).setState(1);
-                            mNotificationManager.cancel(ID_NOTIFICATION_GPS_DETECTED);
-                        }
-                        if (action.equals(ACTION_CANCEL)) {
-                            homePlace.setBedroomLighOnService(false);
-                            mNotificationManager.cancel(ID_NOTIFICATION_GPS_DETECTED);
-                        }
-                    }
+                    Place placeFromId = BackgroundService.places.get(placeID);
+                    Place.Action action = placeFromId.getAction(actionID);
+
+                    action.doAction(notifiAction, extras);
+                    mNotificationManager.cancel(HomePlace.ID_NOTIFICATION_GPS_DETECTED);
                 }
             }
         }
@@ -68,17 +64,20 @@ public class NotificationService extends IntentService {
     private void buildNotification(String[] codes) {
         if (codes[0].equals("0")) {
             if (codes[1].equals("Turn on bedroom light")) {
-                BLOffNotification();
+                BLOffNotification(0, true, Integer.parseInt(codes[2]), "Bedroom light off","Turn on bedroom light?");
+
+            } else if (codes[1].equals("Turn off bedroom light")) {
+                BLOffNotification(0, false, Integer.parseInt(codes[2]), "Bedroom light on","Turn off bedroom light?");
             }
         }
     }
 
-    private void BLOffNotification() {
+    private void BLOffNotification(int placeID, boolean turnOn, int actionID, String title, String question) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.drawable.icon_appbar_brain_transparent);
-        mBuilder.setContentTitle("Bedroom light off");
-        mBuilder.setContentText("Turn on bedroom light?");
+        mBuilder.setContentTitle(title);
+        mBuilder.setContentText(question);
 //        mBuilder.setAutoCancel(true);
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
 
@@ -90,7 +89,9 @@ public class NotificationService extends IntentService {
 
         // Action yes
         Intent yesAction = new Intent(this, NotificationService.class);
-        yesAction.putExtra("place id", 0);
+        yesAction.putExtra("place id", placeID);
+        yesAction.putExtra("turnOn", turnOn);
+        yesAction.putExtra("actionID", actionID);
         yesAction.setAction(ACTION_YES);
 
         PendingIntent yesPendingIntent =
@@ -103,21 +104,23 @@ public class NotificationService extends IntentService {
 
         mBuilder.addAction(R.drawable.temp, "YES", yesPendingIntent);
 
-        // Action no
-        Intent noAction = new Intent(this, NotificationService.class);
-        noAction.putExtra("place id", 0);
-        noAction.setAction(ACTION_CANCEL);
+        // Action cancel
+        Intent cancelAction = new Intent(this, NotificationService.class);
+        cancelAction.putExtra("place id", placeID);
+        cancelAction.putExtra("turnOn", turnOn);
+        cancelAction.putExtra("actionID", actionID);
+        cancelAction.setAction(ACTION_CANCEL);
 
         PendingIntent noPendingIntent =
                 PendingIntent.getService(
                         this,
                         0,
-                        noAction,
+                        cancelAction,
                         PendingIntent.FLAG_UPDATE_CURRENT // ??
                 );
 
         mBuilder.addAction(R.drawable.temp, "CANCEL", noPendingIntent);
 
-        mNotificationManager.notify(ID_NOTIFICATION_GPS_DETECTED, mBuilder.build());
+        mNotificationManager.notify(actionID, mBuilder.build());
     }
 }

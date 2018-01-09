@@ -1,12 +1,16 @@
 package se.su.dsv.mastermcvoiceit.place;
 
 import android.location.Location;
+import android.os.Bundle;
+
+import java.util.ArrayList;
 
 import se.su.dsv.mastermcvoiceit.remote.SSHConnDetails;
 import se.su.dsv.mastermcvoiceit.remote.actuator.ActuatorList;
 import se.su.dsv.mastermcvoiceit.remote.actuator.TelldusActuator;
 import se.su.dsv.mastermcvoiceit.remote.sensor.SensorList;
 import se.su.dsv.mastermcvoiceit.remote.sensor.TelldusSensor;
+import se.su.dsv.mastermcvoiceit.service.NotificationService;
 
 
 /**
@@ -14,6 +18,7 @@ import se.su.dsv.mastermcvoiceit.remote.sensor.TelldusSensor;
  */
 
 public class HomePlace extends Place {
+    public static final int ID_NOTIFICATION_GPS_DETECTED = 475839235;
     private SSHConnDetails connDetails;
 
     private boolean bedroomLighOnService = true;
@@ -24,6 +29,40 @@ public class HomePlace extends Place {
 
         initSensors();
         initActuators();
+        initActions();
+    }
+
+    private void initActions() {
+
+        // getting home / leaving home action.
+        actions.add(new Action(ID_NOTIFICATION_GPS_DETECTED) {
+            @Override
+            public String[] checkCondition(Location currentLocation) {
+                if (currentLocation != null && currentLocation.distanceTo(HomePlace.super.location) < 1000) {
+
+                    if (actuatorList.get(11).getState() == 0 && bedroomLighOnService)
+                        return new String[]{
+                                "0",
+                                "Turn on bedroom light",
+                                "" + ID_NOTIFICATION_GPS_DETECTED
+                        };
+                }
+                return null;
+            }
+
+            @Override
+            public void doAction(String action, Bundle extras) {
+                boolean turnActuatorOn = extras.getBoolean("turnOn");
+
+                if (action.equals(NotificationService.ACTION_YES)) {
+                    actuatorList.get(11).setState(turnActuatorOn ? 1 : 0);
+
+                } else if (action.equals(NotificationService.ACTION_CANCEL)) {
+                    setBedroomLighOnService(false);
+                }
+            }
+
+        });
     }
 
     public SSHConnDetails getConnDetails() {
@@ -34,16 +73,19 @@ public class HomePlace extends Place {
         this.bedroomLighOnService = state;
     }
 
-    public String[] tick(Location currentLocation) {
+    public ArrayList<String[]> tick(Location currentLocation) {
         sensorList.updateBatches();
         actuatorList.updateBatches();
 
-        if (currentLocation != null && currentLocation.distanceTo(super.location) < 1000) {
-            if (actuatorList.get(11).getState() == 0 && bedroomLighOnService)
-                return new String[]{"0", "Turn on bedroom light"};
+        ArrayList<String[]> ret = new ArrayList<>();
+        String[] tmp;
+        for (Action action : actions) {
+            tmp = action.checkCondition(currentLocation);
+            if (tmp != null)
+                ret.add(tmp);
         }
 
-        return null;
+        return ret;
     }
 
     /**
