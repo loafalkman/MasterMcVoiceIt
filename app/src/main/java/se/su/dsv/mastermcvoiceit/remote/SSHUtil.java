@@ -49,6 +49,9 @@ public final class SSHUtil {
             sess.close();
             conn.close();
         } catch (IOException e) {
+            System.out.println(hostname);
+            System.out.println(username);
+            System.out.println(password);
             e.printStackTrace(System.err);
             System.exit(2);
         }

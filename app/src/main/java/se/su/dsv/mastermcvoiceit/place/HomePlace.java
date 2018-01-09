@@ -21,8 +21,6 @@ public class HomePlace extends Place {
     public static final int ID_NOTIFICATION_GPS_DETECTED = 475839235;
     private SSHConnDetails connDetails;
 
-    private boolean bedroomLighOnService = true;
-
     public HomePlace(Location location, SSHConnDetails connDetails) {
         super(null, null, location);
         this.connDetails = connDetails;
@@ -36,8 +34,11 @@ public class HomePlace extends Place {
 
         // getting home / leaving home action.
         actions.add(new Action(ID_NOTIFICATION_GPS_DETECTED) {
+            private boolean bedroomLighOnService = true;
+
             @Override
             public String[] checkCondition(Location currentLocation) {
+                // approaching home
                 if (currentLocation != null && currentLocation.distanceTo(HomePlace.super.location) < 1000) {
 
                     if (actuatorList.get(11).getState() == 0 && bedroomLighOnService)
@@ -46,7 +47,18 @@ public class HomePlace extends Place {
                                 "Turn on bedroom light",
                                 "" + ID_NOTIFICATION_GPS_DETECTED
                         };
+
+                // leaving home
+                } else if (currentLocation != null && currentLocation.distanceTo(HomePlace.super.location) > 1000) {
+                    if (actuatorList.get(11).getState() == 1 && bedroomLighOnService)
+                        return new String[]{
+                                "0",
+                                "Turn off bedroom light",
+                                "" + ID_NOTIFICATION_GPS_DETECTED
+                        };
                 }
+
+
                 return null;
             }
 
@@ -58,7 +70,7 @@ public class HomePlace extends Place {
                     actuatorList.get(11).setState(turnActuatorOn ? 1 : 0);
 
                 } else if (action.equals(NotificationService.ACTION_CANCEL)) {
-                    setBedroomLighOnService(false);
+                    bedroomLighOnService = false;
                 }
             }
 
@@ -69,16 +81,16 @@ public class HomePlace extends Place {
         return this.connDetails;
     }
 
-    public void setBedroomLighOnService(boolean state) {
-        this.bedroomLighOnService = state;
-    }
+//    public void setBedroomLighOnService(boolean state) {
+//        this.bedroomLighOnService = state;
+//    }
 
     public ArrayList<String[]> tick(Location currentLocation) {
         sensorList.updateBatches();
         actuatorList.updateBatches();
-
         ArrayList<String[]> ret = new ArrayList<>();
         String[] tmp;
+
         for (Action action : actions) {
             tmp = action.checkCondition(currentLocation);
             if (tmp != null)

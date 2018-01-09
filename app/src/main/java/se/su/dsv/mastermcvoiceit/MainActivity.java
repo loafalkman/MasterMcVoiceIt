@@ -162,14 +162,14 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
 
     public void updateCardModelListener() {
-        if(cardsFragment != null) {
+        if (cardsFragment != null) {
             cardsFragment.updateCardModels();
             cardsFragment.renderAllCards();
         }
     }
 
     private void doCommand(String command) {
-        if(cardsFragment != null) {
+        if (cardsFragment != null) {
             cardsFragment.doCommand(command, textToSpeech);
             cardsFragment.updateCardModels();
             cardsFragment.renderAllCards();
