@@ -35,11 +35,15 @@ public class WeekAvgCommand extends Command {
     public String doCommand(String spokenText) {
         String command = isForCurrWeek? "mcaverage CURRENT 135" : "mcaverage LAST 135";
         float result = Float.parseFloat(SSHUtil.runCommand(command, connDetails).trim());
+        String sensation = result < 0 ? "cold" : "warm";
+
+        result = Math.abs(Math.round(result * 10) / 10);
 
         if (isForCurrWeek)
-            return "the average temperature for this week is " + result + "C° ";
+
+            return "the average temperature for this week is " + result + " degrees " + sensation;
         else
-            return "the average temperature for last week is " + result + "C° ";
+            return "the average temperature for last week is " + result + " degrees " + sensation;
     }
 
 

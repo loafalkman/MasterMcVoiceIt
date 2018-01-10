@@ -7,8 +7,21 @@ import se.su.dsv.mastermcvoiceit.remote.actuator.Actuator;
  */
 
 public class ActuatorCommand extends Command {
-    private final String[] cmdOnPatterns = {"turn on %s", "turn on %s please", "turn on the %s please"};
-    private final String[] cmdOffPatterns = {"turn off %s", "turn off %s please", "shut down %s", "turn off %s please"};
+    private final String[] cmdOnPatterns = {
+            "turn on %s",
+            "turn on the %s",
+            "turn on %s please",
+            "turn on the %s please"
+    };
+    private final String[] cmdOffPatterns = {
+            "turn off %s",
+            "turn off the %s",
+            "turn off %s please",
+            "turn off the %s please",
+            "shut down %s",
+            "shut down the %s"
+    };
+
     private Actuator actuator;
     private boolean isTurnOnCommand;
 
