@@ -74,11 +74,15 @@ public class BackgroundService extends Service {
             Log.d("Service", "run location " + lastLocation);
 
             for (Place place : places) {
-                String[] notify = place.tick(gpsON? lastLocation : null);
-                if (notify != null) {
-                    Intent nService = new Intent(BackgroundService.this, NotificationService.class);
-                    nService.putExtra(NotificationService.EXTRA_NOTIFICATION_CODE, notify);
-                    BackgroundService.this.startService(nService);
+                ArrayList<String[]> notify = place.tick(gpsON? lastLocation : null);
+
+                if (notify.size() != 0) {
+
+                    for (String[] noti : notify) {
+                        Intent nService = new Intent(BackgroundService.this, NotificationService.class);
+                        nService.putExtra(NotificationService.EXTRA_NOTIFICATION_CODE, noti);
+                        BackgroundService.this.startService(nService);
+                    }
                 }
             }
 

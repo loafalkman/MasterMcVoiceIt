@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                     Location homeLoc = new Location("");
                     homeLoc.setLatitude(59.345613);
                     homeLoc.setLongitude(18.111798);
-                    BackgroundService.places.add(new HomePlace(homeLoc, homeSSH));
+                    BackgroundService.places.add(new HomePlace(homeLoc, homeSSH, BackgroundService.places.size()));
                     return true;
                 } catch (IllegalStateException e) {
                     Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
 
     public void updateCardModelListener() {
-        if(cardsFragment != null) {
+        if (cardsFragment != null) {
             cardsFragment.updateCardModels();
             cardsFragment.renderAllCards();
         }
@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
             return;
         }
 
-        if(cardsFragment != null) {
+        if (cardsFragment != null) {
             cardsFragment.doCommand(command, textToSpeech);
             cardsFragment.updateCardModels();
             cardsFragment.renderAllCards();

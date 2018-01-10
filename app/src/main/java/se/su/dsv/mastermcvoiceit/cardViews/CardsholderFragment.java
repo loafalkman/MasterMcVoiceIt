@@ -38,7 +38,6 @@ public class CardsholderFragment extends Fragment {
     public static final String KEY_PLACE_NUMBER = "placeNumber";
 
     private GPSController gpsController;
-
     private Place myPlace;
 
     private LocationCardModel locationCardModel;
