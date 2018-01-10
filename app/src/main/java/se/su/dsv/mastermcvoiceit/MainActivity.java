@@ -39,7 +39,11 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         @Override
         public void onInit(int i) {
             textToSpeech.setLanguage(Locale.UK);
-            textToSpeech.speak("welcome to master mac voice it. Sorry for annoying you.", TextToSpeech.QUEUE_ADD, null, "welcomeMessage");
+            textToSpeech.setPitch(1.1f);
+            textToSpeech.speak("welcome to master mac voice it.", TextToSpeech.QUEUE_ADD, null, "welcomeMessage");
+            textToSpeech.setPitch(0.8f);
+            textToSpeech.speak("Sorry for annoying you.", TextToSpeech.QUEUE_ADD, null, "welcomeMessage");
+            textToSpeech.setPitch(1.0f);
         }
     };
 
@@ -169,6 +173,24 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     private void doCommand(String command) {
+        if (command.equals("bye")) {
+            textToSpeech.setSpeechRate(0.7f);
+            textToSpeech.setPitch(0.1f);
+            textToSpeech.speak("bye bye", TextToSpeech.QUEUE_FLUSH, null, "exitMessage");
+            textToSpeech.setPitch(1);
+            textToSpeech.setSpeechRate(1);
+            while (textToSpeech.isSpeaking());
+            finish();
+            return;
+        } else if (command.equals("hello") || command.equals("hi")) {
+            textToSpeech.setPitch(2);
+            textToSpeech.setSpeechRate(2f);
+            textToSpeech.speak("Hello!", TextToSpeech.QUEUE_FLUSH, null, "helloMessage");
+            textToSpeech.setSpeechRate(1);
+            textToSpeech.setPitch(1);
+            return;
+        }
+
         if (cardsFragment != null) {
             cardsFragment.doCommand(command, textToSpeech);
             cardsFragment.updateCardModels();
@@ -177,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     public void voiceInputButtonListener(View v) {
+        textToSpeech.stop();
         if (SpeechRecognizer.isRecognitionAvailable(MainActivity.this)) {
             speechRecognizer.startListening(recognizerIntent);
         }
