@@ -6,8 +6,16 @@ import se.su.dsv.mastermcvoiceit.remote.SSHUtil;
 public class LastWeekCompareCommand extends Command {
     private final String[] cmdDays = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN", "LASTWEEK"};
     private final String[] verbalDays = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "week"};
-    private final String[] tempWarmerCmdPatterns = {"is it warmer than last %s"};
-    private final String[] tempColderCmdPatterns = {"is it colder than last %s"};
+    private final String[] tempWarmerCmdPatterns = {
+            "is it warmer than last %s",
+            "is it warmer today than last %s",
+            "is it warmer today compared to last %s"
+    };
+    private final String[] tempColderCmdPatterns = {
+            "is it colder than last %s",
+            "is it colder today than last %s",
+            "is it colder today compared to last %S"
+    };
     private SSHConnDetails connDetails;
     private boolean colder;
 
@@ -44,19 +52,20 @@ public class LastWeekCompareCommand extends Command {
 
     private String generateAnswer(String result) {
         float value = Float.parseFloat(result);
+        value = Math.round(value * 10) / 10;
 
         if (value > 0.0) {
             if (colder) {
-                return "No, it is " + value + " warmer";
+                return "No, it is " + value + " degrees warmer";
             } else {
-                return "Yes, it is " + value + " warmer";
+                return "Yes, it is " + value + " degrees warmer";
             }
 
         } else if (value < 0.0) {
             if (colder) {
-                return "Yes, it is " + value * -1 + " colder";
+                return "Yes, it is " + value * -1 + " degrees colder";
             } else {
-                return "No, it is " + value * -1 + " colder";
+                return "No, it is " + value * -1 + " degrees colder";
             }
 
         } else {

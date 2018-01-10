@@ -8,8 +8,14 @@ import se.su.dsv.mastermcvoiceit.remote.SSHUtil;
  */
 
 public class CompareWeekTempCommand extends Command {
-    private final String[] tempWarmerCmdPatterns = {"is this week warmer than last week"};
-    private final String[] tempColderCmdPatterns = {"is this week colder than last week"};
+    private final String[] tempWarmerCmdPatterns = {
+            "is this week warmer than last week",
+            "is this week warmer compared to last week"
+    };
+    private final String[] tempColderCmdPatterns = {
+            "is this week colder than last week",
+            "is this week warmer compared to last week"
+    };
     private SSHConnDetails connDetails;
     private boolean colder;
 
@@ -34,16 +40,16 @@ public class CompareWeekTempCommand extends Command {
 
         if (value > 0.0) {
             if (colder) {
-                return "No, this week is on average " + value + " warmer";
+                return "No, this week is on average " + value + " degrees warmer";
             } else {
-                return "Yes, this week is on average " + value + " warmer";
+                return "Yes, this week is on average " + value + " degrees warmer";
             }
 
         } else if (value < 0.0) {
             if (colder) {
-                return "Yes, this week is on average " + value * -1 + " colder";
+                return "Yes, this week is on average " + value * -1 + " degrees colder";
             } else {
-                return "No, this week is on average " + value * -1 + " colder";
+                return "No, this week is on average " + value * -1 + " degrees colder";
             }
 
         } else {
