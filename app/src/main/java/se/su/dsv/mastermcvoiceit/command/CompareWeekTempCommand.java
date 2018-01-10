@@ -60,7 +60,7 @@ public class CompareWeekTempCommand extends Command {
 
     @Override
     public String doCommand(String spokenText) {
-        String command = "mcdiff WEEK 135";
+        String command = "mcdiff WEEKS 135";
         String result = SSHUtil.runCommand(command, connDetails);
         return generateAnswer(result);
     }
