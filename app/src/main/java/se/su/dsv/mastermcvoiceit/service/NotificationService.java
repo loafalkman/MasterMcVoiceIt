@@ -73,7 +73,6 @@ public class NotificationService extends IntentService {
     }
 
     private void BLOffNotification(int placeID, boolean turnOn, int actionID, String title, String question) {
-        Log.d("Notify", question + " " + turnOn);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.drawable.icon_appbar_brain_transparent);
