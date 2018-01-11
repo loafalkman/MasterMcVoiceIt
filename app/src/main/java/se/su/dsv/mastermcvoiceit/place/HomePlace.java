@@ -23,6 +23,10 @@ public class HomePlace extends Place {
 
     private int zonePadding = 50;
     private SSHConnDetails connDetails;
+    private boolean bedroomLighOnService = true;
+    private boolean locationWasNull;
+    private boolean wasHere;
+    private boolean isHere;
 
     public HomePlace(Location location, SSHConnDetails connDetails, int id) {
         super(null, null, location, id);
@@ -37,30 +41,28 @@ public class HomePlace extends Place {
 
         // getting home / leaving home action.
         actions.add(new Action(ID_NOTIFICATION_GPS_DETECTED) {
-            private boolean bedroomLighOnService = true;
 
             @Override
             public String[] checkCondition(Location currentLocation) {
-                // approaching home
-                if (currentLocation != null && currentLocation.distanceTo(HomePlace.super.location) < 1000 - zonePadding) {
 
-                    if (actuatorList.get(11).getState() == 0 && bedroomLighOnService)
+                if (bedroomLighOnService) {
+
+                    // approaching home
+                    if (isHere && actuatorList.get(11).getState() == 0)
                         return new String[]{
-                                ""+id,
+                                "" + id,
                                 "Turn on bedroom light",
                                 "" + ID_NOTIFICATION_GPS_DETECTED
                         };
 
-                // leaving home
-                } else if (currentLocation != null && currentLocation.distanceTo(HomePlace.super.location) > 1000 + zonePadding) {
-                    if (actuatorList.get(11).getState() > 0 && bedroomLighOnService)
+                    // leaving home
+                    else if (!isHere && actuatorList.get(11).getState() > 0)
                         return new String[]{
-                                ""+id,
+                                "" + id,
                                 "Turn off bedroom light",
                                 "" + ID_NOTIFICATION_GPS_DETECTED
                         };
                 }
-
 
                 return null;
             }
@@ -84,20 +86,39 @@ public class HomePlace extends Place {
         return this.connDetails;
     }
 
-//    public void setBedroomLighOnService(boolean state) {
-//        this.bedroomLighOnService = state;
-//    }
-
     public ArrayList<String[]> tick(Location currentLocation) {
         sensorList.updateBatches();
         actuatorList.updateBatches();
         ArrayList<String[]> ret = new ArrayList<>();
         String[] tmp;
 
-        for (Action action : actions) {
-            tmp = action.checkCondition(currentLocation);
-            if (tmp != null)
-                ret.add(tmp);
+        if (currentLocation != null) { // gps on
+
+            if (!locationWasNull) {
+                if (currentLocation.distanceTo(HomePlace.super.location) < 1000 - zonePadding) {
+                    isHere = true;
+                } else if (currentLocation.distanceTo(HomePlace.super.location) > 1000 + zonePadding) {
+                    isHere = false;
+                }
+
+                if (isHere != wasHere) { // user has moved in or out of the gateway area
+                    bedroomLighOnService = true;
+                } else {
+                    bedroomLighOnService = false;
+                }
+
+                for (Action action : actions) {
+                    tmp = action.checkCondition(currentLocation);
+                    if (tmp != null)
+                        ret.add(tmp);
+                }
+            }
+
+            wasHere = isHere;
+            locationWasNull = false;
+
+        } else {
+            locationWasNull = true;
         }
 
         return ret;
