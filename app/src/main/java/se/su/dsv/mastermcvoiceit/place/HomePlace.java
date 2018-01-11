@@ -103,6 +103,7 @@ public class HomePlace extends Place {
 
                 if (isHere != wasHere) { // user has moved in or out of the gateway area
                     bedroomLighOnService = true;
+                    System.out.println("user moved");
                 } else {
                     bedroomLighOnService = false;
                 }
