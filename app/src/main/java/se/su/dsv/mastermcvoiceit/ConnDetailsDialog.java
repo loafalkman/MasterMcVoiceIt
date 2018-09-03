@@ -18,7 +18,7 @@ public class ConnDetailsDialog extends DialogFragment {
     ConnDetailDialogListener listener;
 
     public interface ConnDetailDialogListener {
-        void dialogResult(String ip, String user, String pass);
+        void dialogResult(String ip, String user, String pass, int port);
     }
 
     @Override
@@ -46,8 +46,9 @@ public class ConnDetailsDialog extends DialogFragment {
                         String ip = ((EditText) view.findViewById(R.id.edittext_dialog_ip)).getText().toString();
                         String user = ((EditText) view.findViewById(R.id.edittext_dialog_username)).getText().toString();
                         String pass = ((EditText) view.findViewById(R.id.edittext_dialog_password)).getText().toString();
+                        int port = Integer.parseInt( ((EditText) view.findViewById(R.id.edittext_dialog_port)).getText().toString() );
 
-                        listener.dialogResult(ip, user, pass);
+                        listener.dialogResult(ip, user, pass, port);
                     }
                 });
 //                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

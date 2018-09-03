@@ -6,11 +6,13 @@ package se.su.dsv.mastermcvoiceit.remote;
 
 public class SSHConnDetails {
     private String host, user, password;
+    private int port;
 
-    public SSHConnDetails(String host, String user, String password) {
+    public SSHConnDetails(String host, String user, String password, int port) {
         this.host = host;
         this.user = user;
         this.password = password;
+        this.port = port;
     }
 
     public String getHost() {
@@ -23,5 +25,9 @@ public class SSHConnDetails {
 
     public String getPassword() {
         return password;
+    }
+
+    public int getPort() {
+        return port;
     }
 }

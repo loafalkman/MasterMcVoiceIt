@@ -21,13 +21,14 @@ public final class SSHUtil {
         String hostname = connDetails.getHost();
         String username = connDetails.getUser();
         String password = connDetails.getPassword();
+        int port = connDetails.getPort();
         StringBuilder ret = new StringBuilder();
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         try {
-            Connection conn = new Connection(hostname);
+            Connection conn = new Connection(hostname, port);
             conn.connect();
             boolean isAuthenticated = conn.authenticateWithPassword(username, password);
 

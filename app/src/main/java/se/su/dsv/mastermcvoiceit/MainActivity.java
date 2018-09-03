@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     private static final String PREF_SSH_IP = "SSHIpAddress";
     private static final String PREF_SSH_USER = "SSHUsername";
     private static final String PREF_SSH_PASS = "SSHPassword";
+    private static final String PREF_SSH_PORT = "SSHPort";
 
     private SpeechRecognizer speechRecognizer;
     private Intent recognizerIntent;
@@ -142,23 +143,25 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         String ip = prefs.getString(PREF_SSH_IP, null);
         String user = prefs.getString(PREF_SSH_USER, null);
         String pass = prefs.getString(PREF_SSH_PASS, null);
+        int port = prefs.getInt(PREF_SSH_PORT, -1);
 
-        if (ip == null || user == null || pass == null) {
+        if (ip == null || user == null || pass == null || port == -1) {
             ConnDetailsDialog dialog = new ConnDetailsDialog();
             dialog.show(getFragmentManager(), "ConnDetails");
             return null;
         }
 
-        return new SSHConnDetails(ip, user, pass);
+        return new SSHConnDetails(ip, user, pass, port);
     }
 
     @Override
-    public void dialogResult(String ip, String usr, String pass) {
+    public void dialogResult(String ip, String usr, String pass, int port) {
         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PREF_SSH_IP, ip);
         editor.putString(PREF_SSH_USER, usr);
         editor.putString(PREF_SSH_PASS, pass);
+        editor.putInt(PREF_SSH_PORT, port);
         editor.commit();
 
         initFragment();
